@@ -1,0 +1,425 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* ============================================
+   SHAKTI AI — "The Digital Sanctuary" Design System
+   Powered by Google Stitch • Light Mode
+   ============================================ */
+
+@theme {
+  /* Primary Brand — Stitch Digital Sanctuary palette */
+  --color-shakti-primary: #630ed4;
+  --color-shakti-primary-light: #d2bbff;
+  --color-shakti-primary-dark: #5a00c6;
+  --color-shakti-primary-container: #7c3aed;
+  --color-shakti-secondary: #B4136D;
+  --color-shakti-secondary-light: #ffb0cd;
+  --color-shakti-secondary-dark: #8c0053;
+  --color-shakti-secondary-container: #fd56a7;
+  
+  /* Functional Colors */
+  --color-shakti-safety: #a20017;
+  --color-shakti-safety-light: #ffdad7;
+  --color-shakti-success: #10B981;
+  --color-shakti-success-light: #6EE7B7;
+  --color-shakti-warning: #F59E0B;
+  --color-shakti-warning-light: #FCD34D;
+  --color-shakti-info: #3B82F6;
+  --color-shakti-error: #ba1a1a;
+  --color-shakti-error-container: #ffdad6;
+  
+  /* Light Theme — Digital Sanctuary surfaces */
+  --color-shakti-dark: #fcf8ff;
+  --color-shakti-dark-card: #efebff;
+  --color-shakti-dark-surface: #e9e5ff;
+  --color-shakti-dark-border: #ccc3d8;
+  --color-shakti-dark-text: #181445;
+  --color-shakti-dark-muted: #4a4455;
+  
+  /* Surface hierarchy */
+  --color-surface-lowest: #ffffff;
+  --color-surface-low: #f6f2ff;
+  --color-surface-base: #fcf8ff;
+  --color-surface-container: #efebff;
+  --color-surface-high: #e9e5ff;
+  --color-surface-highest: #e3dfff;
+  --color-surface-bright: #fcf8ff;
+  --color-surface-variant: #e3dfff;
+  --color-surface-dim: #dad6ff;
+  
+  /* Gradient tokens — Soul Gradient */
+  --color-shakti-gradient-start: #630ed4;
+  --color-shakti-gradient-end: #7c3aed;
+  
+  /* Tertiary / Accent — Emergency Red */
+  --color-tertiary: #a20017;
+  --color-tertiary-container: #c6252b;
+  
+  /* Inverse (for dark overlays) */
+  --color-inverse-surface: #2d2a5b;
+  --color-inverse-on-surface: #f3eeff;
+  --color-inverse-primary: #d2bbff;
+  
+  /* Outline */
+  --color-outline: #7b7487;
+  --color-outline-variant: #ccc3d8;
+  
+  /* Fonts — Stitch: Plus Jakarta Sans + Manrope */
+  --font-sans: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
+}
+
+/* Default to Light Mode */
+:root {
+  color-scheme: light;
+}
+
+/* Deep Space Dark Mode Theme */
+.dark {
+  color-scheme: dark;
+  
+  /* Deep Space Palette */
+  --color-shakti-dark: #0f0d1b;
+  --color-shakti-dark-card: #151326;
+  --color-shakti-dark-surface: #1a1731;
+  --color-shakti-dark-border: #2d2948;
+  --color-shakti-dark-text: #fcf8ff;
+  --color-shakti-dark-muted: #9f98b2;
+  
+  /* Surface hierarchy */
+  --color-surface-lowest: #0d0b17;
+  --color-surface-low: #131122;
+  --color-surface-base: #17152a;
+  --color-surface-container: #1e1b36;
+  --color-surface-high: #242042;
+  --color-surface-highest: #2b274e;
+  --color-surface-bright: #322d5b;
+  --color-surface-variant: #3a3468;
+  --color-surface-dim: #0a0812;
+  
+  /* Outline */
+  --color-outline: #5c5573;
+  --color-outline-variant: #3b3552;
+  
+  /* Keep primary colors vibrant for contrast */
+  --color-shakti-primary-light: #b48cff;
+}
+
+/* CSS Reset & Base */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-surface-base);
+  color: var(--color-shakti-dark-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-low);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-shakti-primary);
+}
+
+/* Selection */
+::selection {
+  background: rgba(124, 58, 237, 0.2);
+  color: #181445;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--color-shakti-primary);
+  outline-offset: 2px;
+}
+
+/* Links */
+a {
+  color: var(--color-shakti-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--color-shakti-primary-container);
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-shakti-gradient-start), var(--color-shakti-gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, var(--color-shakti-gradient-start), var(--color-shakti-gradient-end));
+}
+
+.gradient-border {
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--color-shakti-primary), var(--color-shakti-secondary));
+  z-index: -1;
+}
+
+.glass {
+  background: rgba(252, 248, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: none;
+}
+
+.glass-light {
+  background: rgba(239, 235, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: none;
+}
+
+.card {
+  background: var(--color-surface-lowest);
+  border: none;
+  border-radius: 2rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  background: var(--color-surface-lowest);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(24, 20, 69, 0.06);
+}
+
+.card-static {
+  background: var(--color-surface-lowest);
+  border: none;
+  border-radius: 2rem;
+  padding: 1.5rem;
+}
+
+/* ── Global page wrapper fix for all sub-pages ── */
+.p-4 { padding: 16px; }
+.p-5 { padding: 20px; }
+.p-6 { padding: 24px; }
+.pb-24 { padding-bottom: 100px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mt-5 { margin-top: 20px; }
+.space-y-2 > * + * { margin-top: 8px; }
+.space-y-3 > * + * { margin-top: 12px; }
+.space-y-4 > * + * { margin-top: 16px; }
+.space-y-6 > * + * { margin-top: 24px; }
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.flex-1 { flex: 1; }
+.min-w-0 { min-width: 0; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.w-full { width: 100%; }
+
+@media (min-width: 1024px) {
+  .lg\:p-6 { padding: 24px; }
+  .lg\:pb-6 { padding-bottom: 24px; }
+}
+
+/* Pulse Animation for SOS */
+@keyframes sos-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(198, 37, 43, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 20px rgba(198, 37, 43, 0);
+  }
+}
+
+.sos-pulse {
+  animation: sos-pulse 1.5s ease-in-out infinite;
+}
+
+/* Breathing Animation */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* Shimmer Loading */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-container) 25%,
+    var(--color-surface-high) 50%,
+    var(--color-surface-container) 75%
+  );
+  background-size: 2000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Spin for loading */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Glow effect - tinted with primary */
+.glow-purple {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.15), 0 0 60px rgba(124, 58, 237, 0.05);
+}
+
+.glow-pink {
+  box-shadow: 0 0 20px rgba(180, 19, 109, 0.15), 0 0 60px rgba(180, 19, 109, 0.05);
+}
+
+.glow-red {
+  box-shadow: 0 0 20px rgba(198, 37, 43, 0.2), 0 0 60px rgba(198, 37, 43, 0.08);
+}
+
+/* Page transition */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s ease;
+}
+
+/* Input styles */
+input, textarea, select {
+  font-family: var(--font-sans);
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Module-specific accent colors */
+.module-safety { --module-color: var(--color-shakti-safety); }
+.module-jobs { --module-color: var(--color-shakti-warning); }
+.module-tech { --module-color: var(--color-shakti-info); }
+.module-health { --module-color: var(--color-shakti-secondary); }
+.module-community { --module-color: var(--color-shakti-success); }
+
+/* Responsive helpers */
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+}
+
+@media (min-width: 769px) {
+  .hide-desktop { display: none !important; }
+}
+
+/* Main content offset for sidebar on large screens */
+@media (min-width: 1024px) {
+  .main-with-sidebar {
+    margin-left: 240px;
+  }
+  .sidebar-panel {
+    transform: translateX(0) !important;
+  }
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .sidebar-panel:not(.sidebar-open) {
+    transform: translateX(-100%) !important;
+  }
+  .hamburger-btn {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hamburger-btn {
+    display: none !important;
+  }
+}
+
+/* Toast overrides — light theme */
+.toast-custom {
+  background: var(--color-surface-lowest) !important;
+  color: var(--color-shakti-dark-text) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(24, 20, 69, 0.08) !important;
+}
