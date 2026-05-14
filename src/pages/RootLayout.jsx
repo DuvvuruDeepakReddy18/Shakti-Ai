@@ -5,6 +5,8 @@ import Sidebar from '../components/Sidebar';
 import BottomNav from '../components/BottomNav';
 import Navbar from '../components/Navbar';
 import FakeCallOverlay from '../components/FakeCallOverlay';
+import FloatingSOSButton from '../components/FloatingSOSButton';
+
 
 export default function RootLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -38,6 +40,9 @@ export default function RootLayout() {
 
       {/* ── Fake Call Overlay ── */}
       <FakeCallOverlay />
+
+      {/* ── Floating SOS Button ── */}
+      <FloatingSOSButton />
     </div>
   );
 }

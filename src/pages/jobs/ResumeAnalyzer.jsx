@@ -3,10 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, FileText, CheckCircle2, FileUp,
   Sparkles, RefreshCcw, Trophy, Target, ArrowRight,
-  Zap, Info,
+  Zap, Info, Briefcase
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Configure PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 export default function ResumeAnalyzer() {
   const navigate = useNavigate();
@@ -14,7 +18,7 @@ export default function ResumeAnalyzer() {
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
-  const [, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -24,27 +28,139 @@ export default function ResumeAnalyzer() {
         return;
       }
       setSelectedFile(file);
-      startAnalysis();
+      startAnalysis(file);
     }
   };
 
-  const startAnalysis = () => {
+  const extractTextFromFile = async (file) => {
+    if (file.type === 'application/pdf') {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let text = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        text += content.items.map(item => item.str).join(' ') + '\n';
+      }
+      return text;
+    } else {
+      return await file.text();
+    }
+  };
+
+  // Helper: fetch with timeout
+  const fetchWithTimeout = (url, options, timeoutMs = 25000) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    return fetch(url, { ...options, signal: controller.signal })
+      .finally(() => clearTimeout(timer));
+  };
+
+  const startAnalysis = async (file) => {
     setIsAnalyzing(true);
     setResult(null);
-    setTimeout(() => {
-      setIsAnalyzing(false);
+    
+    try {
+      const extractedText = await extractTextFromFile(file);
+      
+      const prompt = `You are an expert ATS (Applicant Tracking System) and career coach.
+Analyze the following resume text:
+"${extractedText.substring(0, 4000)}"
+
+Extract the skills from the resume and show the match scores for 3 different roles it suits best based on those skills.
+Also identify missing keywords, strengths, and one specific bullet point improvement.
+Respond ONLY with a valid JSON object in this EXACT format, with no markdown or extra text:
+{
+  "score": 85,
+  "roles": [
+    { "title": "Frontend Developer", "matchScore": 90 },
+    { "title": "UI/UX Designer", "matchScore": 75 },
+    { "title": "Technical Writer", "matchScore": 60 }
+  ],
+  "missingKeywords": ["React Native", "GraphQL", "Jest"],
+  "strengths": ["Strong action verbs", "Clear impact metrics"],
+  "improvement": {
+    "original": "Worked on web app using React.",
+    "rewritten": "Developed a scalable web application using React, improving load time by 20%.",
+    "reason": "Added specific metrics and impact."
+  }
+}`;
+
+      const models = [
+        'google/gemma-3-4b-it:free',
+        'meta-llama/llama-4-scout:free',
+        'minimax/minimax-m2.5:free',
+      ];
+
+      let parsedResult = null;
+
+      for (const model of models) {
+        try {
+          console.log(`Trying resume analysis model: ${model}`);
+          const response = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              model,
+              max_tokens: 1500,
+              messages: [{ role: "user", content: prompt }]
+            })
+          }, 25000);
+
+          if (!response.ok) {
+            console.warn(`Model ${model} returned status ${response.status}`);
+            continue;
+          }
+          const data = await response.json();
+          if (data.error) {
+            console.warn(`Model ${model} error:`, data.error);
+            continue;
+          }
+          const content = data.choices?.[0]?.message?.content;
+          if (!content) continue;
+          
+          const cleanContent = content.replace(/```json/gi, '').replace(/```/g, '').trim();
+          const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
+          parsedResult = JSON.parse(jsonMatch ? jsonMatch[0] : cleanContent);
+          console.log(`Model ${model} succeeded`);
+          break;
+        } catch (err) {
+          console.warn(`Model ${model} failed:`, err.message);
+          continue;
+        }
+      }
+
+      if (parsedResult) {
+        setResult(parsedResult);
+        toast.success('Analysis complete');
+      } else {
+        throw new Error('All models failed');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('AI models are busy. Showing demo analysis.');
+      // Fallback result for demo purposes if API fails
       setResult({
-        score: 84,
-        missingKeywords: ['Agile Development', 'System Design', 'Cloud Infrastructure', 'A/B Testing'],
-        strengths: ['Impactful action verbs', 'Clean chronological layout', 'Quantified achievements'],
+        score: 78,
+        roles: [
+          { title: "General Developer", matchScore: 80 },
+          { title: "Project Coordinator", matchScore: 65 },
+          { title: "Technical Writer", matchScore: 55 }
+        ],
+        missingKeywords: ['Leadership', 'Analytics', 'Cloud Computing'],
+        strengths: ['Clear structure', 'Basic skills listed', 'Good formatting'],
         improvement: {
-          original: 'Collaborated with the product team to launch several new user features.',
-          rewritten: 'Orchestrated cross-functional collaboration with Product & Engineering to deploy 12+ user-centric features, reducing churn by 18%.',
-          reason: 'Added ownership (Orchestrated) and measurable impact metrics.',
-        },
+          original: 'Did some coding tasks.',
+          rewritten: 'Completed 5+ feature tickets ahead of schedule using modern coding practices.',
+          reason: 'Quantifies output and highlights efficiency.'
+        }
       });
-      toast.success('Analysis complete');
-    }, 3000);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
@@ -61,8 +177,8 @@ export default function ResumeAnalyzer() {
             <Target size={28} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">ATS Analyzer</h1>
-            <p className="text-sm text-gray-600">Optimize your resume for AI screening.</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">AI Resume Analyzer</h1>
+            <p className="text-sm text-gray-600">Extract skills and match your resume to the best roles.</p>
           </div>
         </div>
       </motion.div>
@@ -72,7 +188,7 @@ export default function ResumeAnalyzer() {
           <Zap size={16} className="text-purple-600" />
         </div>
         <p className="text-sm text-gray-700 leading-relaxed">
-          Our AI scans your resume against <span className="text-purple-700 font-semibold">600+ ATS algorithms</span> used by top tech companies.
+          Our Minimax AI scans your resume text, identifies your key skills, and scores your fit for various roles across the industry.
         </p>
       </div>
 
@@ -87,14 +203,14 @@ export default function ResumeAnalyzer() {
           </div>
           <div className="text-center">
             <h3 className="text-base font-semibold text-gray-900 mb-1">Drop your resume here</h3>
-            <p className="text-xs text-gray-500">PDF or DOCX (max 5MB)</p>
+            <p className="text-xs text-gray-500">PDF or TXT (max 5MB)</p>
           </div>
           <button className="px-5 py-2.5 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition-all">
             Browse files
           </button>
           <input
             type="file" ref={fileInputRef} onChange={handleUpload}
-            accept=".pdf,.doc,.docx" className="hidden"
+            accept=".pdf,.txt" className="hidden"
           />
         </motion.div>
       )}
@@ -115,8 +231,8 @@ export default function ResumeAnalyzer() {
               className="absolute left-[-6px] right-[-6px] h-1 bg-purple-400 rounded-full"
             />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Scanning resume…</h3>
-          <p className="text-xs text-gray-500">Decrypting ATS logic</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">Analyzing skills & roles…</h3>
+          <p className="text-xs text-gray-500">Powered by Minimax AI</p>
         </div>
       )}
 
@@ -144,12 +260,39 @@ export default function ResumeAnalyzer() {
               </div>
               <div className="flex-1 text-center md:text-left">
                 <span className="inline-block px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-100 mb-2">
-                  High compatibility
+                  Overall ATS Score
                 </span>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Resume optimized</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">Resume processed</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  Your resume cleared the initial screening. We've identified a few high-impact keywords that could push your score even higher.
+                  We've successfully extracted your skills and mapped them against potential career paths.
                 </p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                  <Briefcase size={18} />
+                </div>
+                <h4 className="text-base font-semibold text-gray-900">Top Role Matches</h4>
+              </div>
+              <div className="space-y-4">
+                {result.roles?.map((role, i) => (
+                  <div key={i} className="flex items-center justify-between gap-4">
+                    <span className="text-sm font-medium text-gray-700 truncate flex-1">{role.title}</span>
+                    <div className="flex items-center gap-3 w-32 sm:w-48 flex-shrink-0">
+                      <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }} 
+                          animate={{ width: `${role.matchScore}%` }}
+                          transition={{ duration: 1, delay: i * 0.2 }}
+                          className={`h-full ${role.matchScore > 80 ? 'bg-emerald-500' : role.matchScore > 60 ? 'bg-amber-500' : 'bg-rose-500'}`} 
+                        />
+                      </div>
+                      <span className="text-xs font-bold text-gray-900 w-8 text-right flex-shrink-0">{role.matchScore}%</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -162,7 +305,7 @@ export default function ResumeAnalyzer() {
                   <h4 className="text-base font-semibold text-gray-900">Missing keywords</h4>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {result.missingKeywords.map((kw, i) => (
+                  {result.missingKeywords?.map((kw, i) => (
                     <span key={i} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-semibold border border-amber-100">
                       {kw}
                     </span>
@@ -178,7 +321,7 @@ export default function ResumeAnalyzer() {
                   <h4 className="text-base font-semibold text-gray-900">Strengths</h4>
                 </div>
                 <div className="space-y-2">
-                  {result.strengths.map((s, i) => (
+                  {result.strengths?.map((s, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm text-gray-700">
                       <CheckCircle2 size={14} className="text-emerald-500 flex-shrink-0" />
                       {s}
@@ -206,7 +349,7 @@ export default function ResumeAnalyzer() {
                     Current <ArrowRight size={11} className="text-gray-300" />
                   </p>
                   <div className="p-4 rounded-xl bg-gray-50 border border-gray-100 min-h-[100px]">
-                    <p className="text-sm text-gray-700 leading-relaxed">{result.improvement.original}</p>
+                    <p className="text-sm text-gray-700 leading-relaxed">{result.improvement?.original}</p>
                   </div>
                 </div>
                 <div>
@@ -214,7 +357,7 @@ export default function ResumeAnalyzer() {
                     Enhanced <Zap size={11} className="text-purple-500" />
                   </p>
                   <div className="p-4 rounded-xl bg-purple-600 text-white min-h-[100px]">
-                    <p className="text-sm font-medium leading-relaxed">{result.improvement.rewritten}</p>
+                    <p className="text-sm font-medium leading-relaxed">{result.improvement?.rewritten}</p>
                   </div>
                 </div>
               </div>
@@ -223,7 +366,7 @@ export default function ResumeAnalyzer() {
                 <Info size={16} className="text-purple-400 flex-shrink-0" />
                 <p className="text-sm text-gray-700 leading-relaxed">
                   <span className="text-purple-700 font-semibold mr-1">Why:</span>
-                  {result.improvement.reason}
+                  {result.improvement?.reason}
                 </p>
               </div>
             </div>

@@ -61,7 +61,7 @@ export default function RegisterPage() {
   };
 
   const inputStyle = {
-    width: '100%', padding: '14px 18px', paddingRight: '48px',
+    width: '100%', paddingTop: '12px', paddingBottom: '12px', paddingLeft: '16px', paddingRight: '48px',
     background: 'var(--color-surface-low)', border: '2px solid transparent',
     borderRadius: '14px', fontSize: '14px', fontFamily: 'var(--font-sans)',
     color: 'var(--color-shakti-dark-text)', outline: 'none',
@@ -98,7 +98,7 @@ export default function RegisterPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          position: 'relative', width: '100%', maxWidth: '440px', zIndex: 10,
+          position: 'relative', width: '100%', maxWidth: '480px', zIndex: 10,
           background: 'var(--color-surface-lowest)', padding: '40px 32px',
           borderRadius: '2rem', boxShadow: '0 20px 60px rgba(24,20,69,0.08)',
         }}
@@ -210,7 +210,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Social buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <button onClick={handleGoogleSignUp} disabled={loading}
             style={{
               padding: '14px', borderRadius: '14px', border: '1px solid var(--color-surface-container)',

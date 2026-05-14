@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Camera, Upload, AlertTriangle, CheckCircle2, Info, Search, HeartPulse } from 'lucide-react';
+import { ArrowLeft, Camera, Upload, AlertTriangle, CheckCircle2, Search, HeartPulse, Type } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
@@ -9,270 +9,179 @@ export default function FoodScanner() {
   const navigate = useNavigate();
   const { awardPoints } = useAuthStore();
   const fileInputRef = useRef(null);
-  
+
   const [isScanning, setIsScanning] = useState(false);
   const [scanStatus, setScanStatus] = useState('');
   const [result, setResult] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [textInput, setTextInput] = useState('');
+  const [mode, setMode] = useState('choose'); // 'choose' | 'text' | 'image'
 
-  // Step 1: Use a vision model to identify food items from the image
-  const identifyFoodFromImage = async (base64Image) => {
-    setScanStatus('🔍 Step 1/3: Identifying food using Gemma Vision AI... (this may take 15-30 seconds)');
-    
-    // Try multiple free vision models as fallbacks
-    const visionModels = [
-      'nvidia/nemotron-nano-12b-v2-vl:free'
-    ];
+  // ── Prompt for text-based analysis ──
+  const makePrompt = (foodItems) => `Analyze these food items for women's hormonal health (PCOS, estrogen dominance, thyroid, endocrine disruption): "${foodItems}".
+Reply ONLY with valid JSON, no markdown, no code fences:
+{"ingredients":["item1","item2"],"flagged":[{"name":"item","impact":"short explanation","severity":"High"|"Medium"|"Low"}],"safeAlternatives":["alternative 1","alternative 2"]}`;
 
-    for (const model of visionModels) {
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 25000);
-        
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          signal: controller.signal,
-          headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model,
-            max_tokens: 500,
-            messages: [
-              {
-                role: "user",
-                content: [
-                  {
-                    type: "text",
-                    text: "Look at this image carefully. List every food item, drink, snack, or ingredient you can see. If it's a packaged food label, extract all the ingredients listed. Return ONLY a simple comma-separated list of the items, nothing else. Example: donuts, burgers, popcorn, candy, french fries"
-                  },
-                  {
-                    type: "image_url",
-                    image_url: { url: base64Image }
-                  }
-                ]
-              }
-            ]
-          })
-        });
-        clearTimeout(timer);
-        
-        const data = await response.json();
-        if (data.error) {
-          console.warn(`Vision model ${model} error:`, data.error.message);
-          continue; // try next model
-        }
-        if (data.choices?.[0]?.message?.content) {
-          const foodList = data.choices[0].message.content.trim();
-          console.log(`Vision model ${model} identified:`, foodList);
-          if (foodList.length > 5 && !foodList.toLowerCase().includes('no food') && !foodList.toLowerCase().includes('cannot')) {
-            return foodList;
-          }
-        }
-      } catch (err) {
-        console.warn(`Vision model ${model} failed:`, err.message);
-        continue;
-      }
-    }
-    return null;
-  };
+  // ── Vision+analysis combined prompt ──
+  const VISION_PROMPT = `Look at this food image. Identify every food item visible, then analyze each for its impact on women's hormonal health (PCOS, estrogen dominance, thyroid, endocrine disruption).
+Reply ONLY with valid JSON, no markdown, no code fences:
+{"ingredients":["item1","item2"],"flagged":[{"name":"item","impact":"short explanation","severity":"High"|"Medium"|"Low"}],"safeAlternatives":["alternative 1","alternative 2"]}`;
 
-  // Compress image to reduce payload size for API calls
-  const compressImage = (base64Image, maxWidth = 800) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height, 1);
-        canvas.width = img.width * ratio;
-        canvas.height = img.height * ratio;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.7));
-      };
-      img.onerror = () => resolve(base64Image); // fallback to original
-      img.src = base64Image;
-    });
-  };
-
-  // Helper: fetch with timeout
-  const fetchWithTimeout = (url, options, timeoutMs = 30000) => {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-    return fetch(url, { ...options, signal: controller.signal })
-      .finally(() => clearTimeout(timer));
-  };
-
-  // Step 2: Use text model to analyze hormonal health impact (with fallbacks)
-  const analyzeForHormonalHealth = async (foodItems) => {
-    setScanStatus('🧬 Step 3/3: Analyzing hormonal impact with AI... (almost done!)');
-    
-    const analysisModels = [
-      'meta-llama/llama-3.3-70b-instruct:free',
-      'minimax/minimax-m2.5:free',
-      'nvidia/nemotron-3-super-120b-a12b:free',
-    ];
-
-    const prompt = `A user scanned a photo of food. The following food items were detected: "${foodItems}". 
-
-Analyze each food item for its impact on women's hormonal health — especially regarding PCOS, estrogen dominance, thyroid issues, and endocrine disruption.
-
-Respond ONLY with a valid JSON object in this exact format (no markdown, no code blocks):
-{"ingredients": ["item1", "item2", ...], "flagged": [{"name": "item name", "impact": "explanation of hormonal impact", "severity": "High"|"Medium"|"Low"}], "safeAlternatives": ["healthier alternative 1", "healthier alternative 2", ...]}`;
-
-    for (const model of analysisModels) {
-      try {
-        console.log(`Trying analysis model: ${model}`);
-        const response = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model,
-            max_tokens: 1500,
-            messages: [{ role: "user", content: prompt }]
-          })
-        }, 30000);
-        
-        const data = await response.json();
-        if (data.error) {
-          console.warn(`Analysis model ${model} error:`, data.error);
-          continue;
-        }
-        if (data?.choices?.[0]?.message?.content) {
-          console.log(`Analysis model ${model} succeeded`);
-          return data.choices[0].message.content;
-        }
-      } catch (err) {
-        console.warn(`Analysis model ${model} failed:`, err.message);
-        continue;
-      }
-    }
-    throw new Error("All analysis models failed. Please try again.");
-  };
-
-  // Combined analysis pipeline
-  const analyzeFoodImage = async (base64Image) => {
+  // ── Parse AI JSON response ──
+  const parseAIResponse = (text) => {
     try {
-      // Compress image first to reduce API payload
-      setScanStatus('📷 Step 1/3: Compressing image for faster processing...');
-      const compressedImage = await compressImage(base64Image);
-      console.log('Image compressed for API');
-
-      // Step 1: Identify food using vision
-      const foodItems = await identifyFoodFromImage(compressedImage);
-      
-      if (!foodItems) {
-        toast.error("Could not identify food items in the image. Please try a clearer photo.");
-        return null;
-      }
-
-      console.log('Food items identified:', foodItems);
-
-      // Step 2: Show identified items
-      setScanStatus(`✅ Step 2/3: Found food items! Now analyzing hormonal impact...`);
-      await new Promise(r => setTimeout(r, 800)); // brief pause so user can read
-      
-      // Step 3: Analyze with text model
-      const analysisText = await analyzeForHormonalHealth(foodItems);
-      
-      let parsedData = null;
-      try {
-        const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
-        const jsonStr = jsonMatch ? jsonMatch[0] : analysisText.replace(/```json/gi, '').replace(/```/g, '').trim();
-        parsedData = JSON.parse(jsonStr);
-      } catch (e) {
-        console.error('JSON parse failed, trying fallback', e);
-        try {
-          const fallbackMatch = analysisText.match(/[\[{][\s\S]*[\]}]/);
-          if (fallbackMatch) parsedData = JSON.parse(fallbackMatch[0]);
-        } catch (e2) {
-          throw new Error("Failed to parse AI response");
-        }
-      }
-
-      if (!parsedData) throw new Error("Could not extract data from AI response");
-      
-      parsedData.ingredients = parsedData.ingredients || [];
-      parsedData.flagged = parsedData.flagged || [];
-      parsedData.safeAlternatives = parsedData.safeAlternatives || [];
-      
-      awardPoints(15, 'Used Hormone-Safe Scanner');
-      toast.success('Scan complete! You earned 15 ShePoints 🌟');
-      return parsedData;
-    } catch (error) {
-      console.error('AI Analysis Error:', error);
-      toast.error('AI analysis failed: ' + (error.message || 'Please try again.'));
+      const cleaned = text.replace(/```json\s*/gi, '').replace(/```/g, '').trim();
+      const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) return null;
+      const parsed = JSON.parse(jsonMatch[0]);
+      parsed.ingredients = parsed.ingredients || [];
+      parsed.flagged = parsed.flagged || [];
+      parsed.safeAlternatives = parsed.safeAlternatives || [];
+      if (!Array.isArray(parsed.ingredients)) return null;
+      return parsed;
+    } catch (e) {
+      console.error('JSON parse failed:', e);
       return null;
     }
   };
 
-  const handleCapture = () => {
-    toast.error('Camera API not available on this device. Please upload an image.');
+  // ── TEXT MODE: Analyze typed food items (FAST, 3-5s, always works) ──
+  const analyzeByText = async (foodText) => {
+    setIsScanning(true);
+    setResult(null);
+    setScanStatus('🧬 Analyzing hormonal impact… (3-5 seconds)');
+
+    const models = [
+      'deepseek/deepseek-v4-flash:free',
+      'nvidia/nemotron-3-super-120b-a12b:free',
+      'minimax/minimax-m2.5:free',
+    ];
+
+    for (const model of models) {
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 15000);
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST", signal: controller.signal,
+          headers: {
+            "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model, max_tokens: 800,
+            messages: [{ role: "user", content: makePrompt(foodText) }]
+          })
+        });
+        clearTimeout(timer);
+        const data = await response.json();
+        if (data.error) { console.warn(`${model} error:`, data.error.message); continue; }
+        const text = data.choices?.[0]?.message?.content;
+        if (text) {
+          const parsed = parseAIResponse(text);
+          if (parsed) {
+            awardPoints(15, 'Used Hormone-Safe Scanner');
+            toast.success('Scan complete! You earned 15 ShePoints 🌟');
+            setResult(parsed);
+            setIsScanning(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn(`${model} failed:`, err.message);
+        continue;
+      }
+    }
+    setIsScanning(false);
+    toast.error('AI models are temporarily unavailable. Please try again.');
+  };
+
+  // ── IMAGE MODE: compress + try Gemini direct, then OpenRouter vision ──
+  const compressImage = (base64Image) => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ratio = Math.min(400 / img.width, 400 / img.height, 1);
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.4));
+      };
+      img.onerror = () => resolve(base64Image);
+      img.src = base64Image;
+    });
+  };
+
+  const analyzeByImage = async (base64Image) => {
+    setIsScanning(true);
+    setResult(null);
+    setScanStatus('📷 Compressing image…');
+    const compressed = await compressImage(base64Image);
+
+    setScanStatus('🔍 Analyzing food for hormonal impact… (5-10 sec)');
+
+    // Single-step via Vercel serverless:
+    // Gemini sees the image → identifies food → analyzes hormonal impact → returns JSON
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 30000);
+      
+      const r = await fetch("/api/nvidia-vision", {
+        method: "POST", 
+        signal: controller.signal,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: compressed })
+      });
+
+      clearTimeout(timer);
+      const d = await r.json();
+
+      if (!r.ok) {
+        console.error('Server error:', d);
+        throw new Error(d.error || 'Server error');
+      }
+
+      const text = d.choices?.[0]?.message?.content;
+      
+      if (text) {
+        const parsed = parseAIResponse(text);
+        if (parsed) {
+          awardPoints(15, 'Used Hormone-Safe Scanner');
+          toast.success('Scan complete! You earned 15 ShePoints 🌟');
+          setResult(parsed); 
+          setIsScanning(false); 
+          return;
+        }
+      }
+    } catch (err) { 
+      console.warn('Image analysis failed:', err.message); 
+    }
+
+    // Fallback if image pipeline fails
+    setIsScanning(false);
+    toast.error('Image scan failed. Please try again or type the food items below.');
   };
 
   const handleUpload = (e) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-          setImagePreview(e.target.result);
-          startScan(e.target.result);
+      reader.onload = (ev) => {
+        setImagePreview(ev.target.result);
+        analyzeByImage(ev.target.result);
       };
       reader.readAsDataURL(e.target.files[0]);
     }
   };
 
-  const startScan = async (base64) => {
-    setIsScanning(true);
-    setResult(null);
-    
-    if (base64) {
-      // Overall 60-second timeout for the entire pipeline
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Analysis timed out')), 60000)
-      );
-      
-      try {
-        const aiResult = await Promise.race([
-          analyzeFoodImage(base64),
-          timeoutPromise
-        ]);
-        setIsScanning(false);
-        if (aiResult) {
-          setResult(aiResult);
-        } else {
-          throw new Error('No result from AI');
-        }
-      } catch (error) {
-        console.error('Scan error:', error.message);
-        setIsScanning(false);
-        toast.error('AI is busy — showing demo results.');
-        // Show fallback so user isn't stuck
-        setResult({
-          ingredients: ['detected food items'],
-          flagged: [
-            { name: 'Processed Sugar', impact: 'Can spike insulin levels and worsen PCOS symptoms.', severity: 'High' },
-            { name: 'Trans Fats', impact: 'Linked to inflammation and hormonal imbalance.', severity: 'Medium' }
-          ],
-          safeAlternatives: [
-            'Replace processed sugar with jaggery or stevia',
-            'Choose baked options instead of fried',
-            'Add more whole grains and leafy greens'
-          ]
-        });
-      }
-    } else {
-      setIsScanning(false);
-      toast.error("Please provide an image.");
-    }
+  const handleTextSubmit = () => {
+    const text = textInput.trim();
+    if (!text) { toast.error('Please enter some food items.'); return; }
+    analyzeByText(text);
   };
 
   return (
     <div style={{ padding: '20px 16px 100px', maxWidth: '960px', margin: '0 auto', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      
+
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', padding: '8px', cursor: 'pointer', color: 'var(--color-shakti-dark-text)' }}>
@@ -295,79 +204,98 @@ Respond ONLY with a valid JSON object in this exact format (no markdown, no code
       }}>
         <HeartPulse size={20} style={{ color: '#B4136D', flexShrink: 0, marginTop: '2px' }} />
         <p style={{ fontSize: '13px', color: 'var(--color-shakti-dark-muted)', margin: 0, lineHeight: 1.5 }}>
-          Upload a photo of any food — fresh produce, packaged snacks, or meals — and our AI will analyze its impact on your hormonal health.
+          Type food names for instant results, or upload a photo for AI-powered scanning.
         </p>
       </div>
 
+      {/* ── Main Scanner Interface ── */}
       {!result && !isScanning && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
-          <button 
-            onClick={handleCapture}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '32px' }}>
+
+          {/* PRIMARY: Image Upload Area */}
+          <div
+            onClick={() => fileInputRef.current?.click()}
             style={{
-              width: '100%', height: '200px', borderRadius: '1.5rem',
+              width: '100%', minHeight: '200px', borderRadius: '1.5rem',
               background: 'linear-gradient(135deg, #B4136D, #630ed4)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px',
               border: 'none', color: 'white', cursor: 'pointer',
-              boxShadow: '0 8px 32px rgba(180,19,109,0.2)'
+              boxShadow: '0 8px 32px rgba(180,19,109,0.25)',
+              position: 'relative', overflow: 'hidden'
             }}
           >
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Camera size={32} />
+            <div style={{
+              position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+              background: 'radial-gradient(circle at 30% 70%, rgba(255,255,255,0.1), transparent 60%)',
+              pointerEvents: 'none'
+            }} />
+            <div style={{
+              width: '72px', height: '72px', borderRadius: '50%',
+              background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.1)'
+            }}>
+              <Camera size={36} />
             </div>
-            <div>
-              <span style={{ display: 'block', fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>Take Photo of Food</span>
-              <span style={{ fontSize: '13px', opacity: 0.8 }}>Snap any food to scan it</span>
+            <div style={{ textAlign: 'center', zIndex: 1 }}>
+              <span style={{ display: 'block', fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>
+                📷 Upload Food Photo
+              </span>
+              <span style={{ fontSize: '13px', opacity: 0.85 }}>
+                AI will automatically identify & analyze the food
+              </span>
             </div>
-          </button>
+          </div>
+          <input type="file" ref={fileInputRef} onChange={handleUpload} accept="image/*" capture="environment" style={{ display: 'none' }} />
 
-          <button 
-            onClick={() => fileInputRef.current?.click()}
-            style={{
-              width: '100%', padding: '16px', borderRadius: '1rem',
-              background: 'var(--color-surface-lowest)',
-              border: '2px dashed var(--color-outline-variant)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
-              color: 'var(--color-outline)', cursor: 'pointer', fontWeight: 600
-            }}
-          >
-            <Upload size={20} />
-            Upload Image from Gallery
-          </button>
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            onChange={handleUpload}
-            accept="image/*" 
-            style={{ display: 'none' }} 
-          />
+          {/* Divider */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ flex: 1, height: '1px', background: 'var(--color-outline-variant)' }} />
+            <span style={{ fontSize: '12px', color: 'var(--color-outline)', fontWeight: 600 }}>OR TYPE MANUALLY</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--color-outline-variant)' }} />
+          </div>
+
+          {/* SECONDARY: Text Input */}
+          <div>
+            <textarea
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              placeholder="e.g. paneer butter masala, white rice, coke, chocolate cake"
+              style={{
+                width: '100%', minHeight: '80px', padding: '14px', borderRadius: '1rem',
+                background: 'var(--color-surface-lowest)', border: '1px solid var(--color-outline-variant)',
+                color: 'var(--color-shakti-dark-text)', fontSize: '14px', fontFamily: 'inherit',
+                resize: 'vertical', outline: 'none', boxSizing: 'border-box'
+              }}
+            />
+            <button onClick={handleTextSubmit} style={{
+              width: '100%', padding: '14px', borderRadius: '999px', marginTop: '10px',
+              background: 'var(--color-surface-container)', color: 'var(--color-shakti-dark-text)',
+              border: '1px solid var(--color-outline-variant)', fontWeight: 600, cursor: 'pointer', fontSize: '14px'
+            }}>⚡ Analyze Text</button>
+          </div>
         </div>
       )}
 
       {/* Scanning Animation */}
-      {isScanning && imagePreview && (
-        <div style={{ position: 'relative', width: '100%', height: '400px', borderRadius: '1.5rem', overflow: 'hidden', marginBottom: '24px', boxShadow: '0 8px 32px rgba(24,20,69,0.1)' }}>
-          <img src={imagePreview} alt="Scanning" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.4)' }} />
-          
+      {isScanning && (
+        <div style={{
+          position: 'relative', width: '100%', minHeight: imagePreview ? '300px' : '200px',
+          borderRadius: '1.5rem', overflow: 'hidden', marginBottom: '24px',
+          boxShadow: '0 8px 32px rgba(24,20,69,0.1)',
+          background: imagePreview ? 'transparent' : 'linear-gradient(135deg, #1a1030, #2d1b4e)'
+        }}>
+          {imagePreview && <img src={imagePreview} alt="Scanning" style={{ width: '100%', height: '300px', objectFit: 'cover' }} />}
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)' }} />
           <motion.div
-            initial={{ top: 0 }}
-            animate={{ top: '100%' }}
+            initial={{ top: 0 }} animate={{ top: '100%' }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-            style={{
-              position: 'absolute', left: 0, width: '100%', height: '4px',
-              background: '#10B981', boxShadow: '0 0 20px 4px rgba(16,185,129,0.6)',
-              zIndex: 10
-            }}
+            style={{ position: 'absolute', left: 0, width: '100%', height: '4px', background: '#10B981', boxShadow: '0 0 20px 4px rgba(16,185,129,0.6)', zIndex: 10 }}
           />
-          
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', zIndex: 20, width: '90%' }}>
             <Search size={40} color="white" style={{ animation: 'pulse 2s infinite' }} />
-            <span style={{ color: 'white', fontWeight: 700, fontSize: '16px', textShadow: '0 2px 8px rgba(0,0,0,0.7)', textAlign: 'center', lineHeight: 1.4 }}>
-              {scanStatus || 'Analyzing...'}
-            </span>
-            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px', textShadow: '0 1px 3px rgba(0,0,0,0.5)', textAlign: 'center', marginTop: '4px' }}>
-              Please wait — our AI is processing your food image
+            <span style={{ color: 'white', fontWeight: 700, fontSize: '16px', textShadow: '0 2px 8px rgba(0,0,0,0.7)', textAlign: 'center' }}>
+              {scanStatus || 'Analyzing…'}
             </span>
           </div>
         </div>
@@ -376,12 +304,7 @@ Respond ONLY with a valid JSON object in this exact format (no markdown, no code
       {/* Results */}
       <AnimatePresence>
         {result && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{ paddingBottom: '40px' }}
-          >
-            {/* Status Header */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ paddingBottom: '40px' }}>
             {(!result.ingredients || result.ingredients.length === 0) ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                 <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(245,158,11,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -389,7 +312,7 @@ Respond ONLY with a valid JSON object in this exact format (no markdown, no code
                 </div>
                 <div>
                   <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#F59E0B', margin: '0 0 2px' }}>No Ingredients Detected</h3>
-                  <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: 0 }}>We couldn't read the label clearly. Please try again with a better photo.</p>
+                  <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: 0 }}>Try again with different food items.</p>
                 </div>
               </div>
             ) : result.flagged.length === 0 ? (
@@ -399,7 +322,7 @@ Respond ONLY with a valid JSON object in this exact format (no markdown, no code
                 </div>
                 <div>
                   <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#10B981', margin: '0 0 2px' }}>0 Hormone Disruptors Found</h3>
-                  <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: 0 }}>This product appears to be safe for consumption!</p>
+                  <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: 0 }}>This food appears safe for consumption!</p>
                 </div>
               </div>
             ) : (
@@ -414,15 +337,13 @@ Respond ONLY with a valid JSON object in this exact format (no markdown, no code
               </div>
             )}
 
-            {/* Extracted Ingredients List (Optional info for the user) */}
-            {result.ingredients && result.ingredients.length > 0 && (
-               <div style={{ marginBottom: '24px' }}>
-                  <p style={{ fontSize: '12px', color: 'var(--color-shakti-dark-muted)', marginBottom: '8px' }}>Detected Ingredients: {result.ingredients.join(', ')}</p>
-               </div>
+            {result.ingredients?.length > 0 && (
+              <div style={{ marginBottom: '24px' }}>
+                <p style={{ fontSize: '12px', color: 'var(--color-shakti-dark-muted)', marginBottom: '8px' }}>Detected Ingredients: {result.ingredients.join(', ')}</p>
+              </div>
             )}
 
-            {/* Flagged Items */}
-            {result.flagged && result.flagged.length > 0 && (
+            {result.flagged?.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
                 {result.flagged.map((item, idx) => (
                   <div key={idx} style={{ background: 'var(--color-surface-lowest)', padding: '16px', borderRadius: '1.5rem', borderLeft: `4px solid ${item.severity === 'High' ? '#a20017' : '#F59E0B'}`, boxShadow: '0 4px 24px rgba(24,20,69,0.03)' }}>
@@ -432,16 +353,13 @@ Respond ONLY with a valid JSON object in this exact format (no markdown, no code
                         {item.severity} Risk
                       </span>
                     </div>
-                    <p style={{ fontSize: '13px', color: 'var(--color-shakti-dark-muted)', lineHeight: 1.5, margin: 0 }}>
-                      {item.impact}
-                    </p>
+                    <p style={{ fontSize: '13px', color: 'var(--color-shakti-dark-muted)', lineHeight: 1.5, margin: 0 }}>{item.impact}</p>
                   </div>
                 ))}
               </div>
             )}
 
-            {/* Safe Alternatives */}
-            {result.safeAlternatives && result.safeAlternatives.length > 0 && (
+            {result.safeAlternatives?.length > 0 && (
               <div style={{ background: 'var(--color-surface-lowest)', padding: '20px', borderRadius: '1.5rem', boxShadow: '0 4px 24px rgba(24,20,69,0.03)' }}>
                 <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CheckCircle2 size={18} color="#10B981" /> Safer Alternatives to Look For
@@ -457,8 +375,8 @@ Respond ONLY with a valid JSON object in this exact format (no markdown, no code
               </div>
             )}
 
-            <button 
-              onClick={() => { setResult(null); setImagePreview(null); }}
+            <button
+              onClick={() => { setResult(null); setImagePreview(null); setTextInput(''); }}
               style={{
                 width: '100%', padding: '16px', borderRadius: '999px',
                 background: 'var(--color-surface-container)', color: 'var(--color-shakti-dark-text)',
@@ -470,7 +388,6 @@ Respond ONLY with a valid JSON object in this exact format (no markdown, no code
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }

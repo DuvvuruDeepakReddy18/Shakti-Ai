@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 const useSafetyStore = create((set, get) => ({
   sosActive: false,
+  sosStatus: 'idle', // 'idle' | 'notifying' | 'active'
   sosTimer: null,
   isRecording: false,
   liveLocation: { lat: 40.7128, lng: -74.0060 },
@@ -22,7 +23,7 @@ const useSafetyStore = create((set, get) => ({
       const { sosProgress } = get();
       if (sosProgress >= 100) {
         clearInterval(interval);
-        get().activateSOS();
+        set({ sosStatus: 'notifying', sosProgress: 100 });
       } else {
         set({ sosProgress: sosProgress + 3.33 });
       }
@@ -37,7 +38,7 @@ const useSafetyStore = create((set, get) => ({
   },
 
   activateSOS: () => {
-    set({ sosActive: true, sosProgress: 100 });
+    set({ sosActive: true, sosStatus: 'active', sosProgress: 100 });
     // Get location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -54,6 +55,7 @@ const useSafetyStore = create((set, get) => ({
     if (sosTimer) clearInterval(sosTimer);
     set({ 
       sosActive: false, 
+      sosStatus: 'idle',
       sosTimer: null, 
       sosProgress: 0, 
       isRecording: false 

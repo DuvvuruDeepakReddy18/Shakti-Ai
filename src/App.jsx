@@ -29,6 +29,8 @@ import SafetyScoreboard from './pages/safety/SafetyScoreboard';
 import IsThisNormal from './pages/safety/IsThisNormal';
 import TimeCapsule from './pages/safety/TimeCapsule';
 import KnowYourRights from './pages/safety/KnowYourRights';
+import ActiveSOSPage from './pages/safety/ActiveSOSPage';
+
 
 // Jobs
 import JobsHome from './pages/jobs/JobsHome';
@@ -136,6 +138,8 @@ export default function App() {
           <Route path="safety/is-this-normal" element={<IsThisNormal />} />
           <Route path="safety/time-capsule" element={<TimeCapsule />} />
           <Route path="safety/rights" element={<KnowYourRights />} />
+          <Route path="safety/active" element={<ActiveSOSPage />} />
+
 
           {/* Jobs */}
           <Route path="jobs" element={<JobsHome />} />

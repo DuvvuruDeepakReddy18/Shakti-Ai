@@ -32,26 +32,47 @@ export default function LoginPage() {
       await signInWithGoogle(); 
       toast.success('Welcome! 💜'); 
       navigate('/'); 
-    } catch { 
-      toast.error('Google sign-in failed.'); 
+    } catch (err) { 
+      console.error("Google sign-in error:", err);
+      if (err.code === 'auth/popup-closed-by-user') {
+        toast.error('Sign-in cancelled.');
+      } else {
+        toast.error(err.message || 'Google sign-in failed. Check console for details.'); 
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleDemoLogin = async () => {
     setLoading(true);
-    try { 
-      await signIn('demo@shakti.ai', 'demo123'); 
-      toast.success('Welcome to SHAKTI AI Demo! 💜'); 
-      navigate('/'); 
-    } catch { 
-      toast.error('Demo login failed.'); 
+    try {
+      // Force demo mode: bypass Firebase, use local storage directly
+      const demoUser = { uid: 'demo-user-001', email: 'demo@shakti.ai', displayName: 'Shakti Warrior', photoURL: null };
+      const demoProfile = {
+        uid: 'demo-user-001', name: 'Shakti Warrior', email: 'demo@shakti.ai',
+        phone: '+91 9876543210', photoURL: '', mode: 'student',
+        emergencyContacts: [{ name: 'Mom', phone: '+91 9000000001', relation: 'Mother' }],
+        location: { lat: 12.9716, lng: 77.5946 }, isVolunteer: false,
+        skills: ['Coding', 'Design'], interests: ['AI', 'Web Dev'],
+        safetyScore: 100, moodHistory: [], menstrualData: { lastPeriod: null, cycleLength: 28, periodLength: 5 },
+        onboardingComplete: false, ageRange: '18-24', city: 'Bangalore', shePoints: 60, sheLevel: 'Beginner',
+      };
+      localStorage.setItem('shakti_demo_user', JSON.stringify(demoUser));
+      localStorage.setItem('shakti_demo_profile_demo@shakti.ai', JSON.stringify(demoProfile));
+      // Update zustand store directly
+      useAuthStore.setState({ user: demoUser, userProfile: demoProfile, loading: false, isDemo: true });
+      toast.success('Welcome to SHAKTI AI Demo! 💜');
+      navigate('/');
+    } catch (err) {
+      console.error('Demo login error:', err);
+      toast.error('Demo login failed.');
     }
     setLoading(false);
   };
 
   const inputStyle = {
-    width: '100%', padding: '14px 18px', paddingRight: '48px',
+    width: '100%', paddingTop: '12px', paddingBottom: '12px', paddingLeft: '16px', paddingRight: '48px',
     background: 'var(--color-surface-low)', border: '2px solid transparent',
     borderRadius: '14px', fontSize: '14px', fontFamily: 'var(--font-sans)',
     color: 'var(--color-shakti-dark-text)', outline: 'none',
@@ -88,7 +109,7 @@ export default function LoginPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          position: 'relative', width: '100%', maxWidth: '420px', zIndex: 10,
+          position: 'relative', width: '100%', maxWidth: '480px', zIndex: 10,
           background: 'var(--color-surface-lowest)', padding: '40px 32px',
           borderRadius: '2rem', boxShadow: '0 20px 60px rgba(24,20,69,0.08)',
         }}
@@ -180,7 +201,7 @@ export default function LoginPage() {
         </div>
 
         {/* Social buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <button onClick={handleGoogleLogin} disabled={loading}
             style={{
               padding: '14px', borderRadius: '14px', border: '1px solid var(--color-surface-container)',

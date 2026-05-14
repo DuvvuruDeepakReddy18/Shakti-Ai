@@ -31,3 +31,5 @@ dist-ssr
 # Deploy / tooling local state
 .netlify
 .claude
+
+.vercel
