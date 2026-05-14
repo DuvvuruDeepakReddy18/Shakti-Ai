@@ -21,15 +21,17 @@ export default function FoodScanner() {
     
     // Try multiple free vision models as fallbacks
     const visionModels = [
-      'google/gemma-3-12b-it:free',
-      'google/gemma-3-27b-it:free',
-      'google/gemma-3-4b-it:free',
+      'nvidia/nemotron-nano-12b-v2-vl:free'
     ];
 
     for (const model of visionModels) {
       try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 25000);
+        
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
+          signal: controller.signal,
           headers: {
             "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
             "Content-Type": "application/json"
@@ -54,6 +56,8 @@ export default function FoodScanner() {
             ]
           })
         });
+        clearTimeout(timer);
+        
         const data = await response.json();
         if (data.error) {
           console.warn(`Vision model ${model} error:`, data.error.message);
@@ -105,9 +109,9 @@ export default function FoodScanner() {
     setScanStatus('🧬 Step 3/3: Analyzing hormonal impact with AI... (almost done!)');
     
     const analysisModels = [
+      'meta-llama/llama-3.3-70b-instruct:free',
       'minimax/minimax-m2.5:free',
-      'google/gemma-3-4b-it:free',
-      'meta-llama/llama-4-scout:free',
+      'nvidia/nemotron-3-super-120b-a12b:free',
     ];
 
     const prompt = `A user scanned a photo of food. The following food items were detected: "${foodItems}". 
@@ -225,17 +229,40 @@ Respond ONLY with a valid JSON object in this exact format (no markdown, no code
     setIsScanning(true);
     setResult(null);
     
-    // Call AI if we have a real image
     if (base64) {
+      // Overall 60-second timeout for the entire pipeline
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Analysis timed out')), 60000)
+      );
+      
       try {
-        const aiResult = await analyzeFoodImage(base64);
+        const aiResult = await Promise.race([
+          analyzeFoodImage(base64),
+          timeoutPromise
+        ]);
         setIsScanning(false);
         if (aiResult) {
-            setResult(aiResult);
+          setResult(aiResult);
+        } else {
+          throw new Error('No result from AI');
         }
       } catch (error) {
+        console.error('Scan error:', error.message);
         setIsScanning(false);
-        toast.error(error.message || "Analysis failed");
+        toast.error('AI is busy — showing demo results.');
+        // Show fallback so user isn't stuck
+        setResult({
+          ingredients: ['detected food items'],
+          flagged: [
+            { name: 'Processed Sugar', impact: 'Can spike insulin levels and worsen PCOS symptoms.', severity: 'High' },
+            { name: 'Trans Fats', impact: 'Linked to inflammation and hormonal imbalance.', severity: 'Medium' }
+          ],
+          safeAlternatives: [
+            'Replace processed sugar with jaggery or stevia',
+            'Choose baked options instead of fried',
+            'Add more whole grains and leafy greens'
+          ]
+        });
       }
     } else {
       setIsScanning(false);
