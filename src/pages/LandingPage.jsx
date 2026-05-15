@@ -96,7 +96,7 @@ export default function LandingPage() {
             A comprehensive ecosystem leveraging artificial intelligence for your safety, career progression, holistic health, and community building.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', sm: { flexDirection: 'row' }, gap: '16px', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
             <Link to="/register" style={{
               padding: '16px 32px', borderRadius: '999px', background: 'linear-gradient(135deg, #a20017, #B4136D)',
               color: 'white', fontWeight: 700, fontSize: '16px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
