@@ -95,17 +95,17 @@ Reply ONLY with valid JSON, no markdown, no code fences:
     toast.error('AI models are temporarily unavailable. Please try again.');
   };
 
-  // ── IMAGE MODE: compress + try Gemini direct, then OpenRouter vision ──
+  // ── IMAGE MODE: compress + try OpenRouter vision models, then Gemini serverless ──
   const compressImage = (base64Image) => {
     return new Promise((resolve) => {
       const img = new window.Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const ratio = Math.min(400 / img.width, 400 / img.height, 1);
+        const ratio = Math.min(800 / img.width, 800 / img.height, 1);
         canvas.width = Math.round(img.width * ratio);
         canvas.height = Math.round(img.height * ratio);
         canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.4));
+        resolve(canvas.toDataURL('image/jpeg', 0.6));
       };
       img.onerror = () => resolve(base64Image);
       img.src = base64Image;
@@ -118,10 +118,60 @@ Reply ONLY with valid JSON, no markdown, no code fences:
     setScanStatus('📷 Compressing image…');
     const compressed = await compressImage(base64Image);
 
-    setScanStatus('🔍 Analyzing food for hormonal impact… (5-10 sec)');
+    setScanStatus('🔍 Identifying food from image… (5-15 sec)');
 
-    // Single-step via Vercel serverless:
-    // Gemini sees the image → identifies food → analyzes hormonal impact → returns JSON
+    // ── Strategy 1: OpenRouter vision models (client-side, same pattern as text) ──
+    const visionModels = [
+      'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+      'google/gemma-4-26b-a4b-it:free',
+      'google/gemma-4-31b-it:free',
+      'nvidia/nemotron-nano-12b-v2-vl:free',
+    ];
+
+    for (const model of visionModels) {
+      try {
+        console.log(`[Vision] Trying ${model}...`);
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 25000);
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST", signal: controller.signal,
+          headers: {
+            "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model, max_tokens: 800,
+            messages: [{
+              role: "user",
+              content: [
+                { type: "text", text: VISION_PROMPT },
+                { type: "image_url", image_url: { url: compressed } }
+              ]
+            }]
+          })
+        });
+        clearTimeout(timer);
+        const data = await response.json();
+        if (data.error) { console.warn(`${model} error:`, data.error.message); continue; }
+        const text = data.choices?.[0]?.message?.content;
+        if (text) {
+          const parsed = parseAIResponse(text);
+          if (parsed) {
+            awardPoints(15, 'Used Hormone-Safe Scanner');
+            toast.success('Scan complete! You earned 15 ShePoints 🌟');
+            setResult(parsed);
+            setIsScanning(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn(`${model} failed:`, err.message);
+        continue;
+      }
+    }
+
+    // ── Strategy 2: Vercel serverless Gemini endpoint as fallback ──
+    setScanStatus('🔄 Trying backup scanner…');
     try {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 30000);
@@ -136,30 +186,26 @@ Reply ONLY with valid JSON, no markdown, no code fences:
       clearTimeout(timer);
       const d = await r.json();
 
-      if (!r.ok) {
-        console.error('Server error:', d);
-        throw new Error(d.error || 'Server error');
-      }
-
-      const text = d.choices?.[0]?.message?.content;
-      
-      if (text) {
-        const parsed = parseAIResponse(text);
-        if (parsed) {
-          awardPoints(15, 'Used Hormone-Safe Scanner');
-          toast.success('Scan complete! You earned 15 ShePoints 🌟');
-          setResult(parsed); 
-          setIsScanning(false); 
-          return;
+      if (r.ok) {
+        const text = d.choices?.[0]?.message?.content;
+        if (text) {
+          const parsed = parseAIResponse(text);
+          if (parsed) {
+            awardPoints(15, 'Used Hormone-Safe Scanner');
+            toast.success('Scan complete! You earned 15 ShePoints 🌟');
+            setResult(parsed); 
+            setIsScanning(false); 
+            return;
+          }
         }
       }
     } catch (err) { 
-      console.warn('Image analysis failed:', err.message); 
+      console.warn('Gemini fallback failed:', err.message); 
     }
 
-    // Fallback if image pipeline fails
+    // ── All vision pipelines failed ──
     setIsScanning(false);
-    toast.error('Image scan failed. Please try again or type the food items below.');
+    toast.error('Image scan is temporarily unavailable. Please type the food items below instead.', { duration: 5000 });
   };
 
   const handleUpload = (e) => {
