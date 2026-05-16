@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './store/authStore';
 import { Toaster } from 'react-hot-toast';
-import useUiStore, { initTheme } from './store/uiStore';
+import { initTheme } from './store/uiStore';
 
 // Layouts & Guards
 import RootLayout from './pages/RootLayout';
@@ -74,7 +74,6 @@ import MerchandiseStore from './pages/profile/MerchandiseStore';
 
 export default function App() {
   const { initAuth, loading } = useAuthStore();
-  const { darkMode } = useUiStore();
 
   useEffect(() => {
     initAuth();
@@ -83,7 +82,7 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--color-shakti-dark)] flex items-center justify-center">
+      <div style={{ minHeight: '100vh', background: 'var(--color-surface-base)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <LoadingSpinner text="Starting SHAKTI AI..." size="lg" />
       </div>
     );
@@ -95,11 +94,12 @@ export default function App() {
         position="top-center"
         toastOptions={{
           style: {
-            background: 'var(--color-shakti-dark-surface)',
-            color: '#fff',
-            border: '1px solid var(--color-shakti-dark-border)',
-            borderRadius: '12px',
-            fontSize: '14px'
+            background: 'var(--color-surface-lowest)',
+            color: 'var(--color-shakti-dark-text)',
+            border: 'none',
+            borderRadius: '16px',
+            fontSize: '14px',
+            boxShadow: '0 8px 32px rgba(24,20,69,0.08)',
           },
           success: { iconTheme: { primary: '#10B981', secondary: '#fff' } },
           error: { iconTheme: { primary: '#EF4444', secondary: '#fff' } }

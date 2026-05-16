@@ -20,7 +20,12 @@ export default function RootLayout() {
   }, [location.pathname]);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--color-surface-base)', fontFamily: 'var(--font-sans)', color: 'var(--color-shakti-dark-text)' }}>
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--color-surface-base)',
+      fontFamily: 'var(--font-sans)',
+      color: 'var(--color-shakti-dark-text)',
+    }}>
       
       {/* ── Top App Bar ── */}
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
@@ -29,7 +34,7 @@ export default function RootLayout() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* ── Main Content ── */}
-      <main style={{ paddingTop: '64px', paddingBottom: '80px' }}>
+      <main style={{ paddingTop: '64px', paddingBottom: '80px', minHeight: '100vh' }}>
         <div className="main-with-sidebar">
           <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '24px 20px' }}>
             <Outlet />

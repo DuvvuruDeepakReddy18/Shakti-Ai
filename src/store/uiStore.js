@@ -5,39 +5,43 @@ const useUiStore = create(
   persist(
     (set) => ({
       darkMode: false,
-      toggleDarkMode: () => set((state) => {
-        const newMode = !state.darkMode;
-        if (newMode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-        return { darkMode: newMode };
-      }),
-      setDarkMode: (mode) => set((state) => {
-        if (mode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-        return { darkMode: mode };
-      }),
+      // Theme toggle is disabled — app is light-only.
+      // Keeping the methods so no call sites break.
+      toggleDarkMode: () => {},
+      setDarkMode: () => {},
       fakeCallActive: false,
       triggerFakeCall: () => set({ fakeCallActive: true }),
       endFakeCall: () => set({ fakeCallActive: false }),
     }),
     {
       name: 'shakti-ui-v2',
+      // Force darkMode to false on every rehydration so
+      // users who previously toggled dark mode get reset.
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.darkMode = false;
+        }
+      },
     }
   )
 );
 
 export const initTheme = () => {
-  const isDark = useUiStore.getState().darkMode;
-  if (isDark) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
+  // Always enforce light mode — remove any lingering dark class
+  document.documentElement.classList.remove('dark');
+
+  // Also nuke the old persisted state if it had darkMode: true
+  try {
+    const raw = localStorage.getItem('shakti-ui-v2');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed?.state?.darkMode) {
+        parsed.state.darkMode = false;
+        localStorage.setItem('shakti-ui-v2', JSON.stringify(parsed));
+      }
+    }
+  } catch (_) {
+    // ignore
   }
 };
 
