@@ -136,13 +136,13 @@ export default function Dashboard() {
             </Link>
           </div>
 
-          <div style={{ width: '100%', height: '8px', background: 'var(--color-surface-container)', borderRadius: '999px', overflow: 'hidden' }}>
+          <div style={{ width: '100%', height: '10px', background: 'var(--color-surface-container)', borderRadius: '999px', overflow: 'hidden' }}>
             <motion.div
               initial={{ width: 0 }} animate={{ width: '65%' }} transition={{ duration: 1, ease: 'easeOut' }}
               style={{ height: '100%', background: 'linear-gradient(90deg, #630ed4, #B4136D)', borderRadius: '999px' }}
             />
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-outline)', fontWeight: 600, marginTop: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-outline)', fontWeight: 600, marginTop: '6px', padding: '0 2px' }}>
             <span>{points} / 1000</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f59e0b' }}>
               <Star size={11} fill="currentColor" /> Next: Gold
@@ -173,11 +173,11 @@ export default function Dashboard() {
         <h2 style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-outline)', margin: '0 0 12px 4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <Flame size={13} style={{ color: '#f97316' }} /> Quick actions
         </h2>
-        <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px' }}>
+        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '12px', paddingTop: '4px', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {quickActions.map((action, i) => {
             const Icon = action.icon;
             const content = (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', minWidth: '68px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', minWidth: '76px' }}>
                 <div style={{
                   width: '52px', height: '52px', borderRadius: '16px',
                   background: action.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -216,18 +216,18 @@ export default function Dashboard() {
             Track <ChevronRight size={12} />
           </Link>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '16px', overflowX: 'auto', paddingBottom: '8px', scrollbarWidth: 'none' }}>
           {MOODS.map((mood) => (
             <Link key={mood.id} to="/health/mood" style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-              padding: '10px 4px', borderRadius: '12px', textDecoration: 'none',
-              transition: 'background 0.2s',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+              padding: '12px', borderRadius: '14px', textDecoration: 'none',
+              transition: 'background 0.2s', minWidth: '70px',
             }}
             onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-surface-low)'}
             onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-              <span style={{ fontSize: '28px' }}>{mood.emoji}</span>
-              <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--color-shakti-dark-muted)', textAlign: 'center' }}>{mood.label}</span>
+              <span style={{ fontSize: '32px' }}>{mood.emoji}</span>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--color-shakti-dark-muted)', textAlign: 'center' }}>{mood.label}</span>
             </Link>
           ))}
         </div>
@@ -301,7 +301,7 @@ export default function Dashboard() {
       </div>
 
       {/* BOTTOM ROW */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
         {/* Badges */}
         <motion.div
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
@@ -365,6 +365,8 @@ export default function Dashboard() {
           </div>
         </motion.div>
       </div>
+      {/* BOTTOM PADDING TO PREVENT SOS BUTTON OVERLAP */}
+      <div style={{ height: '100px' }} />
     </div>
   );
 }

@@ -30,8 +30,10 @@ export default function RootLayout() {
 
       {/* ── Main Content ── */}
       <main style={{ paddingTop: '64px', paddingBottom: '80px' }}>
-        <div className="main-with-sidebar" style={{ maxWidth: '1040px', margin: '0 auto', padding: '24px 20px' }}>
-          <Outlet />
+        <div className="main-with-sidebar">
+          <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '24px 20px' }}>
+            <Outlet />
+          </div>
         </div>
       </main>
 

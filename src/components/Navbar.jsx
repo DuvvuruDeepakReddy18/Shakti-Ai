@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Bell, Menu, X, LogOut, User, Settings } from 'lucide-react';
+import { Search, Bell, Menu, X, LogOut, User, Settings, Sun, Moon } from 'lucide-react';
 import useAuthStore from '../store/authStore';
+import useUiStore from '../store/uiStore';
 import { getInitials } from '../utils/helpers';
 
 export default function Navbar({ onToggleSidebar, sidebarOpen }) {
@@ -9,6 +10,7 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { user, userProfile, logout } = useAuthStore();
+  const { darkMode, toggleDarkMode } = useUiStore();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,7 +35,7 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }) {
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-      background: 'rgba(252,248,255,0.85)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+      background: 'var(--color-surface-lowest)', opacity: 0.95, backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
       borderBottom: 'none',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px', padding: '0 16px' }}>
@@ -69,7 +71,7 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }) {
         </div>
 
         {/* Center - Search */}
-        <div className="hide-mobile" style={{ flex: 1, maxWidth: '400px', margin: '0 32px' }}>
+        <div className="hide-mobile" style={{ flex: 1, maxWidth: '280px', margin: '0 24px' }}>
           <div style={{ position: 'relative', width: '100%' }}>
             <Search size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-shakti-dark-muted)' }} />
             <input
@@ -99,6 +101,15 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }) {
             style={{ padding: '10px', borderRadius: '12px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--color-shakti-dark-muted)' }}
           >
             <Search size={20} />
+          </button>
+
+          {/* Theme Toggle */}
+          <button 
+            onClick={toggleDarkMode}
+            style={{ padding: '10px', borderRadius: '12px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--color-shakti-dark-muted)' }}
+            aria-label="Toggle theme"
+          >
+            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
           {/* Notifications */}

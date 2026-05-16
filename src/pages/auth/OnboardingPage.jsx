@@ -37,7 +37,7 @@ export default function OnboardingPage() {
     else { if (max && arr.length >= max) { toast('Maximum selections reached', { icon: 'ℹ️' }); return; } setter([...arr, item]); }
   };
   const addContact = () => { if (emergencyContacts.length < 3) setEmergencyContacts([...emergencyContacts, { name: '', phone: '', relation: 'Friend' }]); };
-  const updateContact = (i, f, v) => { const u = [...emergencyContacts]; u[i][f] = v; setEmergencyContacts(u); };
+  const updateContact = (i, f, v) => { const u = [...emergencyContacts]; u[i] = { ...u[i], [f]: v }; setEmergencyContacts(u); };
   const removeContact = (i) => setEmergencyContacts(emergencyContacts.filter((_, j) => j !== i));
   const requestLocation = () => { if (navigator.geolocation) navigator.geolocation.getCurrentPosition(() => toast.success('Location access granted!'), () => toast.error('Location access denied')); };
 
@@ -121,18 +121,22 @@ export default function OnboardingPage() {
           <motion.div key={step}
             initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            style={{ background: 'var(--color-surface-lowest)', padding: '36px 28px', borderRadius: '2rem', boxShadow: '0 20px 60px rgba(24,20,69,0.08)', flex: 1, overflowY: 'auto' }}>
+            style={{ background: 'var(--color-surface-lowest)', padding: '36px 28px', borderRadius: '2rem', boxShadow: '0 20px 60px rgba(24,20,69,0.08)', flex: 1, display: 'flex', flexDirection: 'column', minHeight: '600px' }}>
 
             {/* Step Header */}
-            {step !== 7 && (
-              <div style={{ marginBottom: '28px' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--color-surface-low)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-                  <Sparkles size={24} style={{ color: 'var(--color-shakti-primary)' }} />
+            <div style={{ flexShrink: 0 }}>
+              {step !== 7 && (
+                <div style={{ marginBottom: '28px' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--color-surface-low)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                    <Sparkles size={24} style={{ color: 'var(--color-shakti-primary)' }} />
+                  </div>
+                  <h2 style={{ fontSize: '26px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: '0 0 6px' }}>{stepTitles[step-1].title}</h2>
+                  <p style={{ fontSize: '14px', color: 'var(--color-outline)', margin: 0, lineHeight: 1.5 }}>{stepTitles[step-1].sub}</p>
                 </div>
-                <h2 style={{ fontSize: '26px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: '0 0 6px' }}>{stepTitles[step-1].title}</h2>
-                <p style={{ fontSize: '14px', color: 'var(--color-outline)', margin: 0, lineHeight: 1.5 }}>{stepTitles[step-1].sub}</p>
-              </div>
-            )}
+              )}
+            </div>
+
+            <div style={{ flex: 1, overflowY: 'auto', paddingRight: '8px', paddingBottom: '16px' }}>
 
             {/* STEP 1 */}
             {step === 1 && (
@@ -254,8 +258,10 @@ export default function OnboardingPage() {
               </div>
             )}
 
+            </div>
+
             {/* NAV BUTTONS */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '36px', paddingTop: '20px', borderTop: '1px solid var(--color-surface-container)' }}>
+            <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', paddingTop: '20px', borderTop: '1px solid var(--color-surface-container)' }}>
               {step > 1 ? (
                 <button onClick={() => setStep(step - 1)} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--color-outline)', background: 'none', border: 'none', cursor: 'pointer', padding: '10px 14px', borderRadius: '12px', fontFamily: 'var(--font-sans)' }}>
                   <ArrowLeft size={16} /> Back

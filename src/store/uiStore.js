@@ -27,7 +27,7 @@ const useUiStore = create(
       endFakeCall: () => set({ fakeCallActive: false }),
     }),
     {
-      name: 'shakti-ui-storage',
+      name: 'shakti-ui-v2',
     }
   )
 );

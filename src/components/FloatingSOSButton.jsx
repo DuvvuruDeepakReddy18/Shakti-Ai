@@ -49,8 +49,8 @@ export default function FloatingSOSButton() {
   return (
     <div style={{
       position: 'fixed',
-      bottom: '100px', // Above bottom nav
-      right: '20px',
+      bottom: '90px', // Above bottom nav
+      right: '24px',
       zIndex: 9999,
       display: 'flex',
       flexDirection: 'column',
