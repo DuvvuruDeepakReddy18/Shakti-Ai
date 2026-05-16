@@ -15,14 +15,14 @@ export default function IdeaIncubator() {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#fdfcff] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600 mb-4">
+    <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
+      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-blue-600 mb-4">
         <ArrowLeft size={16} /> Back to Tech
       </Link>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl p-6 md:p-8 mb-6 shadow-[0_10px_30px_rgba(109,40,217,0.06)] border border-amber-50"
+        className="bg-[var(--color-surface-lowest)] rounded-3xl p-6 md:p-8 mb-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-amber-50"
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-5">
@@ -30,8 +30,8 @@ export default function IdeaIncubator() {
               <Lightbulb size={28} />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">Idea Incubator</h1>
-              <p className="text-sm text-gray-600">Pitch ideas. Find collaborators. Build together.</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-1">Idea Incubator</h1>
+              <p className="text-sm text-[var(--color-text-secondary)]">Pitch ideas. Find collaborators. Build together.</p>
             </div>
           </div>
           <button
@@ -44,20 +44,20 @@ export default function IdeaIncubator() {
       </motion.div>
 
       {showForm && (
-        <div className="bg-white rounded-2xl p-5 mb-6 border border-amber-100">
-          <h3 className="text-base font-semibold text-gray-900 mb-3">Pitch a new idea</h3>
+        <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 mb-6 border border-amber-100">
+          <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-3">Pitch a new idea</h3>
           <input
             type="text"
             placeholder="Idea title (e.g., Period Pain Tracker for Athletes)"
-            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm mb-3 focus:border-amber-400 outline-none"
+            className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-surface-highlight)] text-sm mb-3 focus:border-amber-400 outline-none"
           />
           <textarea
             placeholder="Brief description, tech stack, what kind of teammates you need..."
             rows={3}
-            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm mb-3 focus:border-amber-400 outline-none resize-none"
+            className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-surface-highlight)] text-sm mb-3 focus:border-amber-400 outline-none resize-none"
           />
           <div className="flex justify-end gap-2">
-            <button onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+            <button onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-low)]">
               Cancel
             </button>
             <button className="px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600">
@@ -72,7 +72,7 @@ export default function IdeaIncubator() {
           <motion.div
             key={idea.id}
             whileHover={{ y: -2 }}
-            className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all"
+            className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm hover:shadow-md transition-all"
           >
             <div className="flex items-start gap-4">
               <div
@@ -82,17 +82,17 @@ export default function IdeaIncubator() {
                 <Lightbulb size={22} style={{ color: idea.color }} />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-base font-semibold text-gray-900 leading-tight mb-1">{idea.title}</h3>
-                <p className="text-xs text-gray-500 mb-3">by {idea.author}</p>
+                <h3 className="text-base font-semibold text-[var(--color-text-primary)] leading-tight mb-1">{idea.title}</h3>
+                <p className="text-xs text-[var(--color-text-secondary)] mb-3">by {idea.author}</p>
                 <div className="flex items-center gap-1.5 mb-4 flex-wrap">
                   {idea.stack.map(s => (
-                    <span key={s} className="px-2 py-1 rounded-md bg-gray-50 text-gray-600 text-[10px] font-medium">
+                    <span key={s} className="px-2 py-1 rounded-md bg-[var(--color-surface-low)] text-[var(--color-text-secondary)] text-[10px] font-medium">
                       {s}
                     </span>
                   ))}
                 </div>
                 <div className="flex items-center justify-between flex-wrap gap-3">
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-4 text-xs text-[var(--color-text-secondary)]">
                     <button className="flex items-center gap-1 hover:text-amber-600">
                       <ThumbsUp size={14} /> {idea.votes}
                     </button>

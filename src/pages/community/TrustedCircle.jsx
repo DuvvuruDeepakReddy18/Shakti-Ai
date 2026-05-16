@@ -47,31 +47,31 @@ export default function TrustedCircle() {
   return (
     <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(59,130,246,0.1))' }}>
+        className="rounded-2xl p-6" style={{ background: 'color-mix(in srgb, var(--color-shakti-success) 20%, transparent)' }}>
         <div className="flex items-center gap-3 mb-2">
-          <Shield size={24} className="text-green-400" />
+          <Shield size={24} className="text-[var(--color-shakti-success)]" />
           <h1 className="text-2xl font-display font-bold text-[var(--color-shakti-dark-text)]">Trusted Circle</h1>
         </div>
-        <p className="text-sm text-green-200/70">Your inner circle — trusted contacts for safety, support & connection</p>
+        <p className="text-sm text-[var(--color-shakti-success)] opacity-70">Your inner circle — trusted contacts for safety, support & connection</p>
       </motion.div>
 
       <div className="grid grid-cols-3 gap-3">
         <div className="card-static p-4 text-center">
-          <p className="text-2xl font-bold text-green-400">{circle.length}</p>
+          <p className="text-2xl font-bold text-[var(--color-shakti-success)]">{circle.length}</p>
           <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">Members</p>
         </div>
         <div className="card-static p-4 text-center">
-          <p className="text-2xl font-bold text-blue-400">{circle.filter(c => c.shareLocation).length}</p>
+          <p className="text-2xl font-bold text-[var(--color-shakti-primary)]">{circle.filter(c => c.shareLocation).length}</p>
           <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">Tracking You</p>
         </div>
         <div className="card-static p-4 text-center">
-          <p className="text-2xl font-bold text-yellow-400">{pending.length}</p>
+          <p className="text-2xl font-bold text-[var(--color-shakti-warning)]">{pending.length}</p>
           <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">Pending</p>
         </div>
       </div>
 
       <button onClick={() => setShowAdd(!showAdd)}
-        className="w-full py-3 rounded-xl gradient-bg text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-green-500/20">
+        className="w-full py-3 rounded-xl gradient-bg text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-shakti-success)]/20">
         <UserPlus size={18} /> Add to Circle
       </button>
 
@@ -101,10 +101,10 @@ export default function TrustedCircle() {
                   <p className="font-semibold text-[var(--color-shakti-dark-text)] text-sm">{p.name}</p>
                   <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">{p.relation} · {p.mutual} mutual</p>
                 </div>
-                <button onClick={() => accept(p.id)} className="w-8 h-8 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/30">
+                <button onClick={() => accept(p.id)} className="w-8 h-8 rounded-lg bg-[var(--color-shakti-success)]/20 text-[var(--color-shakti-success)] flex items-center justify-center hover:bg-[var(--color-shakti-success)]/30">
                   <Check size={16} />
                 </button>
-                <button onClick={() => reject(p.id)} className="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center hover:bg-red-500/30">
+                <button onClick={() => reject(p.id)} className="w-8 h-8 rounded-lg bg-[var(--color-shakti-error)]/20 text-[var(--color-shakti-error)] flex items-center justify-center hover:bg-[var(--color-shakti-error)]/30">
                   <X size={16} />
                 </button>
               </motion.div>
@@ -125,17 +125,17 @@ export default function TrustedCircle() {
                     {m.name.charAt(0)}
                   </div>
                   <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[var(--color-shakti-dark)] ${
-                    m.status === 'online' ? 'bg-green-500' : m.status === 'away' ? 'bg-yellow-500' : 'bg-gray-500'
+                    m.status === 'online' ? 'bg-[var(--color-shakti-success)]' : m.status === 'away' ? 'bg-[var(--color-shakti-warning)]' : 'bg-[var(--color-shakti-dark-muted)]'
                   }`} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-[var(--color-shakti-dark-text)] text-sm">{m.name}</p>
                   <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">{m.relation} · {m.lastActive}</p>
                 </div>
-                <button className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center hover:bg-blue-500/30">
+                <button className="w-8 h-8 rounded-lg bg-[var(--color-shakti-primary)]/20 text-[var(--color-shakti-primary)] flex items-center justify-center hover:bg-[var(--color-shakti-primary)]/30">
                   <MessageCircle size={14} />
                 </button>
-                <button className="w-8 h-8 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/30">
+                <button className="w-8 h-8 rounded-lg bg-[var(--color-shakti-success)]/20 text-[var(--color-shakti-success)] flex items-center justify-center hover:bg-[var(--color-shakti-success)]/30">
                   <Phone size={14} />
                 </button>
               </div>
@@ -144,8 +144,8 @@ export default function TrustedCircle() {
                   <MapPin size={10} /> {m.shareLocation ? 'Can see your location' : 'Not sharing location'}
                 </span>
                 <button onClick={() => toggleShare(m.id)}
-                  className={`w-9 h-5 rounded-full relative transition-colors ${m.shareLocation ? 'bg-green-500' : 'bg-gray-600'}`}>
-                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${m.shareLocation ? 'left-4' : 'left-0.5'}`} />
+                  className={`w-9 h-5 rounded-full relative transition-colors ${m.shareLocation ? 'bg-[var(--color-shakti-success)]' : 'bg-[var(--color-shakti-dark-muted)]'}`}>
+                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-[var(--color-surface-lowest)] transition-all ${m.shareLocation ? 'left-4' : 'left-0.5'}`} />
                 </button>
               </div>
             </motion.div>

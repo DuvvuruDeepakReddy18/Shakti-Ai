@@ -81,7 +81,7 @@ export default function LearningCenter() {
             className={`px-6 py-3 rounded-[1.25rem] text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 flex items-center gap-2 ${
               activeTrack === t.id
                 ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/20 scale-105'
-                : 'bg-[var(--color-surface-lowest)] text-[var(--color-text-primary)] border border-gray-100 hover:border-cyan-200 hover:shadow-md'
+                : 'bg-[var(--color-surface-lowest)] text-[var(--color-text-primary)] border border-[var(--color-surface-highlight)] hover:border-cyan-200 hover:shadow-md'
             }`}
           >
             {t.label}
@@ -128,9 +128,9 @@ export default function LearningCenter() {
                 <p className="text-sm font-semibold text-[var(--color-text-secondary)] mb-4">{c.provider}</p>
               </div>
               
-              <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-[var(--color-text-secondary)] mt-auto">
-                <span className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1.5 rounded-lg">
-                  <Clock size={14} className="text-gray-400" /> {c.duration}
+              <div className="pt-4 border-t border-[var(--color-surface-highlight)] flex items-center justify-between text-xs font-semibold text-[var(--color-text-secondary)] mt-auto">
+                <span className="flex items-center gap-1.5 bg-[var(--color-surface-low)] px-2.5 py-1.5 rounded-lg">
+                  <Clock size={14} className="text-[var(--color-outline)]" /> {c.duration}
                 </span>
                 <span className={`flex items-center gap-1 transition-colors ${c.paid && !isUnlocked ? 'text-purple-600' : 'text-cyan-600'}`}>
                   {c.paid && !isUnlocked ? <><QrCode size={14} /> Unlock</> : <><ExternalLink size={14} /> Open</>}
@@ -151,7 +151,7 @@ export default function LearningCenter() {
             <h2 className="text-xl font-bold mb-2">Earn certificates as you learn</h2>
             <p className="text-cyan-50 text-sm font-medium">Complete a track to unlock a verified SHAKTI badge for your professional profile.</p>
           </div>
-          <button className="px-6 py-3 bg-white text-cyan-600 rounded-full font-bold shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2 whitespace-nowrap">
+          <button className="px-6 py-3 bg-[var(--color-surface-lowest)] text-cyan-600 rounded-full font-bold shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2 whitespace-nowrap">
             View Badges <ChevronRight size={16} />
           </button>
         </div>
@@ -165,12 +165,12 @@ export default function LearningCenter() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm bg-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden text-center"
+              className="w-full max-w-sm bg-[var(--color-surface-lowest)] rounded-[2rem] p-8 shadow-2xl relative overflow-hidden text-center"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 blur-3xl rounded-full pointer-events-none" />
               
               <div className="flex justify-end mb-2 relative z-10">
-                 <button onClick={() => !scanning && setSelectedPaidCourse(null)} disabled={scanning} className="p-2 rounded-full bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-50">
+                 <button onClick={() => !scanning && setSelectedPaidCourse(null)} disabled={scanning} className="p-2 rounded-full bg-[var(--color-surface-low)] text-[var(--color-outline)] hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-50">
                    <X size={18} />
                  </button>
               </div>
@@ -181,18 +181,18 @@ export default function LearningCenter() {
                      <div className="absolute inset-0 rounded-full bg-green-400 opacity-20 animate-ping"></div>
                      <CheckCircle2 size={48} className="text-green-500 relative z-10" />
                    </div>
-                   <h3 className="text-xl font-bold text-gray-900 mb-2">Unlocking Course...</h3>
-                   <p className="text-sm font-medium text-gray-500">Payment verified. Opening course...</p>
+                   <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-2">Unlocking Course...</h3>
+                   <p className="text-sm font-medium text-[var(--color-text-secondary)]">Payment verified. Opening course...</p>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-4">
                   <div className="w-16 h-16 rounded-[1.25rem] bg-purple-50 flex items-center justify-center text-purple-600 mb-4 shadow-inner border border-purple-100">
                     <Lock size={32} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{selectedPaidCourse.title}</h3>
-                  <p className="text-sm font-medium text-gray-500 mb-8">Scan the QR code to purchase and unlock this premium course.</p>
+                  <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-1">{selectedPaidCourse.title}</h3>
+                  <p className="text-sm font-medium text-[var(--color-text-secondary)] mb-8">Scan the QR code to purchase and unlock this premium course.</p>
                   
-                  <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 mb-8 inline-block shadow-purple-500/5">
+                  <div className="bg-[var(--color-surface-lowest)] p-4 rounded-3xl shadow-sm border border-[var(--color-surface-highlight)] mb-8 inline-block shadow-purple-500/5">
                     <div className="grid grid-cols-5 gap-1.5 w-32 h-32">
                       {[...Array(25)].map((_, i) => (
                         <div key={i} className={`rounded-[4px] ${Math.random() > 0.4 ? 'bg-purple-900' : 'bg-purple-100'}`}></div>

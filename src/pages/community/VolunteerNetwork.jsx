@@ -22,9 +22,9 @@ const OPPORTUNITIES = [
 ];
 
 const URGENCY_STYLE = {
-  Low: 'bg-green-500/20 text-green-400',
-  Medium: 'bg-yellow-500/20 text-yellow-400',
-  High: 'bg-red-500/20 text-red-400',
+  Low: 'bg-[var(--color-shakti-success)]/20 text-[var(--color-shakti-success)]',
+  Medium: 'bg-[var(--color-shakti-warning)]/20 text-[var(--color-shakti-warning)]',
+  High: 'bg-[var(--color-shakti-error)]/20 text-[var(--color-shakti-error)]',
 };
 
 export default function VolunteerNetwork() {
@@ -42,25 +42,25 @@ export default function VolunteerNetwork() {
   return (
     <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(245,158,11,0.1))' }}>
+        className="rounded-2xl p-6" style={{ background: 'color-mix(in srgb, var(--color-shakti-success) 20%, transparent)' }}>
         <div className="flex items-center gap-3 mb-2">
-          <HandHeart size={24} className="text-green-400" />
+          <HandHeart size={24} className="text-[var(--color-shakti-success)]" />
           <h1 className="text-2xl font-display font-bold text-[var(--color-shakti-dark-text)]">Volunteer Network</h1>
         </div>
-        <p className="text-sm text-green-200/70">Give back to your community. Earn SHAKTI points & badges.</p>
+        <p className="text-sm text-[var(--color-shakti-success)] opacity-70">Give back to your community. Earn SHAKTI points & badges.</p>
       </motion.div>
 
       <div className="grid grid-cols-3 gap-3">
         <div className="card-static p-4 text-center">
-          <p className="text-2xl font-bold text-green-400">{applied.length}</p>
+          <p className="text-2xl font-bold text-[var(--color-shakti-success)]">{applied.length}</p>
           <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">Applied</p>
         </div>
         <div className="card-static p-4 text-center">
-          <p className="text-2xl font-bold text-blue-400">0</p>
+          <p className="text-2xl font-bold text-[var(--color-shakti-primary)]">0</p>
           <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">Hours Given</p>
         </div>
         <div className="card-static p-4 text-center">
-          <p className="text-2xl font-bold text-pink-400">0</p>
+          <p className="text-2xl font-bold text-[var(--color-shakti-secondary)]">0</p>
           <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">Lives Touched</p>
         </div>
       </div>
@@ -91,19 +91,19 @@ export default function VolunteerNetwork() {
             <div className="grid grid-cols-3 gap-2 my-3">
               <div className="flex items-center gap-1 text-[11px] text-[var(--color-shakti-dark-muted)]"><Clock size={10} /> {o.hours}</div>
               <div className="flex items-center gap-1 text-[11px] text-[var(--color-shakti-dark-muted)]"><MapPin size={10} /> {o.mode}</div>
-              <div className="flex items-center gap-1 text-[11px] text-yellow-400"><Star size={10} className="fill-yellow-400" /> {o.rating}</div>
+              <div className="flex items-center gap-1 text-[11px] text-[var(--color-shakti-warning)]"><Star size={10} className="fill-[var(--color-shakti-warning)]" /> {o.rating}</div>
             </div>
 
             <div className="flex flex-wrap gap-1.5 mb-3">
               {o.skills.map(s => (
-                <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-green-500/15 text-green-400 border border-green-500/20">{s}</span>
+                <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-[var(--color-shakti-success)]/15 text-[var(--color-shakti-success)] border border-[var(--color-shakti-success)]/20">{s}</span>
               ))}
             </div>
 
             <div className="flex items-center justify-between pt-2 border-t border-[var(--color-shakti-dark-border)]">
               <span className="text-[10px] text-[var(--color-shakti-dark-muted)]">{o.volunteers} volunteers</span>
               <button onClick={() => apply(o.id, o.title)}
-                className={`px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${applied.includes(o.id) ? 'bg-green-500/20 text-green-400' : 'gradient-bg text-white'}`}>
+                className={`px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${applied.includes(o.id) ? 'bg-[var(--color-shakti-success)]/20 text-[var(--color-shakti-success)]' : 'gradient-bg text-white'}`}>
                 {applied.includes(o.id) ? <><CheckCircle2 size={12} /> Applied</> : 'Apply Now'}
               </button>
             </div>

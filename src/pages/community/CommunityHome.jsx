@@ -8,24 +8,24 @@ import {
 } from 'lucide-react';
 
 const tools = [
-  { to: '/community/forums', icon: MessageSquare, title: 'Forums', desc: 'Open discussions', color: '#7c3aed', bg: '#f5f3ff' },
-  { to: '/community/circle', icon: UserPlus, title: 'Trusted Circle', desc: 'Your network', color: '#db2777', bg: '#fdf2f8' },
-  { to: '/community/events', icon: Calendar, title: 'Events', desc: 'Meetups & workshops', color: '#3b82f6', bg: '#eff6ff' },
-  { to: '/community/skills', icon: Briefcase, title: 'Skill Exchange', desc: 'Trade expertise', color: '#10B981', bg: '#ecfdf5' },
-  { to: '/community/volunteers', icon: Users, title: 'Volunteers', desc: 'Help nearby', color: '#d97706', bg: '#fffbeb' },
+  { to: '/community/forums', icon: MessageSquare, title: 'Forums', desc: 'Open discussions', color: 'var(--color-shakti-primary)', bg: 'var(--color-shakti-primary-container)' },
+  { to: '/community/circle', icon: UserPlus, title: 'Trusted Circle', desc: 'Your network', color: 'var(--color-shakti-tertiary)', bg: 'var(--color-shakti-tertiary-container)' },
+  { to: '/community/events', icon: Calendar, title: 'Events', desc: 'Meetups & workshops', color: 'var(--color-shakti-info)', bg: 'var(--color-shakti-info-container)' },
+  { to: '/community/skills', icon: Briefcase, title: 'Skill Exchange', desc: 'Trade expertise', color: 'var(--color-shakti-success)', bg: 'var(--color-shakti-success-container)' },
+  { to: '/community/volunteers', icon: Users, title: 'Volunteers', desc: 'Help nearby', color: 'var(--color-shakti-warning)', bg: 'var(--color-shakti-warning-container)' },
 ];
 
 const categories = [
   { id: 'all', label: 'All' },
-  { id: 'safety', label: 'Safety', icon: Shield, color: '#f43f5e' },
-  { id: 'health', label: 'Mental Health', icon: Heart, color: '#ec4899' },
-  { id: 'career', label: 'Career', icon: TrendingUp, color: '#d97706' },
+  { id: 'safety', label: 'Safety', icon: Shield, color: 'var(--color-shakti-error)' },
+  { id: 'health', label: 'Mental Health', icon: Heart, color: 'var(--color-shakti-tertiary)' },
+  { id: 'career', label: 'Career', icon: TrendingUp, color: 'var(--color-shakti-warning)' },
 ];
 
 const posts = [
-  { id: 1, author: 'Anonymous_Priya', avatar: 'linear-gradient(135deg, #7c3aed, #db2777)', time: '2h ago', category: 'health', title: 'Managing burnout as a working mom', content: "Lately I've been feeling completely overwhelmed juggling my new role and taking care of my 3yo. How do you all manage?", likes: 45, comments: 12, tags: ['Burnout', 'Motherhood'], hot: false },
-  { id: 2, author: 'CodeQueen99', avatar: 'linear-gradient(135deg, #3b82f6, #6366f1)', time: '5h ago', category: 'career', title: 'Negotiating salary for my first dev job', content: 'I just got an offer for a junior frontend role in Bangalore! They offered 8LPA, but the market average seems to be 10LPA. Should I negotiate?', likes: 128, comments: 34, tags: ['Salary', 'Tech'], hot: true },
-  { id: 3, author: 'SafeTravels', avatar: 'linear-gradient(135deg, #10B981, #0d9488)', time: '1d ago', category: 'safety', title: 'Safe routes in Marathahalli?', content: 'Moving to Bangalore next week. Does anyone know which areas around Marathahalli are safest for late-night walks?', likes: 89, comments: 22, tags: ['Bangalore', 'Relocation'], hot: false },
+  { id: 1, author: 'Anonymous_Priya', avatar: 'linear-gradient(135deg, var(--color-shakti-primary), var(--color-shakti-tertiary))', time: '2h ago', category: 'health', title: 'Managing burnout as a working mom', content: "Lately I've been feeling completely overwhelmed juggling my new role and taking care of my 3yo. How do you all manage?", likes: 45, comments: 12, tags: ['Burnout', 'Motherhood'], hot: false },
+  { id: 2, author: 'CodeQueen99', avatar: 'linear-gradient(135deg, var(--color-shakti-info), var(--color-shakti-primary))', time: '5h ago', category: 'career', title: 'Negotiating salary for my first dev job', content: 'I just got an offer for a junior frontend role in Bangalore! They offered 8LPA, but the market average seems to be 10LPA. Should I negotiate?', likes: 128, comments: 34, tags: ['Salary', 'Tech'], hot: true },
+  { id: 3, author: 'SafeTravels', avatar: 'linear-gradient(135deg, var(--color-shakti-success), var(--color-shakti-secondary))', time: '1d ago', category: 'safety', title: 'Safe routes in Marathahalli?', content: 'Moving to Bangalore next week. Does anyone know which areas around Marathahalli are safest for late-night walks?', likes: 89, comments: 22, tags: ['Bangalore', 'Relocation'], hot: false },
 ];
 
 export default function CommunityHome() {
@@ -53,19 +53,19 @@ export default function CommunityHome() {
           boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
         }}
       >
-        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(16,185,129,0.08)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '-40px', left: '-30px', width: '160px', height: '160px', background: 'rgba(13,148,136,0.06)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'var(--color-shakti-success-container)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-40px', left: '-30px', width: '160px', height: '160px', background: 'var(--color-shakti-success-container)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
 
         <div style={{ position: 'relative', zIndex: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
               <div style={{
                 width: '52px', height: '52px', borderRadius: '16px',
-                background: 'linear-gradient(135deg, #10B981, #0d9488)',
+                background: 'linear-gradient(135deg, var(--color-shakti-success), var(--color-shakti-secondary))',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 6px 20px rgba(16,185,129,0.25)',
+                boxShadow: '0 6px 20px color-mix(in srgb, var(--color-shakti-success) 25%, transparent)',
               }}>
-                <Users size={24} color="white" strokeWidth={2.2} />
+                <Users size={24} color="var(--color-shakti-success-on)" strokeWidth={2.2} />
               </div>
               <div>
                 <h1 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>SHAKTI Circles</h1>
@@ -98,8 +98,8 @@ export default function CommunityHome() {
             <Link to="/community/forums" style={{
               display: 'flex', alignItems: 'center', gap: '6px',
               padding: '10px 16px', borderRadius: '12px',
-              background: 'linear-gradient(135deg, #10B981, #0d9488)',
-              color: 'white', textDecoration: 'none', fontSize: '13px', fontWeight: 700,
+              background: 'linear-gradient(135deg, var(--color-shakti-success), var(--color-shakti-secondary))',
+              color: 'var(--color-shakti-success-on)', textDecoration: 'none', fontSize: '13px', fontWeight: 700,
               fontFamily: 'var(--font-sans)',
             }}>
               <Plus size={16} /> New
@@ -163,14 +163,14 @@ export default function CommunityHome() {
                 padding: '8px 16px', borderRadius: '999px',
                 fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap',
                 border: isActive ? 'none' : '1px solid var(--color-surface-container)',
-                background: isActive ? 'linear-gradient(135deg, #10B981, #0d9488)' : 'var(--color-surface-lowest)',
-                color: isActive ? 'white' : 'var(--color-shakti-dark-muted)',
+                background: isActive ? 'linear-gradient(135deg, var(--color-shakti-success), var(--color-shakti-secondary))' : 'var(--color-surface-lowest)',
+                color: isActive ? 'var(--color-shakti-success-on)' : 'var(--color-shakti-dark-muted)',
                 cursor: 'pointer', transition: 'all 0.2s',
-                boxShadow: isActive ? '0 4px 12px rgba(16,185,129,0.2)' : 'none',
+                boxShadow: isActive ? '0 4px 12px color-mix(in srgb, var(--color-shakti-success) 20%, transparent)' : 'none',
                 fontFamily: 'var(--font-sans)',
               }}
             >
-              {Icon && <Icon size={13} style={{ color: isActive ? 'white' : cat.color }} />}
+              {Icon && <Icon size={13} style={{ color: isActive ? 'var(--color-shakti-success-on)' : cat.color }} />}
               {cat.label}
             </button>
           );
@@ -186,11 +186,11 @@ export default function CommunityHome() {
       }}>
         <div style={{
           width: '40px', height: '40px', borderRadius: '12px',
-          background: 'linear-gradient(135deg, #7c3aed, #db2777)',
+          background: 'linear-gradient(135deg, var(--color-shakti-primary), var(--color-shakti-tertiary))',
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-          boxShadow: '0 4px 12px rgba(124,58,237,0.2)',
+          boxShadow: '0 4px 12px color-mix(in srgb, var(--color-shakti-primary) 20%, transparent)',
         }}>
-          <Shield size={18} color="white" />
+          <Shield size={18} color="var(--color-shakti-primary-on)" />
         </div>
         <p style={{ fontSize: '12px', color: 'var(--color-shakti-dark-muted)', lineHeight: 1.5, margin: 0 }}>
           Safe, anonymous space. Harassment results in an instant ban. Let's keep our circle supportive.
@@ -228,7 +228,7 @@ export default function CommunityHome() {
                   <div style={{
                     position: 'absolute', top: 0, right: '20px',
                     padding: '2px 8px', borderRadius: '0 0 6px 6px',
-                    background: 'linear-gradient(135deg, #f97316, #ef4444)',
+                    background: 'linear-gradient(135deg, var(--color-shakti-warning), var(--color-shakti-error))',
                     color: 'white', fontSize: '10px', fontWeight: 700,
                     textTransform: 'uppercase', letterSpacing: '0.05em',
                     display: 'flex', alignItems: 'center', gap: '4px',
@@ -268,7 +268,7 @@ export default function CommunityHome() {
                       style={{
                         display: 'flex', alignItems: 'center', gap: '6px',
                         fontSize: '12px', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer',
-                        color: liked.includes(post.id) ? '#ec4899' : 'var(--color-outline)',
+                        color: liked.includes(post.id) ? 'var(--color-shakti-tertiary)' : 'var(--color-outline)',
                         fontFamily: 'var(--font-sans)',
                       }}
                     >
@@ -301,18 +301,18 @@ export default function CommunityHome() {
           position: 'relative', overflow: 'hidden',
         }}
       >
-        <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '100px', height: '100px', background: 'rgba(16,185,129,0.06)', borderRadius: '50%', filter: 'blur(40px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '100px', height: '100px', background: 'var(--color-shakti-success-container)', borderRadius: '50%', filter: 'blur(40px)', pointerEvents: 'none' }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative', zIndex: 10 }}>
           <div style={{
             width: '40px', height: '40px', borderRadius: '12px',
-            background: 'linear-gradient(135deg, #10B981, #0d9488)',
+            background: 'linear-gradient(135deg, var(--color-shakti-success), var(--color-shakti-secondary))',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(16,185,129,0.2)',
+            boxShadow: '0 4px 12px color-mix(in srgb, var(--color-shakti-success) 20%, transparent)',
           }}>
-            <Sparkles size={18} color="white" />
+            <Sparkles size={18} color="var(--color-shakti-success-on)" />
           </div>
           <p style={{ fontSize: '13px', color: 'var(--color-shakti-dark-muted)', lineHeight: 1.6, margin: 0, position: 'relative', zIndex: 10 }}>
-            The <span style={{ color: '#10B981', fontWeight: 700 }}>Career</span> circle is very active this week — many are discussing salary negotiation in tech.
+            The <span style={{ color: 'var(--color-shakti-success)', fontWeight: 700 }}>Career</span> circle is very active this week — many are discussing salary negotiation in tech.
           </p>
         </div>
       </motion.div>

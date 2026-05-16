@@ -45,10 +45,10 @@ export default function StressDetector() {
   const reset = () => { setAnswers({}); setJournal(''); setResult(null); };
 
   const STRESS_MAP = {
-    low: { color: 'text-green-500', bg: 'bg-green-50', border: 'border-green-200', label: 'Low Stress', advice: 'You\'re doing great! Keep up healthy habits.', icon: CheckCircle2 },
-    moderate: { color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-200', label: 'Moderate Stress', advice: 'Some warning signs. Try short wellness breaks today.', icon: Activity },
-    high: { color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-200', label: 'High Stress', advice: 'Your body needs care. Prioritize sleep and reach out to someone.', icon: AlertTriangle },
-    critical: { color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-200', label: 'Critical — Reach Out', advice: 'Please talk to a professional. iCall: 9152987821 (free & confidential).', icon: AlertTriangle },
+    low: { color: 'text-[var(--color-shakti-success)]', bg: 'bg-[var(--color-shakti-success)]/10', border: 'border-[var(--color-shakti-success)]/30', label: 'Low Stress', advice: 'You\'re doing great! Keep up healthy habits.', icon: CheckCircle2 },
+    moderate: { color: 'text-[var(--color-shakti-warning)]', bg: 'bg-[var(--color-shakti-warning)]/10', border: 'border-[var(--color-shakti-warning)]/30', label: 'Moderate Stress', advice: 'Some warning signs. Try short wellness breaks today.', icon: Activity },
+    high: { color: 'text-[var(--color-shakti-error)]', bg: 'bg-[var(--color-shakti-error)]/10', border: 'border-[var(--color-shakti-error)]/30', label: 'High Stress', advice: 'Your body needs care. Prioritize sleep and reach out to someone.', icon: AlertTriangle },
+    critical: { color: 'text-[var(--color-shakti-error)]', bg: 'bg-[var(--color-shakti-error)]/20', border: 'border-[var(--color-shakti-error)]/50', label: 'Critical — Reach Out', advice: 'Please talk to a professional. iCall: 9152987821 (free & confidential).', icon: AlertTriangle },
   };
 
   return (
@@ -56,9 +56,9 @@ export default function StressDetector() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
         className="rounded-[2rem] p-6 shadow-sm bg-[var(--color-surface-lowest)] relative overflow-hidden"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-500/10 to-transparent blur-3xl opacity-50 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--color-shakti-primary)]/10 to-transparent blur-3xl opacity-50 pointer-events-none" />
         <div className="flex items-center gap-4 relative z-10">
-          <div className="w-14 h-14 rounded-[1.25rem] bg-purple-50 flex items-center justify-center text-purple-600 flex-shrink-0 shadow-inner">
+          <div className="w-14 h-14 rounded-[1.25rem] bg-[var(--color-shakti-primary)]/10 flex items-center justify-center text-[var(--color-shakti-primary)] flex-shrink-0 shadow-inner">
             <Brain size={28} strokeWidth={1.5} />
           </div>
           <div>
@@ -73,7 +73,7 @@ export default function StressDetector() {
           <div className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-wider">Progress</span>
-              <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-md">{answeredCount}/{QUESTIONS.length}</span>
+              <span className="text-xs font-bold text-[var(--color-shakti-primary)] bg-[var(--color-shakti-primary)]/10 px-2 py-1 rounded-md">{answeredCount}/{QUESTIONS.length}</span>
             </div>
             <div className="h-2.5 w-full bg-[var(--color-surface)] rounded-full overflow-hidden shadow-inner">
               <motion.div className="h-full bg-gradient-to-r from-[var(--color-shakti-dark-text)] to-[#3A2D80]" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
@@ -112,11 +112,11 @@ export default function StressDetector() {
             <label className="text-sm font-bold text-[var(--color-text-primary)] mb-3 block">Optional: Journal your feelings</label>
             <textarea value={journal} onChange={(e) => setJournal(e.target.value)}
               placeholder="Share what's weighing on your mind..." rows={4}
-              className="w-full px-5 py-4 rounded-xl bg-[var(--color-surface)] text-[var(--color-text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all resize-none shadow-inner" />
+              className="w-full px-5 py-4 rounded-xl bg-[var(--color-surface)] text-[var(--color-text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-shakti-primary)]/20 focus:border-[var(--color-shakti-primary)] transition-all resize-none shadow-inner" />
           </div>
 
           <button onClick={analyze} disabled={loading || answeredCount < QUESTIONS.length}
-            className="w-full py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0">
+            className="w-full py-4 rounded-full bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0">
             {loading ? <Loader2 size={18} className="animate-spin" /> : <Brain size={18} />}
             {loading ? 'Analyzing...' : 'Analyze My Wellbeing'}
           </button>
@@ -130,7 +130,7 @@ export default function StressDetector() {
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
             <div className={`rounded-[1.5rem] p-8 ${info.bg} shadow-sm`}>
               <div className="flex items-start gap-4 mb-6">
-                <div className={`p-3 rounded-[1rem] bg-white shadow-sm flex-shrink-0 ${info.color}`}>
+                <div className={`p-3 rounded-[1rem] bg-[var(--color-surface-lowest)] shadow-sm flex-shrink-0 ${info.color}`}>
                   <Icon size={28} strokeWidth={1.5} />
                 </div>
                 <div>
@@ -146,10 +146,10 @@ export default function StressDetector() {
 
             {result.aiAnalysis && (
               <div className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-6 shadow-sm">
-                <h4 className="text-sm font-bold text-[var(--color-text-primary)] mb-4 flex items-center gap-2"><Brain size={16} className="text-purple-600" /> AI Emotion Analysis</h4>
+                <h4 className="text-sm font-bold text-[var(--color-text-primary)] mb-4 flex items-center gap-2"><Brain size={16} className="text-[var(--color-shakti-primary)]" /> AI Emotion Analysis</h4>
                 <div className="flex items-center gap-2 mb-4 flex-wrap">
-                  <span className="text-xs px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 capitalize font-bold shadow-sm">{result.aiAnalysis.primaryEmotion}</span>
-                  <span className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 capitalize font-bold shadow-sm">{result.aiAnalysis.sentiment}</span>
+                  <span className="text-xs px-3 py-1.5 rounded-lg bg-[var(--color-shakti-primary)]/10 text-[var(--color-shakti-primary)] capitalize font-bold shadow-sm">{result.aiAnalysis.primaryEmotion}</span>
+                  <span className="text-xs px-3 py-1.5 rounded-lg bg-[var(--color-shakti-secondary)]/10 text-[var(--color-shakti-secondary)] capitalize font-bold shadow-sm">{result.aiAnalysis.sentiment}</span>
                   <span className="text-xs font-semibold text-[var(--color-text-secondary)] px-2">Intensity {result.aiAnalysis.intensity}/10</span>
                 </div>
                 <p className="text-sm italic font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface)] p-4 rounded-xl shadow-inner">"{result.aiAnalysis.suggestion}"</p>
@@ -160,7 +160,7 @@ export default function StressDetector() {
               <button onClick={reset} className="py-4 rounded-full bg-[var(--color-surface-lowest)] text-[var(--color-text-primary)] font-bold text-sm shadow-sm hover:bg-[var(--color-surface)] transition-colors active:scale-95">
                 Take Again
               </button>
-              <a href="/health/companion" className="py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-sm text-center shadow-md hover:shadow-lg transition-all active:scale-95">
+              <a href="/health/companion" className="py-4 rounded-full bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] text-white font-bold text-sm text-center shadow-md hover:shadow-lg transition-all active:scale-95">
                 Talk to SHAKTI
               </a>
             </div>

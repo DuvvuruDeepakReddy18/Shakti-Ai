@@ -18,22 +18,22 @@ const others = [
 
 export default function Leaderboard() {
   return (
-    <div className="min-h-screen bg-[#fdfcff] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600 mb-4">
+    <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
+      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-blue-600 mb-4">
         <ArrowLeft size={16} /> Back to Tech
       </Link>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl p-6 md:p-8 mb-6 shadow-[0_10px_30px_rgba(109,40,217,0.06)] border border-emerald-50"
+        className="bg-[var(--color-surface-lowest)] rounded-3xl p-6 md:p-8 mb-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-emerald-50"
       >
         <div className="flex items-center gap-5">
           <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
             <Award size={28} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">Leaderboard</h1>
-            <p className="text-sm text-gray-600">Top builders this week. Keep the streak going.</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-1">Leaderboard</h1>
+            <p className="text-sm text-[var(--color-text-secondary)]">Top builders this week. Keep the streak going.</p>
           </div>
         </div>
       </motion.div>
@@ -46,7 +46,7 @@ export default function Leaderboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: t.rank * 0.1 }}
-            className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm text-center"
+            className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm text-center"
           >
             <div className="text-3xl mb-2">{t.badge}</div>
             <div
@@ -55,8 +55,8 @@ export default function Leaderboard() {
             >
               {t.initial}
             </div>
-            <p className="text-sm font-semibold text-gray-900 truncate">{t.name}</p>
-            <p className="text-lg font-bold text-gray-900 mt-1">{t.points.toLocaleString()}</p>
+            <p className="text-sm font-semibold text-[var(--color-text-primary)] truncate">{t.name}</p>
+            <p className="text-lg font-bold text-[var(--color-text-primary)] mt-1">{t.points.toLocaleString()}</p>
             <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold mt-2">
               <TrendingUp size={10} /> {t.delta}
             </div>
@@ -81,22 +81,22 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-3 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-900">Ranks 4 – 8</h3>
+      <div className="bg-[var(--color-surface-lowest)] rounded-2xl border border-[var(--color-surface-highlight)] shadow-sm overflow-hidden">
+        <div className="px-5 py-3 border-b border-[var(--color-surface-highlight)]">
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Ranks 4 – 8</h3>
         </div>
         <div className="divide-y divide-gray-50">
           {others.map(o => (
-            <div key={o.rank} className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors">
-              <span className="w-6 text-sm font-semibold text-gray-400">#{o.rank}</span>
+            <div key={o.rank} className="flex items-center gap-4 px-5 py-3 hover:bg-[var(--color-surface-low)] transition-colors">
+              <span className="w-6 text-sm font-semibold text-[var(--color-outline)]">#{o.rank}</span>
               <div
                 className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-semibold"
                 style={{ backgroundColor: o.color }}
               >
                 {o.initial}
               </div>
-              <span className="flex-1 text-sm font-medium text-gray-900">{o.name}</span>
-              <span className="text-sm font-semibold text-gray-700">{o.points.toLocaleString()}</span>
+              <span className="flex-1 text-sm font-medium text-[var(--color-text-primary)]">{o.name}</span>
+              <span className="text-sm font-semibold text-[var(--color-text-primary)]">{o.points.toLocaleString()}</span>
               <span className="text-xs text-emerald-600 font-semibold w-12 text-right">{o.delta}</span>
             </div>
           ))}

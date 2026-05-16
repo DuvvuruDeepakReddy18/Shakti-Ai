@@ -8,13 +8,11 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
-import useUiStore from '../../store/uiStore';
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
   const { signOut } = useAuthStore();
   const navigate = useNavigate();
-  const { darkMode, setDarkMode } = useUiStore();
   const [notifications, setNotifications] = useState(true);
   const [sosSoundsOn, setSosSoundsOn] = useState(true);
   const [shakeDetection, setShakeDetection] = useState(true);
@@ -29,29 +27,29 @@ export default function SettingsPage() {
   const Toggle = ({ checked, onChange }) => (
     <button
       onClick={(e) => { e.stopPropagation(); onChange(!checked); }}
-      className={`relative w-12 h-6 rounded-full border-none cursor-pointer flex shrink-0 items-center px-1 transition-colors duration-300 ${checked ? 'bg-[var(--color-shakti-dark-text)]' : 'bg-gray-200'}`}
+      className={`relative w-12 h-6 rounded-full border-none cursor-pointer flex shrink-0 items-center px-1 transition-colors duration-300 ${checked ? 'bg-[var(--color-shakti-dark-text)]' : 'bg-[var(--color-surface-highlight)]'}`}
     >
       <motion.div
         initial={false}
         animate={{ x: checked ? 24 : 0 }}
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        className="w-4 h-4 bg-white rounded-full shadow-sm"
+        className="w-4 h-4 bg-[var(--color-surface-lowest)] rounded-full shadow-sm"
       />
     </button>
   );
 
   const SettingRow = ({ icon: Icon, iconColor, iconBg, title, desc, right, onClick, danger }) => (
     <motion.button
-      whileHover={onClick ? { scale: 0.99, backgroundColor: danger ? 'var(--color-rose-50)' : 'var(--color-surface)' } : {}}
+      whileHover={onClick ? { scale: 0.99, backgroundColor: danger ? 'var(--color-shakti-safety-light)' : 'var(--color-surface)' } : {}}
       whileTap={onClick ? { scale: 0.97 } : {}}
       onClick={onClick}
-      className={`w-full flex items-center text-left gap-4 p-3 rounded-xl transition-colors ${onClick ? 'cursor-pointer hover:bg-[var(--color-surface)]' : 'cursor-default'} ${danger ? 'hover:bg-rose-50' : ''}`}
+      className={`w-full flex items-center text-left gap-4 p-3 rounded-xl transition-colors ${onClick ? 'cursor-pointer hover:bg-[var(--color-surface)]' : 'cursor-default'} ${danger ? 'hover:bg-[var(--color-shakti-safety-light)]' : ''}`}
     >
       <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-inner" style={{ backgroundColor: iconBg }}>
         <Icon size={18} style={{ color: iconColor }} strokeWidth={2} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className={`text-sm font-bold m-0 ${danger ? 'text-rose-600' : 'text-[var(--color-text-primary)]'}`}>{title}</p>
+        <p className={`text-sm font-bold m-0 ${danger ? 'text-[var(--color-shakti-safety)]' : 'text-[var(--color-text-primary)]'}`}>{title}</p>
         {desc && <p className="text-xs font-medium text-[var(--color-text-secondary)] m-0 mt-0.5 truncate">{desc}</p>}
       </div>
       <div className="shrink-0 flex items-center">
@@ -100,45 +98,42 @@ export default function SettingsPage() {
 
       {/* SECTIONS */}
       <Section label="Appearance" delay={0.05}>
-        <SettingRow icon={darkMode ? Moon : Sun} iconColor="#d97706" iconBg="#fffbeb"
-          title="Theme mode" desc={darkMode ? 'Dark mode active' : 'Light mode active'}
-          right={<Toggle checked={darkMode} onChange={setDarkMode} />} />
-        <SettingRow icon={Globe} iconColor="#3b82f6" iconBg="#eff6ff"
+        <SettingRow icon={Globe} iconColor="var(--color-shakti-info)" iconBg="var(--color-surface-highest)"
           title="App language" desc="English (US)" />
       </Section>
 
       <Section label="Notifications" delay={0.1}>
-        <SettingRow icon={Bell} iconColor="#10B981" iconBg="#ecfdf5"
+        <SettingRow icon={Bell} iconColor="var(--color-shakti-success)" iconBg="var(--color-shakti-success-light)"
           title="Push alerts" desc="Stay updated with real-time alerts"
           right={<Toggle checked={notifications} onChange={setNotifications} />} />
-        <SettingRow icon={Volume2} iconColor="#ec4899" iconBg="#fdf2f8"
+        <SettingRow icon={Volume2} iconColor="var(--color-shakti-secondary)" iconBg="var(--color-shakti-secondary-light)"
           title="SOS audio" desc="High-frequency alarm for emergencies"
           right={<Toggle checked={sosSoundsOn} onChange={setSosSoundsOn} />} />
       </Section>
 
       <Section label="Safety & Privacy" delay={0.15}>
-        <SettingRow icon={Vibrate} iconColor="#f43f5e" iconBg="#fff1f2"
+        <SettingRow icon={Vibrate} iconColor="var(--color-shakti-safety)" iconBg="var(--color-shakti-safety-light)"
           title="Shake for SOS" desc="Triple shake to trigger emergency"
           right={<Toggle checked={shakeDetection} onChange={setShakeDetection} />} />
-        <SettingRow icon={Shield} iconColor="#f43f5e" iconBg="#fff1f2"
+        <SettingRow icon={Shield} iconColor="var(--color-shakti-safety)" iconBg="var(--color-shakti-safety-light)"
           title="Trusted contacts" desc="Manage your circle of safety"
           onClick={() => navigate('/safety/contacts')} />
-        <SettingRow icon={Lock} iconColor="#7c3aed" iconBg="#f5f3ff"
+        <SettingRow icon={Lock} iconColor="var(--color-shakti-primary)" iconBg="var(--color-shakti-primary-light)"
           title="Locker security" desc="Manage your evidence vault PIN"
           onClick={() => navigate('/safety/evidence')} />
-        <SettingRow icon={Eye} iconColor="#3b82f6" iconBg="#eff6ff"
+        <SettingRow icon={Eye} iconColor="var(--color-shakti-info)" iconBg="var(--color-surface-highest)"
           title="Data & privacy" desc="Control what you share with SHAKTI" />
       </Section>
 
       <Section label="Support" delay={0.2}>
-        <SettingRow icon={HelpCircle} iconColor="#10B981" iconBg="#ecfdf5"
+        <SettingRow icon={HelpCircle} iconColor="var(--color-shakti-success)" iconBg="var(--color-shakti-success-light)"
           title="Help center" desc="FAQs and community support" />
       </Section>
 
       <Section label="Account" delay={0.25}>
-        <SettingRow icon={LogOut} iconColor="#d97706" iconBg="#fffbeb"
+        <SettingRow icon={LogOut} iconColor="var(--color-shakti-warning)" iconBg="var(--color-shakti-warning-light)"
           title="Sign out" desc="Securely exit your account" onClick={handleLogout} />
-        <SettingRow icon={Trash2} iconColor="#f43f5e" iconBg="#fff1f2"
+        <SettingRow icon={Trash2} iconColor="var(--color-shakti-safety)" iconBg="var(--color-shakti-safety-light)"
           title="Close account" desc="Permanently remove all your data"
           onClick={() => setShowModal(true)} danger />
       </Section>
@@ -164,8 +159,8 @@ export default function SettingsPage() {
               className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-sm bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-8 z-[1001] shadow-xl border border-[var(--color-surface-highlight)]"
             >
               <div className="text-center">
-                <div className="w-16 h-16 rounded-[1.25rem] bg-rose-50 flex items-center justify-center mx-auto mb-5 shadow-inner">
-                  <AlertTriangle size={32} className="text-rose-500" />
+                <div className="w-16 h-16 rounded-[1.25rem] bg-[var(--color-shakti-safety-light)] flex items-center justify-center mx-auto mb-5 shadow-inner">
+                  <AlertTriangle size={32} className="text-[var(--color-shakti-safety)]" />
                 </div>
                 <h3 className="text-lg font-bold text-[var(--color-text-primary)] mb-3">Are you sure?</h3>
                 <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-6">
@@ -174,7 +169,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col gap-3">
                   <motion.button 
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-3.5 rounded-[1rem] bg-gradient-to-r from-rose-500 to-rose-600 text-white text-sm font-bold hover:from-rose-600 hover:to-rose-700 transition-all shadow-sm"
+                    className="w-full py-3.5 rounded-[1rem] bg-gradient-to-r from-[var(--color-shakti-safety)] to-rose-700 text-white text-sm font-bold glow-red transition-all shadow-sm"
                   >
                     Delete everything
                   </motion.button>

@@ -20,38 +20,38 @@ export default function MentorMatch() {
     : mentors.filter(m => m.expertise.includes(activeFilter));
 
   return (
-    <div className="min-h-screen bg-[#fdfcff] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600 mb-4">
+    <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
+      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-blue-600 mb-4">
         <ArrowLeft size={16} /> Back to Tech
       </Link>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl p-6 md:p-8 mb-6 shadow-[0_10px_30px_rgba(109,40,217,0.06)] border border-purple-50"
+        className="bg-[var(--color-surface-lowest)] rounded-3xl p-6 md:p-8 mb-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-purple-50"
       >
         <div className="flex items-center gap-5">
           <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 flex-shrink-0">
             <Users size={28} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">Mentor Match</h1>
-            <p className="text-sm text-gray-600">AI-paired mentors who match your goals & schedule.</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-1">Mentor Match</h1>
+            <p className="text-sm text-[var(--color-text-secondary)]">AI-paired mentors who match your goals & schedule.</p>
           </div>
         </div>
       </motion.div>
 
       <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 mb-6 border border-purple-100 flex items-start gap-4">
-        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-purple-600 shadow-sm flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-[var(--color-surface-lowest)] flex items-center justify-center text-purple-600 shadow-sm flex-shrink-0">
           <Sparkles size={20} />
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-900 mb-1">AI suggests: <span className="text-purple-700">Priya Krishnan</span></p>
-          <p className="text-xs text-gray-600">Based on your interest in frontend & leadership growth.</p>
+          <p className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">AI suggests: <span className="text-purple-700">Priya Krishnan</span></p>
+          <p className="text-xs text-[var(--color-text-secondary)]">Based on your interest in frontend & leadership growth.</p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 mb-5 overflow-x-auto pb-2">
-        <Filter size={14} className="text-gray-400 flex-shrink-0" />
+        <Filter size={14} className="text-[var(--color-outline)] flex-shrink-0" />
         {filters.map(f => (
           <button
             key={f}
@@ -59,7 +59,7 @@ export default function MentorMatch() {
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
               activeFilter === f
                 ? 'bg-purple-600 text-white shadow-sm'
-                : 'bg-white text-gray-600 border border-gray-200 hover:border-purple-200'
+                : 'bg-[var(--color-surface-lowest)] text-[var(--color-text-secondary)] border border-[var(--color-surface-highlight)] hover:border-purple-200'
             }`}
           >
             {f}
@@ -72,7 +72,7 @@ export default function MentorMatch() {
           <motion.div
             key={m.id}
             whileHover={{ y: -3 }}
-            className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all"
+            className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm hover:shadow-md transition-all"
           >
             <div className="flex items-start gap-4 mb-4">
               <div
@@ -82,19 +82,19 @@ export default function MentorMatch() {
                 {m.initial}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-base font-semibold text-gray-900 leading-tight">{m.name}</h3>
-                <p className="text-xs text-gray-500">{m.role} · {m.company}</p>
+                <h3 className="text-base font-semibold text-[var(--color-text-primary)] leading-tight">{m.name}</h3>
+                <p className="text-xs text-[var(--color-text-secondary)]">{m.role} · {m.company}</p>
                 <div className="flex items-center gap-3 mt-1">
-                  <div className="flex items-center gap-1 text-xs text-gray-700">
+                  <div className="flex items-center gap-1 text-xs text-[var(--color-text-primary)]">
                     <Star size={12} className="text-amber-400 fill-amber-400" />
                     <span className="font-semibold">{m.rating}</span>
                   </div>
-                  <span className="text-xs text-gray-400">{m.sessions} sessions</span>
+                  <span className="text-xs text-[var(--color-outline)]">{m.sessions} sessions</span>
                 </div>
               </div>
             </div>
 
-            <p className="text-sm text-gray-600 mb-4 leading-relaxed">{m.bio}</p>
+            <p className="text-sm text-[var(--color-text-secondary)] mb-4 leading-relaxed">{m.bio}</p>
 
             <div className="flex items-center gap-1.5 mb-4 flex-wrap">
               {m.expertise.map(e => (

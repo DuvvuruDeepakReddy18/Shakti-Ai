@@ -78,9 +78,9 @@ export default function MenstrualTracker() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
         className="rounded-[2rem] p-6 shadow-sm bg-[var(--color-surface-lowest)] relative overflow-hidden"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-pink-500/10 to-transparent blur-3xl opacity-50 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--color-shakti-secondary)]/10 to-transparent blur-3xl opacity-50 pointer-events-none" />
         <div className="flex items-center gap-4 relative z-10">
-          <div className="w-14 h-14 rounded-[1.25rem] bg-pink-50 flex items-center justify-center text-pink-600 flex-shrink-0 shadow-inner">
+          <div className="w-14 h-14 rounded-[1.25rem] bg-[var(--color-shakti-secondary)]/10 flex items-center justify-center text-[var(--color-shakti-secondary)] flex-shrink-0 shadow-inner">
             <Droplet size={28} strokeWidth={1.5} />
           </div>
           <div>
@@ -99,7 +99,7 @@ export default function MenstrualTracker() {
                 <h2 className="text-2xl font-display font-bold text-[var(--color-text-primary)]">{CYCLE_PHASES[currentPhase].label}</h2>
                 <p className="text-sm font-medium mt-1" style={{ color: CYCLE_PHASES[currentPhase].color }}>{CYCLE_PHASES[currentPhase].description}</p>
               </div>
-              <div className="text-center bg-white p-4 rounded-2xl shadow-sm">
+              <div className="text-center bg-[var(--color-surface-lowest)] p-4 rounded-2xl shadow-sm">
                 <p className="text-4xl font-bold text-[var(--color-text-primary)]">{daysUntil > 0 ? daysUntil : 0}</p>
                 <p className="text-[10px] font-bold text-[var(--color-text-secondary)] uppercase mt-1">Days Until</p>
               </div>
@@ -108,7 +108,7 @@ export default function MenstrualTracker() {
 
           <div className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-6 shadow-sm">
             <h3 className="text-base font-bold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-pink-50"><Info size={16} style={{ color: CYCLE_PHASES[currentPhase].color }} /></div> Tips for this phase
+              <div className="p-1.5 rounded-lg bg-[var(--color-shakti-secondary)]/10"><Info size={16} style={{ color: CYCLE_PHASES[currentPhase].color }} /></div> Tips for this phase
             </h3>
             <ul className="space-y-3">
               {PHASE_TIPS[currentPhase].map((tip, idx) => (
@@ -128,25 +128,25 @@ export default function MenstrualTracker() {
           <div>
             <label className="text-sm font-bold text-[var(--color-text-primary)] mb-2 block">First day of last period</label>
             <input type="date" value={lastPeriod} onChange={(e) => setLastPeriod(e.target.value)}
-              className="w-full px-5 py-3 rounded-xl bg-[var(--color-surface)] text-[var(--color-text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all shadow-inner" />
+              className="w-full px-5 py-3 rounded-xl bg-[var(--color-surface)] text-[var(--color-text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-shakti-secondary)]/20 focus:border-[var(--color-shakti-secondary)] transition-all shadow-inner" />
           </div>
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-bold text-[var(--color-text-primary)]">Cycle length</label>
-              <span className="text-sm font-bold text-pink-500 bg-pink-50 px-3 py-1 rounded-lg">{cycleLength} days</span>
+              <span className="text-sm font-bold text-[var(--color-shakti-secondary)] bg-[var(--color-shakti-secondary)]/10 px-3 py-1 rounded-lg">{cycleLength} days</span>
             </div>
             <input type="range" min="21" max="35" value={cycleLength}
               onChange={(e) => setCycleLength(Number(e.target.value))}
-              className="w-full accent-pink-500 mt-2" />
+              className="w-full accent-[var(--color-shakti-secondary)] mt-2" />
           </div>
         </div>
-        <button onClick={save} className="w-full py-4 mt-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95">Save Details</button>
+        <button onClick={save} className="w-full py-4 mt-2 rounded-full bg-gradient-to-r from-[var(--color-shakti-secondary)] to-[var(--color-shakti-error)] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95">Save Details</button>
       </div>
 
       {calendar.length > 0 && (
         <div className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-6 shadow-sm">
           <h3 className="text-base font-bold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-pink-50"><Calendar size={16} className="text-pink-500" /></div> Cycle Calendar
+            <div className="p-1.5 rounded-lg bg-[var(--color-shakti-secondary)]/10"><Calendar size={16} className="text-[var(--color-shakti-secondary)]" /></div> Cycle Calendar
           </h3>
           <div className="grid grid-cols-7 gap-2">
             {calendar.map(d => (
@@ -171,7 +171,7 @@ export default function MenstrualTracker() {
       <div className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-6 shadow-sm space-y-6">
         <div>
           <h3 className="text-xl font-display font-bold text-[var(--color-text-primary)] mb-2 flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-purple-50"><Moon size={20} className="text-purple-600" /></div> Cycle Sync Explorer
+            <div className="p-1.5 rounded-lg bg-[var(--color-shakti-primary)]/10"><Moon size={20} className="text-[var(--color-shakti-primary)]" /></div> Cycle Sync Explorer
           </h3>
           <p className="text-sm font-medium text-[var(--color-text-secondary)]">
             Slide to explore how your body changes throughout your cycle and get personalized wellness tips.
@@ -198,7 +198,7 @@ export default function MenstrualTracker() {
 
         <div className="p-5 rounded-[1rem] shadow-sm" style={{ background: `linear-gradient(135deg, ${CYCLE_PHASES[explorerPhase].color}10, ${CYCLE_PHASES[explorerPhase].color}05)` }}>
            <h4 className="text-sm font-bold mb-3 flex items-center gap-2 text-[var(--color-text-primary)]">
-             <div className="p-1 rounded bg-white shadow-sm"><Info size={14} style={{ color: CYCLE_PHASES[explorerPhase].color }} /></div>
+             <div className="p-1 rounded bg-[var(--color-surface-lowest)] shadow-sm"><Info size={14} style={{ color: CYCLE_PHASES[explorerPhase].color }} /></div>
              Tips for Day {explorerDay}
            </h4>
            <ul className="space-y-2">
@@ -218,18 +218,18 @@ export default function MenstrualTracker() {
           {SYMPTOMS.map(s => (
             <motion.button key={s.id} whileTap={{ scale: 0.95 }} onClick={() => toggleSymptom(s.id)}
               className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 transition-all shadow-sm ${
-                symptoms.includes(s.id) ? 'bg-pink-50' : 'bg-[var(--color-surface)] hover:bg-pink-50/50'
+                symptoms.includes(s.id) ? 'bg-[var(--color-shakti-secondary)]/10' : 'bg-[var(--color-surface)] hover:bg-[var(--color-shakti-secondary)]/5'
               }`}>
               <span className="text-2xl">{s.emoji}</span>
-              <span className={`text-[10px] font-bold ${symptoms.includes(s.id) ? 'text-pink-600' : 'text-[var(--color-text-secondary)]'}`}>{s.label}</span>
+              <span className={`text-[10px] font-bold ${symptoms.includes(s.id) ? 'text-[var(--color-shakti-secondary)]' : 'text-[var(--color-text-secondary)]'}`}>{s.label}</span>
             </motion.button>
           ))}
         </div>
       </div>
 
-      <div className="bg-blue-50 rounded-[1rem] p-5 flex items-start gap-4 shadow-sm">
-        <div className="p-2 bg-white rounded-lg shadow-sm"><Info size={18} className="text-blue-500 shrink-0" /></div>
-        <p className="text-sm font-medium text-blue-800 leading-relaxed">
+      <div className="bg-[var(--color-shakti-primary)]/10 rounded-[1rem] p-5 flex items-start gap-4 shadow-sm">
+        <div className="p-2 bg-[var(--color-surface-lowest)] rounded-lg shadow-sm"><Info size={18} className="text-[var(--color-shakti-primary)] shrink-0" /></div>
+        <p className="text-sm font-medium text-[var(--color-text-primary)] leading-relaxed">
           Your cycle data is stored privately on your device. We never share or sell your data.
         </p>
       </div>

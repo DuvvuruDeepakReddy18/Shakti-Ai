@@ -4,12 +4,12 @@ import { Calendar, MapPin, Users, CheckCircle2, Clock, Video, Coffee } from 'luc
 import toast from 'react-hot-toast';
 
 const EVENTS = [
-  { id: 1, title: 'SHE Leads: Women in Tech Summit', date: 'Apr 25', time: '10:00 AM', mode: 'Online', attendees: 1240, capacity: 2000, tags: ['Tech', 'Leadership'], free: true, host: 'WomenTech India', color: 'bg-blue-500' },
-  { id: 2, title: 'Financial Literacy Workshop for Homemakers', date: 'Apr 27', time: '6:00 PM', mode: 'Online', attendees: 340, capacity: 500, tags: ['Finance', 'Basics'], free: true, host: 'MoneyForShe', color: 'bg-green-500' },
-  { id: 3, title: 'Self Defense Training (Free)', date: 'May 1', time: '7:00 AM', mode: 'Bangalore', attendees: 89, capacity: 100, tags: ['Safety', 'Fitness'], free: true, host: 'SafetyFirst', color: 'bg-red-500' },
-  { id: 4, title: 'Freelancing 101: From Zero to Your First Client', date: 'May 3', time: '5:00 PM', mode: 'Online', attendees: 890, capacity: 1500, tags: ['Career', 'Skills'], free: false, price: '₹199', host: 'FreelanceSheCan', color: 'bg-purple-500' },
-  { id: 5, title: 'Period Wellness — Nutritionist AMA', date: 'May 5', time: '8:00 PM', mode: 'Online', attendees: 560, capacity: 1000, tags: ['Health'], free: true, host: 'HealthyHer', color: 'bg-pink-500' },
-  { id: 6, title: 'Mumbai Coffee Meetup — Women Founders', date: 'May 8', time: '11:00 AM', mode: 'Mumbai', attendees: 34, capacity: 50, tags: ['Networking', 'Entrepreneurship'], free: true, host: 'FounderSisters', color: 'bg-orange-500' },
+  { id: 1, title: 'SHE Leads: Women in Tech Summit', date: 'Apr 25', time: '10:00 AM', mode: 'Online', attendees: 1240, capacity: 2000, tags: ['Tech', 'Leadership'], free: true, host: 'WomenTech India', color: 'bg-[var(--color-shakti-info)]' },
+  { id: 2, title: 'Financial Literacy Workshop for Homemakers', date: 'Apr 27', time: '6:00 PM', mode: 'Online', attendees: 340, capacity: 500, tags: ['Finance', 'Basics'], free: true, host: 'MoneyForShe', color: 'bg-[var(--color-shakti-success)]' },
+  { id: 3, title: 'Self Defense Training (Free)', date: 'May 1', time: '7:00 AM', mode: 'Bangalore', attendees: 89, capacity: 100, tags: ['Safety', 'Fitness'], free: true, host: 'SafetyFirst', color: 'bg-[var(--color-shakti-error)]' },
+  { id: 4, title: 'Freelancing 101: From Zero to Your First Client', date: 'May 3', time: '5:00 PM', mode: 'Online', attendees: 890, capacity: 1500, tags: ['Career', 'Skills'], free: false, price: '₹199', host: 'FreelanceSheCan', color: 'bg-[var(--color-shakti-primary)]' },
+  { id: 5, title: 'Period Wellness — Nutritionist AMA', date: 'May 5', time: '8:00 PM', mode: 'Online', attendees: 560, capacity: 1000, tags: ['Health'], free: true, host: 'HealthyHer', color: 'bg-[var(--color-shakti-tertiary)]' },
+  { id: 6, title: 'Mumbai Coffee Meetup — Women Founders', date: 'May 8', time: '11:00 AM', mode: 'Mumbai', attendees: 34, capacity: 50, tags: ['Networking', 'Entrepreneurship'], free: true, host: 'FounderSisters', color: 'bg-[var(--color-shakti-warning)]' },
 ];
 
 export default function Events() {
@@ -25,12 +25,12 @@ export default function Events() {
   return (
     <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.2), rgba(59,130,246,0.1))' }}>
+        className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-shakti-primary) 20%, transparent), color-mix(in srgb, var(--color-shakti-info) 10%, transparent))' }}>
         <div className="flex items-center gap-3 mb-2">
-          <Calendar size={24} className="text-purple-400" />
+          <Calendar size={24} className="text-[var(--color-shakti-primary)]" />
           <h1 className="text-2xl font-display font-bold text-[var(--color-shakti-dark-text)]">Community Events</h1>
         </div>
-        <p className="text-sm text-purple-200/70">Workshops, meetups & webinars — for and by women</p>
+        <p className="text-sm text-[var(--color-shakti-dark-muted)]">Workshops, meetups & webinars — for and by women</p>
       </motion.div>
 
       <div className="flex gap-2">
@@ -61,7 +61,7 @@ export default function Events() {
                   <span className="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded bg-black/40 text-[var(--color-shakti-dark-text)] font-bold">{e.price}</span>
                 )}
                 {e.free && (
-                  <span className="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded bg-green-500/90 text-[var(--color-shakti-dark-text)] font-bold">FREE</span>
+                  <span className="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded bg-[var(--color-shakti-success)] text-[var(--color-shakti-success-on)] font-bold">FREE</span>
                 )}
               </div>
               <div className="p-4">
@@ -70,7 +70,7 @@ export default function Events() {
 
                 <div className="flex flex-wrap gap-1.5 mb-3">
                   {e.tags.map(t => (
-                    <span key={t} className="text-[10px] px-2 py-0.5 rounded bg-purple-500/15 text-purple-300">{t}</span>
+                    <span key={t} className="text-[10px] px-2 py-0.5 rounded bg-[var(--color-shakti-primary-container)] text-[var(--color-shakti-primary)]">{t}</span>
                   ))}
                 </div>
 
@@ -90,7 +90,7 @@ export default function Events() {
 
                 <button onClick={() => register(e.id, e.title)} disabled={isRegistered}
                   className={`w-full py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 ${
-                    isRegistered ? 'bg-green-500/20 text-green-400' : 'gradient-bg text-white'
+                    isRegistered ? 'bg-[var(--color-shakti-success-container)] text-[var(--color-shakti-success)]' : 'gradient-bg text-white'
                   }`}>
                   {isRegistered ? <><CheckCircle2 size={12} /> Registered</> : 'Register'}
                 </button>

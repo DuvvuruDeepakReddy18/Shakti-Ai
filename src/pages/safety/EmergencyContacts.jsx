@@ -23,22 +23,22 @@ export default function EmergencyContacts() {
   const removeContact = (id) => setContacts(contacts.filter(c => c.id !== id));
 
   return (
-    <div className="min-h-screen bg-[#fdfcff] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <Link to="/safety" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-purple-600 mb-4">
+    <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
+      <Link to="/safety" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent-purple)] mb-4">
         <ArrowLeft size={16} /> Back to Safety
       </Link>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl p-6 md:p-8 mb-6 shadow-[0_10px_30px_rgba(109,40,217,0.06)] border border-amber-50"
+        className="bg-[var(--color-surface-lowest)] rounded-3xl p-6 md:p-8 mb-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[var(--color-surface-highlight)]"
       >
         <div className="flex items-center gap-5">
           <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 flex-shrink-0">
             <Users size={28} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">Emergency Contacts</h1>
-            <p className="text-sm text-gray-600">These people are alerted instantly when you trigger SOS.</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-1">Emergency Contacts</h1>
+            <p className="text-sm text-[var(--color-text-secondary)]">These people are alerted instantly when you trigger SOS.</p>
           </div>
         </div>
       </motion.div>
@@ -56,19 +56,19 @@ export default function EmergencyContacts() {
             key={c.id}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4"
+            className="bg-[var(--color-surface-lowest)] rounded-2xl p-4 border border-[var(--color-surface-highlight)] shadow-sm flex items-center gap-4"
           >
             <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold">
               {c.priority}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-base font-semibold text-gray-900 truncate">{c.name}</p>
-              <p className="text-xs text-gray-500">{c.relation} · {c.phone}</p>
+              <p className="text-base font-semibold text-[var(--color-text-primary)] truncate">{c.name}</p>
+              <p className="text-xs text-[var(--color-text-secondary)]">{c.relation} · {c.phone}</p>
             </div>
             <a href={`tel:${c.phone}`} className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center">
               <Phone size={16} />
             </a>
-            <button onClick={() => removeContact(c.id)} className="w-9 h-9 rounded-lg bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-500 flex items-center justify-center">
+            <button onClick={() => removeContact(c.id)} className="w-9 h-9 rounded-lg bg-[var(--color-surface-low)] text-[var(--color-text-secondary)] hover:bg-rose-50 hover:text-rose-500 flex items-center justify-center">
               <Trash2 size={16} />
             </button>
           </motion.div>
@@ -76,29 +76,29 @@ export default function EmergencyContacts() {
       </div>
 
       {showAdd ? (
-        <div className="bg-white rounded-2xl p-5 mb-6 border border-amber-100 shadow-sm">
-          <h3 className="text-base font-semibold text-gray-900 mb-3">Add new contact</h3>
+        <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 mb-6 border border-amber-100 shadow-sm">
+          <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-3">Add new contact</h3>
           <div className="space-y-3">
             <input
               type="text" placeholder="Name"
               value={newContact.name}
               onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-amber-400 outline-none"
+              className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-surface-highlight)] bg-[var(--color-surface)] text-sm text-[var(--color-text-primary)] focus:border-amber-400 outline-none"
             />
             <input
               type="tel" placeholder="Phone (with country code)"
               value={newContact.phone}
               onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-amber-400 outline-none"
+              className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-surface-highlight)] bg-[var(--color-surface)] text-sm text-[var(--color-text-primary)] focus:border-amber-400 outline-none"
             />
             <input
               type="text" placeholder="Relationship (e.g. Friend, Mother)"
               value={newContact.relation}
               onChange={(e) => setNewContact({ ...newContact, relation: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-amber-400 outline-none"
+              className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-surface-highlight)] bg-[var(--color-surface)] text-sm text-[var(--color-text-primary)] focus:border-amber-400 outline-none"
             />
             <div className="flex justify-end gap-2 pt-1">
-              <button onClick={() => setShowAdd(false)} className="px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+              <button onClick={() => setShowAdd(false)} className="px-4 py-2 rounded-lg text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-low)]">
                 Cancel
               </button>
               <button onClick={addContact} className="px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600">
@@ -116,20 +116,20 @@ export default function EmergencyContacts() {
         </button>
       )}
 
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">National helplines</h3>
+      <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3">National helplines</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {HELPLINES.map((h) => (
           <a
             key={h.number}
             href={`tel:${h.number}`}
-            className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-3 hover:border-rose-200 transition-all"
+            className="bg-[var(--color-surface-lowest)] rounded-2xl p-4 border border-[var(--color-surface-highlight)] shadow-sm flex items-center gap-3 hover:border-rose-200 transition-all"
           >
             <div className="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
               <Phone size={18} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900 truncate">{h.name}</p>
-              <p className="text-xs text-gray-500 truncate">{h.description}</p>
+              <p className="text-sm font-semibold text-[var(--color-text-primary)] truncate">{h.name}</p>
+              <p className="text-xs text-[var(--color-text-secondary)] truncate">{h.description}</p>
             </div>
             <span className="text-base font-bold text-rose-600">{h.number}</span>
           </a>

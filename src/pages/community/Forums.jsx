@@ -14,11 +14,11 @@ const DEMO_POSTS = [
 ];
 
 const CAT_COLORS = {
-  safety: 'bg-red-500/20 text-red-400',
-  career: 'bg-amber-500/20 text-amber-400',
-  health: 'bg-pink-500/20 text-pink-400',
-  tech: 'bg-blue-500/20 text-blue-400',
-  general: 'bg-green-500/20 text-green-400',
+  safety: 'bg-[var(--color-shakti-error-container)] text-[var(--color-shakti-error)]',
+  career: 'bg-[var(--color-shakti-warning-container)] text-[var(--color-shakti-warning)]',
+  health: 'bg-[var(--color-shakti-tertiary-container)] text-[var(--color-shakti-tertiary)]',
+  tech: 'bg-[var(--color-shakti-info-container)] text-[var(--color-shakti-info)]',
+  general: 'bg-[var(--color-shakti-success-container)] text-[var(--color-shakti-success)]',
 };
 
 export default function Forums() {
@@ -40,16 +40,17 @@ export default function Forums() {
   return (
     <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(59,130,246,0.1))' }}>
+        className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-shakti-success) 20%, transparent), color-mix(in srgb, var(--color-shakti-info) 10%, transparent))' }}>
         <div className="flex items-center gap-3 mb-2">
-          <MessageSquare size={24} className="text-green-400" />
+          <MessageSquare size={24} className="text-[var(--color-shakti-success)]" />
           <h1 className="text-2xl font-display font-bold text-[var(--color-shakti-dark-text)]">Community Forums</h1>
         </div>
-        <p className="text-sm text-green-200/70">Discuss. Support. Share. Anonymous options available.</p>
+        <p className="text-sm text-[var(--color-shakti-dark-muted)]">Discuss. Support. Share. Anonymous options available.</p>
       </motion.div>
 
       <button onClick={() => setShowNew(!showNew)}
-        className="w-full py-3 rounded-xl gradient-bg text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-green-500/20">
+        className="w-full py-3 rounded-xl gradient-bg text-white font-semibold flex items-center justify-center gap-2 shadow-lg"
+        style={{ boxShadow: '0 10px 15px -3px color-mix(in srgb, var(--color-shakti-success) 20%, transparent)' }}>
         <Plus size={18} /> Start a Discussion
       </button>
 
@@ -86,14 +87,15 @@ export default function Forums() {
       <div className="space-y-3">
         {filtered.map((p, i) => (
           <motion.div key={p.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-            className="card-static p-4 hover:border-green-500/30 cursor-pointer">
+            className="card-static p-4 hover:border-[var(--color-shakti-success)] cursor-pointer"
+            style={{ transition: 'border-color 0.2s' }}>
             <div className="flex items-start gap-3 mb-2">
               <div className="w-9 h-9 rounded-full gradient-bg flex items-center justify-center text-[var(--color-shakti-dark-text)] text-xs font-bold shrink-0">
                 {p.author.charAt(0)}
               </div>
               <div className="flex-1">
                 <div className="flex items-start gap-2 mb-1">
-                  {p.pinned && <span className="text-[9px] px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-bold uppercase">📌 Pinned</span>}
+                  {p.pinned && <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--color-shakti-warning-container)] text-[var(--color-shakti-warning)] font-bold uppercase">📌 Pinned</span>}
                   <span className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${CAT_COLORS[p.category]}`}>{p.category}</span>
                 </div>
                 <h3 className="font-semibold text-[var(--color-shakti-dark-text)] text-sm mb-1 line-clamp-2">{p.title}</h3>
@@ -106,10 +108,10 @@ export default function Forums() {
               </div>
             </div>
             <div className="flex items-center gap-4 pt-2 border-t border-[var(--color-shakti-dark-border)] text-[11px] text-[var(--color-shakti-dark-muted)]">
-              <span className="flex items-center gap-1"><Heart size={11} className="text-pink-400" /> {p.likes}</span>
-              <span className="flex items-center gap-1"><MessageSquare size={11} className="text-blue-400" /> {p.replies}</span>
+              <span className="flex items-center gap-1"><Heart size={11} className="text-[var(--color-shakti-tertiary)]" /> {p.likes}</span>
+              <span className="flex items-center gap-1"><MessageSquare size={11} className="text-[var(--color-shakti-info)]" /> {p.replies}</span>
               <span className="flex items-center gap-1"><Eye size={11} /> {p.views}</span>
-              {p.likes > 100 && <span className="ml-auto flex items-center gap-1 text-orange-400"><TrendingUp size={11} /> Trending</span>}
+              {p.likes > 100 && <span className="ml-auto flex items-center gap-1 text-[var(--color-shakti-warning)]"><TrendingUp size={11} /> Trending</span>}
             </div>
           </motion.div>
         ))}

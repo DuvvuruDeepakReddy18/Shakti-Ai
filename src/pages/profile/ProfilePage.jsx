@@ -54,14 +54,14 @@ export default function ProfilePage() {
         <div className="relative z-10 flex flex-col items-center gap-4">
           <div className="relative">
             {userProfile?.photoURL ? (
-              <img src={userProfile.photoURL} alt="" className="w-20 h-20 rounded-[1.25rem] object-cover border-4 border-white shadow-[0_6px_20px_rgba(124,58,237,0.15)]" />
+              <img src={userProfile.photoURL} alt="" className="w-20 h-20 rounded-[1.25rem] object-cover border-4 border-[var(--color-surface-lowest)] glow-purple" />
             ) : (
-              <div className="w-20 h-20 rounded-[1.25rem] bg-gradient-to-br from-[#7c3aed] to-[#ec4899] flex items-center justify-center text-white text-2xl font-bold border-4 border-white shadow-[0_6px_20px_rgba(124,58,237,0.15)]">
+              <div className="w-20 h-20 rounded-[1.25rem] bg-gradient-to-br from-[var(--color-shakti-gradient-start)] to-[var(--color-shakti-gradient-end)] flex items-center justify-center text-white text-2xl font-bold border-4 border-[var(--color-surface-lowest)] glow-purple">
                 {getInitials(userProfile?.name || 'User')}
               </div>
             )}
-            <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-[#10B981] border-[3px] border-white rounded-full flex items-center justify-center">
-              <span className="w-2 h-2 bg-white rounded-full" />
+            <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-[var(--color-shakti-success)] border-[3px] border-[var(--color-surface-lowest)] rounded-full flex items-center justify-center">
+              <span className="w-2 h-2 bg-[var(--color-surface-lowest)] rounded-full" />
             </span>
           </div>
           
@@ -77,7 +77,7 @@ export default function ProfilePage() {
               )}
             </div>
             <button onClick={() => editing ? save() : setEditing(true)} disabled={saving}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-[var(--color-shakti-dark-text)] to-[#db2777] text-white text-sm font-bold flex items-center gap-2 mx-auto shadow-[0_4px_12px_rgba(124,58,237,0.25)] transition-opacity disabled:opacity-60"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-[var(--color-shakti-dark-text)] to-[var(--color-shakti-secondary)] text-white text-sm font-bold flex items-center gap-2 mx-auto glow-purple transition-opacity disabled:opacity-60"
             >
               {editing ? <><Save size={16} /> {saving ? 'Saving…' : 'Save'}</> : <><Edit3 size={16} /> Edit profile</>}
             </button>
@@ -109,7 +109,7 @@ export default function ProfilePage() {
         </div>
         <div className="w-full h-2 bg-[var(--color-surface)] rounded-full overflow-hidden">
           <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 1 }}
-            className="h-full bg-gradient-to-r from-[var(--color-shakti-dark-text)] to-[#ec4899] rounded-full" 
+            className="h-full bg-gradient-to-r from-[var(--color-shakti-dark-text)] to-[var(--color-shakti-secondary)] rounded-full" 
           />
         </div>
       </motion.div>
@@ -119,7 +119,7 @@ export default function ProfilePage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} 
           className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-5 shadow-sm border border-[var(--color-surface-highlight)] text-center"
         >
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-orange-500 flex items-center justify-center mx-auto mb-2 shadow-[0_4px_12px_rgba(244,63,94,0.2)]">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--color-shakti-safety)] to-orange-500 flex items-center justify-center mx-auto mb-2 glow-red">
             <Flame size={24} className="text-white fill-white" />
           </div>
           <p className="text-2xl font-extrabold text-[var(--color-text-primary)] m-0 leading-none">{wellnessStreak}</p>
@@ -144,7 +144,7 @@ export default function ProfilePage() {
             className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-5 mb-4 shadow-sm border border-[var(--color-surface-highlight)]"
           >
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-[#7c3aed] to-[#db2777] flex items-center justify-center shadow-[0_4px_12px_rgba(124,58,237,0.2)]">
+              <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] flex items-center justify-center glow-purple">
                 <Edit3 size={20} className="text-white" />
               </div>
               <h3 className="text-base font-bold text-[var(--color-text-primary)] m-0">Edit information</h3>
@@ -239,7 +239,7 @@ export default function ProfilePage() {
               <p className="text-sm font-bold text-[var(--color-text-primary)] m-0 mb-0.5 leading-snug">{a.title}</p>
               <p className="text-xs text-[var(--color-text-secondary)] m-0 leading-snug">{a.desc}</p>
               {a.earned && (
-                <div className="absolute top-2.5 right-2.5 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-sm">
+                <div className="absolute top-2.5 right-2.5 w-6 h-6 bg-[var(--color-surface-lowest)] rounded-full flex items-center justify-center shadow-sm">
                   <Star size={12} className="text-amber-500 fill-amber-500" />
                 </div>
               )}

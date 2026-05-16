@@ -88,7 +88,7 @@ export default function ProjectGenerator() {
         {/* Configuration Section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="bg-white rounded-[2rem] p-6 md:p-8 mb-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative overflow-hidden"
+          className="bg-[var(--color-surface-lowest)] rounded-[2rem] p-6 md:p-8 mb-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-b from-indigo-50/50 to-transparent rounded-bl-full pointer-events-none" />
 
@@ -198,7 +198,7 @@ export default function ProjectGenerator() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.15, type: 'spring', stiffness: 200, damping: 20 }}
-                  className="bg-white rounded-[2rem] p-6 md:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.06)] transition-all duration-300 group"
+                  className="bg-[var(--color-surface-lowest)] rounded-[2rem] p-6 md:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.06)] transition-all duration-300 group"
                 >
                   <div className="flex flex-col md:flex-row items-start gap-6">
                     <div

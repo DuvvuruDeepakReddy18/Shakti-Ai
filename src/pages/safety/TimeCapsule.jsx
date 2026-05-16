@@ -70,7 +70,7 @@ export default function TimeCapsule() {
       </motion.div>
 
       <div className="bg-emerald-50/50 p-4 rounded-[1rem] mb-6 flex gap-3 items-start border border-emerald-100">
-        <div className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-emerald-600 flex-shrink-0 border border-emerald-100">
+        <div className="w-9 h-9 rounded-full bg-[var(--color-surface-lowest)] shadow-sm flex items-center justify-center text-emerald-600 flex-shrink-0 border border-emerald-100">
           <ShieldCheck size={16} />
         </div>
         <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
@@ -106,7 +106,7 @@ export default function TimeCapsule() {
             value={textContent}
             onChange={(e) => setTextContent(e.target.value)}
             placeholder="Describe the incident with as much detail as possible (date, time, involved parties)…"
-            className="w-full h-44 px-5 py-4 rounded-[1rem] bg-[var(--color-surface)] border border-[var(--color-surface-highlight)] text-[var(--color-text-primary)] text-sm placeholder:text-gray-400 focus:outline-none focus:border-[var(--color-shakti-dark-text)] focus:ring-1 focus:ring-[var(--color-shakti-dark-text)] transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] resize-none leading-relaxed"
+            className="w-full h-44 px-5 py-4 rounded-[1rem] bg-[var(--color-surface)] border border-[var(--color-surface-highlight)] text-[var(--color-text-primary)] text-sm placeholder:text-[var(--color-outline)] focus:outline-none focus:border-[var(--color-shakti-dark-text)] focus:ring-1 focus:ring-[var(--color-shakti-dark-text)] transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] resize-none leading-relaxed"
           />
         ) : (
           <div
@@ -145,7 +145,7 @@ export default function TimeCapsule() {
         {sealedRecord && (
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-6 border border-emerald-100 shadow-sm relative"
+            className="bg-[var(--color-surface-lowest)] rounded-2xl p-6 border border-emerald-100 shadow-sm relative"
           >
             <div className="absolute top-4 right-4">
               <span className="px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1">
@@ -158,41 +158,41 @@ export default function TimeCapsule() {
                 <Fingerprint size={22} />
               </div>
               <div>
-                <h3 className="text-base font-semibold text-gray-900">Record sealed</h3>
-                <p className="text-xs text-gray-500">Evidence ID: {sealedRecord.id}</p>
+                <h3 className="text-base font-semibold text-[var(--color-text-primary)]">Record sealed</h3>
+                <p className="text-xs text-[var(--color-text-secondary)]">Evidence ID: {sealedRecord.id}</p>
               </div>
             </div>
 
             <div className="space-y-4">
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+              <div className="bg-[var(--color-surface-low)] p-4 rounded-xl border border-[var(--color-surface-highlight)]">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <p className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider flex items-center gap-1.5">
                     <FileKey size={12} className="text-indigo-500" /> Verification hash
                   </p>
                   <span className="text-[10px] font-semibold text-indigo-600 uppercase tracking-wider">SHA-256</span>
                 </div>
-                <p className="text-xs font-semibold text-gray-700 font-mono break-all leading-relaxed p-3 bg-white rounded-lg border border-gray-100">
+                <p className="text-xs font-semibold text-[var(--color-text-primary)] font-mono break-all leading-relaxed p-3 bg-[var(--color-surface-lowest)] rounded-lg border border-[var(--color-surface-highlight)]">
                   {sealedRecord.hash}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-gray-500 flex-shrink-0">
+                <div className="bg-[var(--color-surface-low)] p-3 rounded-xl border border-[var(--color-surface-highlight)] flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-[var(--color-surface-lowest)] flex items-center justify-center text-[var(--color-text-secondary)] flex-shrink-0">
                     <Clock size={16} />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-0.5">Timestamp</p>
-                    <p className="text-xs font-semibold text-gray-900">{new Date(sealedRecord.timestamp).toLocaleString()}</p>
+                    <p className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-0.5">Timestamp</p>
+                    <p className="text-xs font-semibold text-[var(--color-text-primary)]">{new Date(sealedRecord.timestamp).toLocaleString()}</p>
                   </div>
                 </div>
-                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-gray-500 flex-shrink-0">
+                <div className="bg-[var(--color-surface-low)] p-3 rounded-xl border border-[var(--color-surface-highlight)] flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-[var(--color-surface-lowest)] flex items-center justify-center text-[var(--color-text-secondary)] flex-shrink-0">
                     <Database size={16} />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-0.5">Storage</p>
-                    <p className="text-xs font-semibold text-gray-900">Decentralized vault</p>
+                    <p className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-0.5">Storage</p>
+                    <p className="text-xs font-semibold text-[var(--color-text-primary)]">Decentralized vault</p>
                   </div>
                 </div>
               </div>

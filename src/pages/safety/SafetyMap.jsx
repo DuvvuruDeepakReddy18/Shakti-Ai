@@ -28,9 +28,9 @@ const getZoneColor = (rating) => {
 };
 
 const getZoneBgColor = (rating) => {
-  if (rating === 'safe') return 'bg-emerald-50 text-emerald-700 border-emerald-100';
-  if (rating === 'moderate') return 'bg-amber-50 text-amber-700 border-amber-100';
-  return 'bg-rose-50 text-rose-700 border-rose-100';
+  if (rating === 'safe') return 'bg-[var(--color-shakti-success-light)]/20 text-[var(--color-shakti-success)] border-[var(--color-shakti-success)]/30';
+  if (rating === 'moderate') return 'bg-[var(--color-shakti-warning-light)]/30 text-[#b45309] border-[var(--color-shakti-warning)]/40';
+  return 'bg-[var(--color-shakti-error-container)]/80 text-[var(--color-shakti-error)] border-[var(--color-shakti-error)]/30';
 };
 
 const createCustomIcon = (score, rating) =>
@@ -113,7 +113,7 @@ export default function SafetyMap() {
 
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
-        className="h-[400px] rounded-2xl overflow-hidden mb-6 shadow-md border border-gray-100 relative z-0"
+        className="h-[400px] rounded-2xl overflow-hidden mb-6 shadow-md border border-[var(--color-surface-highlight)] relative z-0"
       >
         <MapContainer center={[centerLat, centerLng]} zoom={11} className="w-full h-full" zoomControl={false}>
           <MapUpdater center={[centerLat, centerLng]} />
@@ -127,8 +127,8 @@ export default function SafetyMap() {
               <Marker position={[zone.lat, zone.lng]} icon={createCustomIcon(zone.score, zone.rating)}>
                 <Popup>
                   <div className="p-2 text-center">
-                    <p className="font-semibold text-gray-900 text-sm mb-1">{zone.name}</p>
-                    <p className="text-xs text-gray-500">{zone.users} active users</p>
+                    <p className="font-semibold text-[var(--color-text-primary)] text-sm mb-1">{zone.name}</p>
+                    <p className="text-xs text-[var(--color-text-secondary)]">{zone.users} active users</p>
                   </div>
                 </Popup>
               </Marker>
@@ -137,15 +137,15 @@ export default function SafetyMap() {
         </MapContainer>
 
         <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md rounded-xl p-3 shadow-md border border-white/60 z-[1000] space-y-2">
-          <LegendItem color="bg-emerald-500" label="Safe (8+)" />
-          <LegendItem color="bg-amber-500" label="Moderate (5-7)" />
-          <LegendItem color="bg-rose-500" label="Caution (<5)" />
+          <LegendItem color="bg-[#10B981]" label="Safe (8+)" />
+          <LegendItem color="bg-[#F59E0B]" label="Moderate (5-7)" />
+          <LegendItem color="bg-[#EF4444]" label="Caution (<5)" />
         </div>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-6 border border-[var(--color-surface-highlight)] shadow-md mb-8">
-        <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
           <Zap size={18} className="text-amber-500" /> AI safety navigator
         </h3>
 
@@ -195,31 +195,31 @@ export default function SafetyMap() {
           {analysis && (
             <motion.div
               initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-              className="mt-5 pt-5 border-t border-gray-100"
+              className="mt-5 pt-5 border-t border-[var(--color-surface-highlight)]"
             >
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-4">
-                <div className="md:col-span-1 flex flex-col items-center justify-center p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                  <div className="text-4xl font-bold text-gray-900 mb-1">{analysis.safetyScore}</div>
-                  <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Safety index</div>
+                <div className="md:col-span-1 flex flex-col items-center justify-center p-4 rounded-2xl bg-[var(--color-surface-low)] border border-[var(--color-surface-highlight)]">
+                  <div className="text-4xl font-bold text-[var(--color-text-primary)] mb-1">{analysis.safetyScore}</div>
+                  <div className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">Safety index</div>
                 </div>
                 <div className="md:col-span-2 space-y-2">
                   <span className={`px-2.5 py-1 rounded-full text-xs font-semibold inline-block border ${getZoneBgColor(analysis.safetyScore >= 8 ? 'safe' : analysis.safetyScore >= 5 ? 'moderate' : 'unsafe')}`}>
                     {analysis.safetyScore >= 8 ? 'Optimal path' : analysis.safetyScore >= 5 ? 'Moderate caution' : 'Alternative recommended'}
                   </span>
-                  <p className="text-sm text-gray-700 leading-relaxed">{analysis.recommendation}</p>
+                  <p className="text-sm text-[var(--color-text-primary)] leading-relaxed">{analysis.recommendation}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {analysis.riskFactors?.length > 0 && (
-                  <div className="bg-rose-50/60 rounded-xl p-4 border border-rose-100">
-                    <h4 className="text-xs font-semibold text-rose-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <div className="bg-[var(--color-shakti-error-container)]/50 rounded-xl p-4 border border-[var(--color-shakti-error)]/20">
+                    <h4 className="text-xs font-semibold text-[var(--color-shakti-error)] uppercase tracking-wider mb-2 flex items-center gap-1.5">
                       <AlertTriangle size={12} /> Attention areas
                     </h4>
                     <div className="space-y-1.5">
                       {analysis.riskFactors.map((r, i) => (
-                        <div key={i} className="flex gap-2 text-sm text-gray-700">
-                          <div className="w-1.5 h-1.5 rounded-full bg-rose-400 mt-1.5 flex-shrink-0" />
+                        <div key={i} className="flex gap-2 text-sm text-[var(--color-text-primary)]">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-shakti-error)] mt-1.5 flex-shrink-0" />
                           <p>{r}</p>
                         </div>
                       ))}
@@ -227,14 +227,14 @@ export default function SafetyMap() {
                   </div>
                 )}
                 {analysis.tips?.length > 0 && (
-                  <div className="bg-emerald-50/60 rounded-xl p-4 border border-emerald-100">
-                    <h4 className="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <div className="bg-[var(--color-shakti-success-light)]/10 rounded-xl p-4 border border-[var(--color-shakti-success)]/20">
+                    <h4 className="text-xs font-semibold text-[var(--color-shakti-success)] uppercase tracking-wider mb-2 flex items-center gap-1.5">
                       <Shield size={12} /> Proactive defense
                     </h4>
                     <div className="space-y-1.5">
                       {analysis.tips.map((t, i) => (
-                        <div key={i} className="flex gap-2 text-sm text-gray-700">
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0" />
+                        <div key={i} className="flex gap-2 text-sm text-[var(--color-text-primary)]">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-shakti-success)] mt-1.5 flex-shrink-0" />
                           <p>{t}</p>
                         </div>
                       ))}
@@ -270,7 +270,7 @@ export default function SafetyMap() {
                 <span className={`px-2 py-0.5 rounded-[0.5rem] text-[10px] uppercase tracking-wider font-bold border ${getZoneBgColor(zone.rating)}`}>{zone.rating}</span>
               </div>
             </div>
-            <ChevronRight size={20} className="text-gray-300 group-hover:text-[var(--color-shakti-dark-text)] transition-colors flex-shrink-0" />
+            <ChevronRight size={20} className="text-[var(--color-outline)] group-hover:text-[var(--color-shakti-dark-text)] transition-colors flex-shrink-0" />
           </motion.div>
         ))}
       </div>
@@ -282,7 +282,7 @@ function LegendItem({ color, label }) {
   return (
     <div className="flex items-center gap-2">
       <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
-      <span className="text-xs font-medium text-gray-700">{label}</span>
+      <span className="text-xs font-medium text-[var(--color-text-primary)]">{label}</span>
     </div>
   );
 }

@@ -84,7 +84,7 @@ export default function SafetyScoreboard() {
               <input
                 value={location} onChange={(e) => setLocation(e.target.value)}
                 placeholder="Search area or landmark"
-                className="w-full px-5 py-4 rounded-[1rem] bg-[var(--color-surface)] border border-[var(--color-surface-highlight)] text-[var(--color-text-primary)] text-sm placeholder:text-gray-400 focus:outline-none focus:border-[var(--color-shakti-dark-text)] focus:ring-1 focus:ring-[var(--color-shakti-dark-text)] transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                className="w-full px-5 py-4 rounded-[1rem] bg-[var(--color-surface)] border border-[var(--color-surface-highlight)] text-[var(--color-text-primary)] text-sm placeholder:text-[var(--color-outline)] focus:outline-none focus:border-[var(--color-shakti-dark-text)] focus:ring-1 focus:ring-[var(--color-shakti-dark-text)] transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
               />
             </div>
 
@@ -96,7 +96,7 @@ export default function SafetyScoreboard() {
                     <Star
                       size={40}
                       fill={s <= rating ? '#ec4899' : 'transparent'}
-                      className={`transition-colors ${s <= rating ? 'text-pink-500' : 'text-gray-300 hover:text-pink-200'}`}
+                      className={`transition-colors ${s <= rating ? 'text-pink-500' : 'text-[var(--color-outline)] hover:text-pink-200'}`}
                     />
                   </button>
                 ))}
@@ -169,7 +169,7 @@ export default function SafetyScoreboard() {
                 </div>
               </div>
               <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-inner group-hover:scale-110 transition-transform
-                 ${item.trend === 'up' ? 'bg-emerald-50 text-emerald-600' : item.trend === 'down' ? 'bg-rose-50 text-rose-600' : 'bg-gray-50 text-gray-400'}`}>
+                 ${item.trend === 'up' ? 'bg-emerald-50 text-emerald-600' : item.trend === 'down' ? 'bg-rose-50 text-rose-600' : 'bg-[var(--color-surface-low)] text-[var(--color-outline)]'}`}>
                 {item.trend === 'up' && <TrendingUp size={18} strokeWidth={2.5} />}
                 {item.trend === 'down' && <TrendingDown size={18} strokeWidth={2.5} />}
                 {item.trend === 'stable' && <ArrowRight size={18} strokeWidth={2.5} />}

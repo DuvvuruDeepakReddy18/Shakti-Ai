@@ -60,6 +60,15 @@
   --color-inverse-on-surface: #f3eeff;
   --color-inverse-primary: #d2bbff;
   
+  /* Semantic aliases for sub-page standardization */
+  --color-surface: #fcf8ff;
+  --color-surface-highlight: #ccc3d8;
+  --color-text-primary: #181445;
+  --color-text-secondary: #7b7487;
+  --color-accent-blue: #3B82F6;
+  --color-accent-pink: #ec4899;
+  --color-accent-purple: #7c3aed;
+
   /* Outline */
   --color-outline: #7b7487;
   --color-outline-variant: #ccc3d8;
