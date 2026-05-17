@@ -70,17 +70,19 @@ export default function ProjectGenerator() {
         </Link>
 
         {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-8 mb-8 shadow-sm border border-white/40"
-        >
-          <div className="flex items-center gap-6">
-            <div className="w-16 h-16 rounded-[1.25rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 flex-shrink-0">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-[2rem] p-8 mb-8 shadow-2xl border border-white/10 bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+            <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-500/20 blur-[80px]" />
+            <div className="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-purple-500/20 blur-[60px]" />
+          </div>
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="w-16 h-16 rounded-[1.25rem] bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center text-white flex-shrink-0 border border-white/5">
               <Code size={32} />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2 tracking-tight">Project Generator</h1>
-              <p className="text-base text-slate-600">Discover your next big idea. Tailored to your unique skills and passions.</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 tracking-tight">Project Generator</h1>
+              <p className="text-base text-white/70">Discover your next big idea. Tailored to your unique skills and passions.</p>
             </div>
           </div>
         </motion.div>

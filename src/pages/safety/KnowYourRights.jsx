@@ -1,13 +1,38 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, ChevronDown, ArrowLeft, Scale, Gavel, HandMetal, Heart, Clock, BookOpen } from 'lucide-react';
+import { Shield, ChevronDown, ArrowLeft, Scale, Gavel, Heart, Clock, BookOpen, ExternalLink, Download, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const RIGHTS = [
-  { id: 1, title: 'POSH Act Protection', subtitle: 'Sexual harassment prevention', icon: Shield, color: 'text-rose-600', bg: 'bg-rose-50', borderColor: 'border-rose-100', content: 'The POSH Act mandates every organization with 10 or more employees to constitute an Internal Complaints Committee (ICC). You have the right to a safe working environment, free from sexual harassment. Complaints can be filed within 3 months of the incident.' },
-  { id: 2, title: 'Maternity Benefits', subtitle: 'Paid leave & facilities', icon: Heart, color: 'text-emerald-600', bg: 'bg-emerald-50', borderColor: 'border-emerald-100', content: 'Women are entitled to 26 weeks of paid maternity leave for the first two children. Includes work from home provisions and mandatory creche facilities for 50+ employee establishments.' },
-  { id: 3, title: 'Equal Remuneration', subtitle: 'Fair pay & no discrimination', icon: Gavel, color: 'text-indigo-600', bg: 'bg-indigo-50', borderColor: 'border-indigo-100', content: 'Employers must pay equal remuneration to men and women for same work. Discrimination in recruitment, promotion, training on grounds of sex is strictly prohibited.' },
-  { id: 4, title: 'Shift Regulations', subtitle: 'Safe working hours', icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', borderColor: 'border-amber-100', content: 'Women cannot be required to work between 7 PM and 6 AM generally. In IT/ITeS sectors, night shifts allowed with adequate safety measures, transportation, and safe environment.' },
+  {
+    id: 1, title: 'POSH Act Protection', subtitle: 'Sexual harassment prevention', icon: Shield, color: 'text-rose-400', bg: 'bg-rose-500/10', borderColor: 'border-rose-500/20',
+    content: 'The POSH Act mandates every organization with 10 or more employees to constitute an Internal Complaints Committee (ICC). You have the right to a safe working environment, free from sexual harassment. Complaints can be filed within 3 months of the incident.',
+    fullActUrl: 'https://legislative.gov.in/sites/default/files/A2013-14.pdf',
+    actName: 'Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013',
+    keyPoints: ['Mandatory ICC in all organizations with 10+ employees', 'Complaint filing within 3 months', 'Confidentiality of identity is mandatory', 'Employer liable for non-compliance'],
+  },
+  {
+    id: 2, title: 'Maternity Benefits', subtitle: 'Paid leave & facilities', icon: Heart, color: 'text-emerald-400', bg: 'bg-emerald-500/10', borderColor: 'border-emerald-500/20',
+    content: 'Women are entitled to 26 weeks of paid maternity leave for the first two children. Includes work from home provisions and mandatory creche facilities for 50+ employee establishments.',
+    fullActUrl: 'https://labour.gov.in/sites/default/files/TheMaternityBenefitAct1961.pdf',
+    actName: 'Maternity Benefit Act, 1961 (Amended 2017)',
+    keyPoints: ['26 weeks paid leave for first two children', '12 weeks for third child onwards', 'Mandatory creche for 50+ employees', 'Work from home option post-maternity'],
+  },
+  {
+    id: 3, title: 'Equal Remuneration', subtitle: 'Fair pay & no discrimination', icon: Gavel, color: 'text-indigo-400', bg: 'bg-indigo-500/10', borderColor: 'border-indigo-500/20',
+    content: 'Employers must pay equal remuneration to men and women for same work. Discrimination in recruitment, promotion, training on grounds of sex is strictly prohibited.',
+    fullActUrl: 'https://labour.gov.in/sites/default/files/equal_remuneration_act_1976_0.pdf',
+    actName: 'Equal Remuneration Act, 1976 (Now under Code on Wages, 2019)',
+    keyPoints: ['Equal pay for equal work', 'No discrimination in hiring', 'No discrimination in promotions', 'Penalties for non-compliance'],
+  },
+  {
+    id: 4, title: 'Shift Regulations', subtitle: 'Safe working hours', icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10', borderColor: 'border-amber-500/20',
+    content: 'Women cannot be required to work between 7 PM and 6 AM generally. In IT/ITeS sectors, night shifts allowed with adequate safety measures, transportation, and safe environment.',
+    fullActUrl: 'https://labour.gov.in/sites/default/files/Factories_Act_1948.pdf',
+    actName: 'Factories Act, 1948 (Section 66)',
+    keyPoints: ['No night shifts without safety measures', 'Mandatory transport for night shifts', 'Safe restroom and rest facilities', 'Security guard escort required'],
+  },
 ];
 
 export default function KnowYourRights() {
@@ -15,73 +40,168 @@ export default function KnowYourRights() {
   const [expandedId, setExpandedId] = useState(null);
   const toggle = (id) => setExpandedId(expandedId === id ? null : id);
 
+  const handleViewFullAct = (right) => {
+    window.open(right.fullActUrl, '_blank', 'noopener,noreferrer');
+    toast.success(`Opening ${right.title} document`);
+  };
+
+  const handleDownloadSummary = (right) => {
+    const summaryText = `
+═══════════════════════════════════════════
+  ${right.title.toUpperCase()}
+  ${right.actName}
+═══════════════════════════════════════════
+
+OVERVIEW
+${'-'.repeat(40)}
+${right.content}
+
+KEY POINTS
+${'-'.repeat(40)}
+${right.keyPoints.map((p, i) => `  ${i + 1}. ${p}`).join('\n')}
+
+IMPORTANT HELPLINES
+${'-'.repeat(40)}
+  • Women Helpline: 181
+  • National Commission for Women: 7827-170-170
+  • Legal Aid Services: 15100
+
+═══════════════════════════════════════════
+  Generated by She Care AI
+  For legal advice, consult a qualified lawyer.
+═══════════════════════════════════════════
+`;
+
+    const blob = new Blob([summaryText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${right.title.replace(/\s+/g, '_')}_Summary.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success('Summary downloaded!');
+  };
+
   return (
-    <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent-purple)] mb-4">
-        <ArrowLeft size={16} /> Back
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a12] via-[#0d0b1a] to-[#0a0a12] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
+      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-white/50 hover:text-white transition-colors mb-6 group">
+        <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /> Back
       </button>
 
+      {/* Hero */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-[var(--color-surface-lowest)] rounded-3xl p-6 md:p-8 mb-6 relative overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[var(--color-surface-highlight)]">
-        <div className="absolute -top-10 -right-10 w-44 h-44 bg-blue-100/40 rounded-full blur-3xl pointer-events-none" />
+        className="relative overflow-hidden rounded-[2rem] p-7 md:p-9 mb-6 border border-white/[0.06]" style={{ background: 'linear-gradient(135deg, #1a1025 0%, #1e2a45 50%, #0d1a2a 100%)' }}>
+        <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-56 h-56 bg-blue-500/8 blur-[80px] rounded-full pointer-events-none" />
         <div className="flex items-center gap-5 relative z-10">
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0"><BookOpen size={28} /></div>
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-400/20 to-blue-400/20 backdrop-blur-md flex items-center justify-center text-indigo-300 flex-shrink-0 border border-indigo-400/20 shadow-lg shadow-indigo-500/10">
+            <BookOpen size={30} strokeWidth={1.5} />
+          </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-1">Know Your Rights</h1>
-            <p className="text-sm text-[var(--color-text-secondary)]">Legal protections & workplace empowerment.</p>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-1.5 tracking-tight">Know Your Rights</h1>
+            <p className="text-indigo-200/60 text-sm font-medium">Legal protections & workplace empowerment.</p>
           </div>
         </div>
       </motion.div>
 
-      <div className="bg-emerald-50/50 p-4 rounded-2xl mb-6 flex gap-3 items-start border border-emerald-100">
-        <div className="w-9 h-9 rounded-xl bg-[var(--color-surface-lowest)] flex items-center justify-center text-emerald-600 flex-shrink-0"><HandMetal size={16} /></div>
-        <p className="text-sm text-[var(--color-text-primary)] leading-relaxed">
+      {/* Info Banner */}
+      <div className="bg-emerald-500/5 p-4 rounded-xl mb-6 flex gap-3 items-start border border-emerald-500/10">
+        <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 flex-shrink-0">
+          <Scale size={16} />
+        </div>
+        <p className="text-sm text-white/60 leading-relaxed">
           Knowledge is power. Below is a simplified summary of key protections.
-          <span className="text-blue-700 font-semibold"> For specific cases, always consult a legal professional.</span>
+          <span className="text-indigo-400 font-semibold"> For specific cases, always consult a legal professional.</span>
         </p>
       </div>
 
+      {/* Rights Cards */}
       <div className="space-y-3">
         {RIGHTS.map((r) => {
           const Icon = r.icon;
           const open = expandedId === r.id;
           return (
-            <motion.div key={r.id} layout className={`bg-[var(--color-surface-lowest)] rounded-2xl border transition-all shadow-sm ${open ? `${r.borderColor} shadow-md` : 'border-[var(--color-surface-highlight)] hover:border-blue-100'}`}>
-              <button onClick={() => toggle(r.id)} className="w-full flex items-center justify-between p-5 text-left outline-none">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${r.bg} ${r.color}`}><Icon size={20} /></div>
-                  <div className="min-w-0">
-                    <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-0.5 truncate">{r.title}</h3>
-                    <p className="text-xs font-medium text-[var(--color-text-secondary)]">{r.subtitle}</p>
-                  </div>
-                </div>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${open ? 'bg-[var(--color-text-primary)] text-white rotate-180' : 'bg-[var(--color-surface-low)] text-[var(--color-text-secondary)]'}`}><ChevronDown size={16} /></div>
-              </button>
-              <AnimatePresence>
-                {open && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                    <div className="px-5 pb-5 pt-1">
-                      <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed border-l-2 border-[var(--color-surface-highlight)] pl-4">{r.content}</p>
-                      <div className="mt-4 flex gap-2 flex-wrap">
-                        <button className="px-4 py-2 rounded-lg bg-[var(--color-text-primary)] text-white text-xs font-semibold hover:opacity-90 transition-all">View full act</button>
-                        <button className="px-4 py-2 rounded-lg bg-[var(--color-surface-lowest)] border border-[var(--color-surface-highlight)] text-[var(--color-text-secondary)] text-xs font-semibold hover:bg-[var(--color-surface-low)] transition-all">Download summary</button>
-                      </div>
+            <motion.div key={r.id} layout className="group">
+              <div className={`bg-white/[0.03] backdrop-blur-sm rounded-2xl border transition-all ${open ? `${r.borderColor} shadow-xl` : 'border-white/[0.06] hover:border-white/[0.12]'}`}>
+                <button onClick={() => toggle(r.id)} className="w-full flex items-center justify-between p-5 text-left outline-none">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${r.bg} ${r.color}`}><Icon size={20} /></div>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-bold text-white mb-0.5 truncate">{r.title}</h3>
+                      <p className="text-xs text-white/40">{r.subtitle}</p>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  </div>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${open ? 'bg-white text-black rotate-180' : 'bg-white/[0.04] text-white/30'}`}>
+                    <ChevronDown size={14} />
+                  </div>
+                </button>
+                <AnimatePresence>
+                  {open && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                      <div className="px-5 pb-5 pt-1 space-y-4">
+                        <p className="text-sm text-white/50 leading-relaxed border-l-2 border-white/[0.08] pl-4">{r.content}</p>
+
+                        {/* Key Points */}
+                        <div className="bg-white/[0.02] rounded-xl p-4 border border-white/[0.04]">
+                          <p className="text-[10px] font-bold text-white/30 uppercase tracking-wider mb-2.5">Key Points</p>
+                          <div className="space-y-2">
+                            {r.keyPoints.map((point, idx) => (
+                              <div key={idx} className="flex items-start gap-2">
+                                <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${r.color.replace('text-', 'bg-')}`} />
+                                <span className="text-xs text-white/50">{point}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 flex-wrap">
+                          <button
+                            onClick={() => handleViewFullAct(r)}
+                            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500/20 to-blue-500/20 text-indigo-300 text-xs font-bold border border-indigo-500/20 hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/10 transition-all flex items-center gap-2"
+                          >
+                            <ExternalLink size={13} /> View Full Act
+                          </button>
+                          <button
+                            onClick={() => handleDownloadSummary(r)}
+                            className="px-4 py-2.5 rounded-xl bg-white/[0.04] text-white/50 text-xs font-bold border border-white/[0.08] hover:bg-white/[0.08] hover:text-white/70 transition-all flex items-center gap-2"
+                          >
+                            <Download size={13} /> Download Summary
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </motion.div>
           );
         })}
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="mt-6 bg-gradient-to-br from-indigo-950 via-purple-900 to-pink-900 rounded-2xl p-6 relative overflow-hidden shadow-md">
-        <div className="absolute top-0 right-0 p-6 opacity-10"><HandMetal size={80} className="text-white" /></div>
+      {/* Legal Support CTA */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+        className="mt-6 relative overflow-hidden rounded-2xl p-6 border border-white/[0.06]" style={{ background: 'linear-gradient(135deg, #1a103a 0%, #2d1050 50%, #1a0a35 100%)' }}>
+        <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 blur-[60px] rounded-full pointer-events-none" />
         <div className="relative z-10">
-          <h3 className="text-lg font-bold text-white mb-1">Legal Support Network</h3>
-          <p className="text-sm text-purple-200/90 mb-4 max-w-md">Connect with pro-bono lawyers and legal aid clinics specializing in women's workplace rights.</p>
-          <button className="px-5 py-2.5 rounded-xl bg-white text-[var(--color-text-primary)] text-sm font-semibold hover:bg-gray-100 transition-all flex items-center gap-2"><Scale size={15} /> Consult legal aid</button>
+          <h3 className="text-lg font-bold text-white mb-1.5">Legal Support Network</h3>
+          <p className="text-sm text-purple-200/50 mb-4 max-w-md">Connect with pro-bono lawyers and legal aid clinics specializing in women's workplace rights.</p>
+          <div className="flex gap-3 flex-wrap">
+            <button
+              onClick={() => { window.open('https://nalsa.gov.in/', '_blank'); toast.success('Opening NALSA portal'); }}
+              className="px-5 py-2.5 rounded-xl bg-white/10 text-white text-sm font-semibold hover:bg-white/15 transition-all flex items-center gap-2 border border-white/[0.08]"
+            >
+              <Scale size={15} /> Legal Aid Portal
+            </button>
+            <button
+              onClick={() => { window.open('tel:15100'); toast.success('Calling Legal Aid: 15100'); }}
+              className="px-5 py-2.5 rounded-xl bg-white/[0.04] text-white/60 text-sm font-semibold hover:bg-white/[0.08] transition-all flex items-center gap-2 border border-white/[0.06]"
+            >
+              <FileText size={15} /> Call 15100
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>

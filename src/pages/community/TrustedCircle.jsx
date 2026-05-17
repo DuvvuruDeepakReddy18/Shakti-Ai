@@ -47,12 +47,18 @@ export default function TrustedCircle() {
   return (
     <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-6" style={{ background: 'color-mix(in srgb, var(--color-shakti-success) 20%, transparent)' }}>
-        <div className="flex items-center gap-3 mb-2">
-          <Shield size={24} className="text-[var(--color-shakti-success)]" />
-          <h1 className="text-2xl font-display font-bold text-[var(--color-shakti-dark-text)]">Trusted Circle</h1>
+        className="rounded-[2rem] p-6 shadow-lg relative overflow-hidden bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
+        <div className="absolute -top-20 -left-20 w-60 h-60 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex items-center gap-3 mb-2 relative z-10">
+          <div className="w-12 h-12 rounded-[1rem] bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10">
+            <Shield size={24} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-display font-bold text-white">Trusted Circle</h1>
+            <p className="text-sm text-white/60">Your inner circle — trusted contacts for safety, support & connection</p>
+          </div>
         </div>
-        <p className="text-sm text-[var(--color-shakti-success)] opacity-70">Your inner circle — trusted contacts for safety, support & connection</p>
       </motion.div>
 
       <div className="grid grid-cols-3 gap-3">

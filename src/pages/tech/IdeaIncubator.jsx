@@ -20,23 +20,25 @@ export default function IdeaIncubator() {
         <ArrowLeft size={16} /> Back to Tech
       </Link>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-[var(--color-surface-lowest)] rounded-3xl p-6 md:p-8 mb-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-amber-50"
-      >
-        <div className="flex items-center justify-between gap-4">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-[2rem] p-6 md:p-8 mb-6 shadow-2xl border border-white/10 bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-amber-500/20 blur-[80px]" />
+          <div className="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-orange-500/20 blur-[60px]" />
+        </div>
+        <div className="flex items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-5">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 flex-shrink-0">
+            <div className="w-14 h-14 rounded-[1.25rem] bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center text-white flex-shrink-0 border border-white/5">
               <Lightbulb size={28} />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-1">Idea Incubator</h1>
-              <p className="text-sm text-[var(--color-text-secondary)]">Pitch ideas. Find collaborators. Build together.</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Idea Incubator</h1>
+              <p className="text-sm text-white/70">Pitch ideas. Find collaborators. Build together.</p>
             </div>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition-colors flex-shrink-0"
+            className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md text-white text-sm font-semibold hover:bg-white/20 transition-colors flex-shrink-0 border border-white/10"
           >
             <Plus size={16} /> Pitch Idea
           </button>

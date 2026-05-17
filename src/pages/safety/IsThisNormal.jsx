@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MessageSquareWarning, ArrowLeft, Sparkles, ShieldCheck, ChevronRight, AlertCircle, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { analyzeIncident } from '../../services/aiService';
 
 const examples = [
   'My boss texts me at 11pm asking about weekend plans',
@@ -22,57 +23,7 @@ export default function IsThisNormal() {
     setAnalysis(null);
     
     try {
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          "model": "minimax/minimax-m2.5:free",
-          "messages": [
-            {
-              "role": "system",
-              "content": `You are an empathetic, supportive, and objective safety advisor for women. 
-Your job is to analyze the situation described by the user and determine if it is "normal", "concerning", or "dangerous".
-You must respond ONLY with a valid JSON object in this exact format, with no markdown formatting or extra text outside the JSON:
-{
-  "verdict": "normal" | "concerning" | "dangerous",
-  "title": "A short, supportive, and clear title summarizing your assessment",
-  "summary": "A compassionate but objective 2-3 sentence summary explaining why this behavior is or isn't acceptable.",
-  "steps": [
-    "Actionable, practical step 1",
-    "Actionable, practical step 2",
-    "Actionable, practical step 3"
-  ],
-  "helplines": ["Relevant helpline 1", "Relevant helpline 2"]
-}
-Always include standard Indian women's helplines if the situation is concerning or dangerous (e.g., 'Women Helpline: 181', 'National Emergency: 112', 'NCW: 7827170170'). Keep steps highly practical, emphasizing boundaries, documentation, and safety.`
-            },
-            {
-              "role": "user",
-              "content": text
-            }
-          ]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      const content = data.choices[0].message.content;
-      
-      let parsedAnalysis;
-      try {
-        const cleanContent = content.replace(/```json/gi, '').replace(/```/g, '').trim();
-        parsedAnalysis = JSON.parse(cleanContent);
-      } catch (err) {
-        console.error("Failed to parse AI response:", content);
-        throw new Error("Failed to parse analysis JSON");
-      }
-
+      const parsedAnalysis = await analyzeIncident(text);
       setAnalysis(parsedAnalysis);
     } catch (error) {
       console.error("Analysis error:", error);
@@ -124,10 +75,12 @@ Always include standard Indian women's helplines if the situation is concerning 
         </div>
       </motion.div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-        className="bg-[var(--color-surface-lowest)] rounded-[2rem] p-4 mb-10 shadow-sm border border-[var(--color-surface-highlight)]"
-      >
+      <div className="relative group mb-10">
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-shakti-primary)]/20 to-[var(--color-shakti-secondary)]/20 rounded-[2.5rem] blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="relative bg-[var(--color-surface-lowest)]/80 backdrop-blur-xl rounded-[2rem] p-4 shadow-sm border border-[var(--color-surface-highlight)]"
+        >
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -148,7 +101,8 @@ Always include standard Indian women's helplines if the situation is concerning 
             {loading ? 'Analyzing...' : 'Analyze'}
           </button>
         </div>
-      </motion.div>
+        </motion.div>
+      </div>
 
       {!analysis && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-8">

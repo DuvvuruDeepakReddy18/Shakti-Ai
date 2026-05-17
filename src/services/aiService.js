@@ -1,7 +1,6 @@
 import { safeParseJSON } from "../utils/helpers";
 
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
-const MODEL = "openrouter/free";
 
 async function fetchOpenRouter(messages) {
   if (!OPENROUTER_API_KEY) {
@@ -9,29 +8,56 @@ async function fetchOpenRouter(messages) {
     throw new Error("Missing API Key");
   }
 
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": window.location.origin, // Required by OpenRouter
-      "X-Title": "She Care AI"
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: messages,
-      temperature: 0.7,
-      top_p: 0.95
-    })
-  });
+  const models = [
+    'minimax/minimax-m2.5:free',
+    'google/gemma-2-9b-it:free',
+    'meta-llama/llama-3.1-8b-instruct:free',
+  ];
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`OpenRouter API error: ${response.status} - ${errorText}`);
+  for (const model of models) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 20000);
+
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": window.location.origin, // Required by OpenRouter
+          "X-Title": "She Care AI"
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: messages,
+          temperature: 0.7,
+          top_p: 0.95
+        })
+      });
+
+      clearTimeout(timer);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.warn(`OpenRouter API error for ${model}: ${response.status} - ${errorText}`);
+        continue;
+      }
+
+      const data = await response.json();
+      if (data.error) {
+        console.warn(`OpenRouter API error for ${model}:`, data.error);
+        continue;
+      }
+      
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.warn(`Fetch error for ${model}:`, error);
+      continue;
+    }
   }
 
-  const data = await response.json();
-  return data.choices[0].message.content;
+  throw new Error("All available AI models failed.");
 }
 
 // 1. AI Companion Chat (Mental Health Support)
@@ -213,40 +239,84 @@ export async function matchMentor(userProfile) {
 // 9. "Is This Normal?" AI Analyzer
 export async function analyzeIncident(description) {
   try {
-    const systemPrompt = `You are an expert legal and psychological advisor for women's safety in India. Analyze the following incident description.
-       Determine if it's normal workplace/social behavior or a violation of boundaries/laws.
-       Return RAW JSON without markdown code blocks:
-       {
-         "category": "Workplace Harassment" | "Cyberstalking" | "Domestic Abuse" | "Boundary Violation" | "Normal Behavior",
-         "isLegallyActionable": boolean,
-         "severity": "Low" | "Medium" | "High" | "Critical",
-         "analysis": "Brief 2-3 sentence explanation of why this is or isn't normal.",
-         "actionSteps": ["Step 1", "Step 2", "Step 3"],
-         "helplines": [{"name": "Name of helpline", "number": "Phone number"}]
-       }`;
+    const systemPrompt = `You are an empathetic, supportive, and objective safety advisor for women. 
+Your job is to analyze the situation described by the user and determine if it is "normal", "concerning", or "dangerous".
+You must respond ONLY with a valid JSON object in this exact format, with no markdown formatting or extra text outside the JSON:
+{
+  "verdict": "normal" | "concerning" | "dangerous",
+  "title": "A short, supportive, and clear title summarizing your assessment",
+  "summary": "A compassionate but objective 2-3 sentence summary explaining why this behavior is or isn't acceptable.",
+  "steps": [
+    "Actionable, practical step 1",
+    "Actionable, practical step 2",
+    "Actionable, practical step 3"
+  ],
+  "helplines": ["Relevant helpline 1", "Relevant helpline 2"]
+}
+Always include standard Indian women's helplines if the situation is concerning or dangerous (e.g., 'Women Helpline: 181', 'National Emergency: 112', 'NCW: 7827170170'). Keep steps highly practical, emphasizing boundaries, documentation, and safety.`;
        
     const content = await fetchOpenRouter([
       { role: "system", content: systemPrompt },
       { role: "user", content: description }
     ]);
-    return safeParseJSON(content);
+    const result = safeParseJSON(content);
+    if (!result) throw new Error("Invalid response format");
+    return result;
   } catch (error) {
     console.error('Incident analysis error:', error);
     return {
-      category: "Boundary Violation",
-      isLegallyActionable: false,
-      severity: "Medium",
-      analysis: "This behavior crosses professional boundaries and is not normal. While it may not immediately be legally actionable without a clear policy violation, it is creating an uncomfortable environment.",
-      actionSteps: [
+      verdict: "concerning",
+      title: "Boundary Violation",
+      summary: "This behavior crosses professional boundaries and is not normal. While it may not immediately be legally actionable without a clear policy violation, it is creating an uncomfortable environment.",
+      steps: [
         "Document all interactions, keeping screenshots and timestamps.",
         "Set clear, written boundaries with the person involved.",
         "Report to HR if the behavior continues after boundaries are set."
       ],
       helplines: [
-        { name: "Women Helpline", number: "1091" },
-        { name: "National Cyber Crime Reporting", number: "1930" }
+        "Women Helpline: 1091",
+        "National Cyber Crime Reporting: 1930"
       ]
     };
+  }
+}
+
+// 10. ATS Resume Analyzer
+export async function analyzeResume(extractedText) {
+  try {
+    const systemPrompt = `You are an expert ATS (Applicant Tracking System) and career coach.
+Analyze the following resume text:
+"${extractedText.substring(0, 4000)}"
+
+Extract the skills from the resume and show the match scores for 3 different roles it suits best based on those skills.
+Also identify missing keywords, strengths, and one specific bullet point improvement.
+Respond ONLY with a valid JSON object in this EXACT format, with no markdown or extra text:
+{
+  "score": 85,
+  "roles": [
+    { "title": "Frontend Developer", "matchScore": 90 },
+    { "title": "UI/UX Designer", "matchScore": 75 },
+    { "title": "Technical Writer", "matchScore": 60 }
+  ],
+  "missingKeywords": ["React Native", "GraphQL", "Jest"],
+  "strengths": ["Strong action verbs", "Clear impact metrics"],
+  "improvement": {
+    "original": "Worked on web app using React.",
+    "rewritten": "Developed a scalable web application using React, improving load time by 20%.",
+    "reason": "Added specific metrics and impact."
+  }
+}`;
+
+    const content = await fetchOpenRouter([
+      { role: "system", content: systemPrompt },
+      { role: "user", content: "Analyze my resume." }
+    ]);
+    const result = safeParseJSON(content);
+    if (!result) throw new Error("Invalid response format");
+    return result;
+  } catch (error) {
+    console.error('Resume analysis error:', error);
+    throw error;
   }
 }
 

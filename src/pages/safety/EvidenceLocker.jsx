@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, ArrowLeft, Mic, Video, Camera, FileText, Clock, MapPin, Shield, CheckCircle2, X, Play, Square, Download, Share2 } from 'lucide-react';
+import { Lock, ArrowLeft, Mic, Video, Camera, FileText, Clock, MapPin, Shield, CheckCircle2, X, Play, Square, Download, Share2, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const evidenceTypes = [
@@ -120,16 +120,18 @@ export default function EvidenceLocker() {
 
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-[var(--color-surface-lowest)]/80 backdrop-blur-xl rounded-[2rem] p-6 md:p-8 mb-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[var(--color-surface-highlight)]"
+          className="relative overflow-hidden bg-gradient-to-br from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] rounded-[2rem] p-6 md:p-8 mb-8 shadow-xl shadow-[var(--color-shakti-primary-light)]/30"
         >
-          <div className="flex items-center gap-6">
-            <div className="w-16 h-16 rounded-[1.25rem] bg-[var(--color-surface)] flex items-center justify-center text-[var(--color-shakti-primary)] shadow-lg shadow-[var(--color-surface-dim)] flex-shrink-0 relative overflow-hidden border border-[var(--color-surface-highlight)]">
-              <Lock size={28} strokeWidth={2} className="relative z-10" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 blur-2xl rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none" />
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="w-16 h-16 rounded-[1.25rem] bg-white/20 backdrop-blur-md shadow-inner flex items-center justify-center text-white flex-shrink-0 border border-white/20">
+              <Lock size={28} strokeWidth={2} />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] mb-2 tracking-tight">Evidence Locker</h1>
-              <p className="text-base text-[var(--color-text-secondary)] flex items-center gap-2">
-                <Shield size={16} className="text-[var(--color-shakti-success)]" />
+              <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">Evidence Locker</h1>
+              <p className="text-white/90 text-base font-medium flex items-center gap-2">
+                <Shield size={16} className="text-[var(--color-shakti-success-light)]" />
                 End-to-end encrypted vault. Only you have the keys.
               </p>
             </div>
@@ -145,23 +147,24 @@ export default function EvidenceLocker() {
             {evidenceTypes.map(t => {
               const Icon = t.icon;
               return (
-                <motion.button
-                  whileHover={{ y: -4, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  key={t.id}
-                  onClick={() => { if(!selected) setSelected(t.id); }}
-                  className={`bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-6 flex flex-col items-center justify-center gap-4 transition-all shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-[var(--color-surface-highlight)] group aspect-square ${
-                    selected === t.id ? 'ring-2 ring-[var(--color-shakti-primary)] shadow-[var(--color-shakti-primary)]/10' : 'hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)]'
-                  }`}
-                >
-                  <div 
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300" 
-                    style={{ backgroundColor: t.bg }}
+                <div key={t.id} className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-shakti-primary)]/20 to-[var(--color-shakti-secondary)]/20 rounded-[1.75rem] blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => { if(!selected) setSelected(t.id); }}
+                    className={`relative w-full bg-[var(--color-surface-lowest)]/80 backdrop-blur-xl rounded-[1.5rem] p-6 flex flex-col items-center justify-center gap-4 transition-all shadow-sm border border-[var(--color-surface-highlight)] aspect-square ${
+                      selected === t.id ? 'ring-2 ring-[var(--color-shakti-primary)] shadow-[var(--color-shakti-primary)]/10' : ''
+                    }`}
                   >
-                    <Icon size={28} style={{ color: t.color }} strokeWidth={1.5} />
-                  </div>
-                  <span className="text-sm font-bold text-[var(--color-text-primary)]">{t.label}</span>
-                </motion.button>
+                    <div 
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300" 
+                      style={{ backgroundColor: t.bg }}
+                    >
+                      <Icon size={28} style={{ color: t.color }} strokeWidth={1.5} />
+                    </div>
+                    <span className="text-sm font-bold text-[var(--color-text-primary)]">{t.label}</span>
+                  </motion.button>
+                </div>
               );
             })}
           </div>

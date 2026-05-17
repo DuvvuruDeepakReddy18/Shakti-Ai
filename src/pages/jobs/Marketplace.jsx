@@ -23,21 +23,23 @@ export default function Marketplace() {
 
   return (
     <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <Link to="/jobs" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-amber-600 mb-4">
+      <Link to="/jobs" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-shakti-primary)] mb-4">
         <ArrowLeft size={16} /> Back to Jobs
       </Link>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-[var(--color-surface-lowest)] rounded-3xl p-6 md:p-8 mb-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-pink-50"
-      >
-        <div className="flex items-center gap-5">
-          <div className="w-14 h-14 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600 flex-shrink-0">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-[2rem] p-6 md:p-8 mb-6 shadow-2xl border border-white/10 bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-[var(--color-shakti-primary)]/20 blur-[80px]" />
+          <div className="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-shakti-secondary)]/20 blur-[60px]" />
+        </div>
+        <div className="flex items-center gap-5 relative z-10">
+          <div className="w-14 h-14 rounded-[1.25rem] bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center text-white flex-shrink-0 border border-white/5">
             <Store size={28} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-1">Women-Owned Marketplace</h1>
-            <p className="text-sm text-[var(--color-text-secondary)]">Discover and support women entrepreneurs.</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Women-Owned Marketplace</h1>
+            <p className="text-sm text-white/70">Discover and support women entrepreneurs.</p>
           </div>
         </div>
       </motion.div>
@@ -49,8 +51,8 @@ export default function Marketplace() {
             onClick={() => setActive(c)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
               active === c
-                ? 'bg-pink-600 text-white shadow-sm'
-                : 'bg-[var(--color-surface-lowest)] text-[var(--color-text-secondary)] border border-[var(--color-surface-highlight)] hover:border-pink-200'
+                ? 'bg-[var(--color-shakti-primary)] text-white shadow-sm'
+                : 'bg-[var(--color-surface-lowest)] text-[var(--color-text-secondary)] border border-[var(--color-surface-highlight)] hover:border-[var(--color-shakti-primary-container)]'
             }`}
           >
             {c}

@@ -65,24 +65,26 @@ export default function MoodTracker() {
         style={{
           position: 'relative', borderRadius: '1.5rem', padding: '28px 24px',
           marginBottom: '20px', overflow: 'hidden',
-          background: 'var(--color-surface-lowest)',
-          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+          background: 'linear-gradient(135deg, #1a153a, #0d0a1f)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
         }}
       >
-        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(236,72,153,0.08)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '-60px', left: '-40px', width: '240px', height: '240px', background: 'rgba(236,72,153,0.2)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-40px', right: '-30px', width: '200px', height: '200px', background: 'rgba(139,92,246,0.15)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none' }} />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
           <div style={{
             width: '52px', height: '52px', borderRadius: '16px',
-            background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+            background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255,255,255,0.1)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 6px 20px rgba(236,72,153,0.25)',
+            boxShadow: '0 4px 16px rgba(236,72,153,0.15)',
           }}>
-            <Smile size={24} color="white" strokeWidth={2.2} />
+            <Smile size={24} color="#f472b6" strokeWidth={2.2} />
           </div>
           <div>
-            <h1 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>Mood Tracker</h1>
-            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0' }}>Check in daily — your emotional wellbeing matters.</p>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'white', margin: 0, lineHeight: 1.2 }}>Mood Tracker</h1>
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', margin: '3px 0 0' }}>Check in daily — your emotional wellbeing matters.</p>
           </div>
         </div>
       </motion.div>

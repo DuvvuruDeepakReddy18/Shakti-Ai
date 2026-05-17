@@ -56,15 +56,16 @@ export default function TimeCapsule() {
       </button>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden bg-[var(--color-surface-lowest)] rounded-[2rem] p-6 md:p-8 mb-8 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[var(--color-surface-highlight)]">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--color-accent-blue)]/10 to-transparent blur-3xl opacity-50 pointer-events-none" />
+        className="relative overflow-hidden bg-gradient-to-br from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] rounded-[2rem] p-6 md:p-8 mb-8 shadow-xl shadow-[var(--color-shakti-primary-light)]/30">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 blur-2xl rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none" />
         <div className="flex items-center gap-5 relative z-10">
-          <div className="w-16 h-16 rounded-[1.25rem] bg-[var(--color-surface)] shadow-inner flex items-center justify-center text-[var(--color-shakti-dark-text)] flex-shrink-0">
+          <div className="w-16 h-16 rounded-[1.25rem] bg-white/20 backdrop-blur-md shadow-inner flex items-center justify-center text-white flex-shrink-0 border border-white/20">
             <Fingerprint size={32} strokeWidth={1.5} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-2 tracking-tight">Digital Vault</h1>
-            <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">Immutable evidence hashing & verification.</p>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-2 tracking-tight">Digital Vault</h1>
+            <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed">Immutable evidence hashing & verification.</p>
           </div>
         </div>
       </motion.div>
@@ -97,10 +98,12 @@ export default function TimeCapsule() {
         })}
       </div>
 
-      <motion.div
-        key={evidenceType} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-6 border border-[var(--color-surface-highlight)] shadow-sm mb-6"
-      >
+      <div className="relative group mb-6">
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-shakti-primary)]/20 to-[var(--color-shakti-secondary)]/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+        <motion.div
+          key={evidenceType} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          className="relative bg-[var(--color-surface-lowest)]/80 backdrop-blur-xl rounded-[1.5rem] p-6 border border-[var(--color-surface-highlight)] shadow-sm"
+        >
         {evidenceType === 'text' ? (
           <textarea
             value={textContent}
@@ -134,12 +137,13 @@ export default function TimeCapsule() {
         <button
           onClick={handleSeal}
           disabled={isSealing || (evidenceType === 'text' && !textContent) || (evidenceType !== 'text' && !selectedFile)}
-          className="w-full py-4 mt-6 rounded-[1rem] bg-gradient-to-r from-[var(--color-shakti-dark-text)] to-[#3A2D80] text-white text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[var(--color-shakti-dark-text)]/20 transition-all disabled:opacity-50 disabled:shadow-none"
+          className="w-full py-4 mt-6 rounded-[1rem] bg-[var(--color-shakti-primary)] text-white text-sm font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[var(--color-shakti-primary)]/30 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:hover:transform-none disabled:shadow-none"
         >
-          {isSealing ? <Loader2 size={18} className="animate-spin" /> : <Lock size={18} className="text-emerald-400" />}
+          {isSealing ? <Loader2 size={18} className="animate-spin" /> : <Lock size={18} />}
           {isSealing ? 'Sealing cryptographic block…' : 'Seal evidence & generate hash'}
         </button>
-      </motion.div>
+        </motion.div>
+      </div>
 
       <AnimatePresence>
         {sealedRecord && (

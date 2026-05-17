@@ -51,21 +51,22 @@ export default function WellnessEngine() {
   return (
     <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-[2rem] p-6 shadow-sm relative overflow-hidden bg-[var(--color-surface-lowest)]">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--color-shakti-success)]/10 to-[var(--color-shakti-primary)]/10 blur-3xl opacity-50 pointer-events-none" />
+        className="rounded-[2rem] p-6 shadow-lg relative overflow-hidden bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
+        <div className="absolute -top-20 -left-20 w-60 h-60 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-purple-500/15 rounded-full blur-3xl pointer-events-none" />
         <div className="flex items-center justify-between relative z-10">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 rounded-[1rem] bg-[var(--color-shakti-success)]/10 flex items-center justify-center text-[var(--color-shakti-success)] flex-shrink-0 shadow-inner">
+              <div className="w-12 h-12 rounded-[1rem] bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-emerald-400 flex-shrink-0 shadow-lg shadow-emerald-500/10">
                 <Activity size={24} />
               </div>
-              <h1 className="text-2xl font-display font-bold text-[var(--color-text-primary)] tracking-tight">Wellness Engine</h1>
+              <h1 className="text-2xl font-display font-bold text-white tracking-tight">Wellness Engine</h1>
             </div>
-            <p className="text-sm text-[var(--color-text-secondary)]">AI-powered activities tailored to your mood</p>
+            <p className="text-sm text-white/60">AI-powered activities tailored to your mood</p>
           </div>
-          <div className="text-center bg-[var(--color-surface)] px-4 py-3 rounded-[1rem] shadow-inner">
-            <div className="flex items-center gap-1 justify-center"><Flame size={16} className="text-[var(--color-shakti-warning)]" /><span className="text-xl font-bold text-[var(--color-text-primary)]">{wellnessStreak}</span></div>
-            <p className="text-[10px] text-[var(--color-text-secondary)] font-bold uppercase tracking-wider mt-1">day streak</p>
+          <div className="text-center bg-white/10 backdrop-blur-md border border-white/10 px-4 py-3 rounded-[1rem] shadow-lg">
+            <div className="flex items-center gap-1 justify-center"><Flame size={16} className="text-amber-400" /><span className="text-xl font-bold text-white">{wellnessStreak}</span></div>
+            <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider mt-1">day streak</p>
           </div>
         </div>
       </motion.div>

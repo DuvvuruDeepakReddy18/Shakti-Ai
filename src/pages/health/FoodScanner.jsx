@@ -52,9 +52,9 @@ Reply ONLY with valid JSON, no markdown, no code fences:
     setScanStatus('🧬 Analyzing hormonal impact… (3-5 seconds)');
 
     const models = [
-      'deepseek/deepseek-v4-flash:free',
-      'nvidia/nemotron-3-super-120b-a12b:free',
       'minimax/minimax-m2.5:free',
+      'google/gemma-2-9b-it:free',
+      'meta-llama/llama-3.1-8b-instruct:free',
     ];
 
     for (const model of models) {
@@ -120,73 +120,36 @@ Reply ONLY with valid JSON, no markdown, no code fences:
 
     setScanStatus('🔍 Identifying food from image… (5-15 sec)');
 
-    // ── Strategy 1: OpenRouter vision models (client-side, same pattern as text) ──
-    const visionModels = [
-      'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-      'google/gemma-4-26b-a4b-it:free',
-      'google/gemma-4-31b-it:free',
-      'nvidia/nemotron-nano-12b-v2-vl:free',
-    ];
-
-    for (const model of visionModels) {
-      try {
-        console.log(`[Vision] Trying ${model}...`);
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 25000);
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST", signal: controller.signal,
-          headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model, max_tokens: 800,
-            messages: [{
-              role: "user",
-              content: [
-                { type: "text", text: VISION_PROMPT },
-                { type: "image_url", image_url: { url: compressed } }
-              ]
-            }]
-          })
-        });
-        clearTimeout(timer);
-        const data = await response.json();
-        if (data.error) { console.warn(`${model} error:`, data.error.message); continue; }
-        const text = data.choices?.[0]?.message?.content;
-        if (text) {
-          const parsed = parseAIResponse(text);
-          if (parsed) {
-            awardPoints(15, 'Used Hormone-Safe Scanner');
-            toast.success('Scan complete! You earned 15 ShePoints 🌟');
-            setResult(parsed);
-            setIsScanning(false);
-            return;
-          }
-        }
-      } catch (err) {
-        console.warn(`${model} failed:`, err.message);
-        continue;
-      }
-    }
-
-    // ── Strategy 2: Vercel serverless Gemini endpoint as fallback ──
-    setScanStatus('🔄 Trying backup scanner…');
+    // ── Call OpenRouter Vision Model ──
+    setScanStatus('🔄 Analyzing image…');
     try {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 30000);
       
-      const r = await fetch("/api/nvidia-vision", {
+      const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST", 
         signal: controller.signal,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: compressed })
+        headers: { 
+          "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json" 
+        },
+        body: JSON.stringify({
+          model: "meta-llama/llama-3.2-11b-vision-instruct:free",
+          max_tokens: 800,
+          messages: [{
+            role: "user",
+            content: [
+              { type: "text", text: VISION_PROMPT },
+              { type: "image_url", image_url: { url: compressed } }
+            ]
+          }]
+        })
       });
 
       clearTimeout(timer);
       const d = await r.json();
 
-      if (r.ok) {
+      if (r.ok && !d.error) {
         const text = d.choices?.[0]?.message?.content;
         if (text) {
           const parsed = parseAIResponse(text);
@@ -198,9 +161,11 @@ Reply ONLY with valid JSON, no markdown, no code fences:
             return;
           }
         }
+      } else {
+        console.warn('OpenRouter vision error:', d.error?.message);
       }
     } catch (err) { 
-      console.warn('Gemini fallback failed:', err.message); 
+      console.warn('Vision fallback failed:', err.message); 
     }
 
     // ── All vision pipelines failed ──

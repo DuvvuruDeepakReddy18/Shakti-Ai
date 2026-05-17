@@ -25,12 +25,18 @@ export default function Events() {
   return (
     <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-shakti-primary) 20%, transparent), color-mix(in srgb, var(--color-shakti-info) 10%, transparent))' }}>
-        <div className="flex items-center gap-3 mb-2">
-          <Calendar size={24} className="text-[var(--color-shakti-primary)]" />
-          <h1 className="text-2xl font-display font-bold text-[var(--color-shakti-dark-text)]">Community Events</h1>
+        className="rounded-[2rem] p-6 shadow-lg relative overflow-hidden bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
+        <div className="absolute -top-20 -left-20 w-60 h-60 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-purple-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex items-center gap-3 mb-2 relative z-10">
+          <div className="w-12 h-12 rounded-[1rem] bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-blue-400 shadow-lg shadow-blue-500/10">
+            <Calendar size={24} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-display font-bold text-white">Community Events</h1>
+            <p className="text-sm text-white/60">Workshops, meetups & webinars — for and by women</p>
+          </div>
         </div>
-        <p className="text-sm text-[var(--color-shakti-dark-muted)]">Workshops, meetups & webinars — for and by women</p>
       </motion.div>
 
       <div className="flex gap-2">

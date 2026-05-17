@@ -1,154 +1,186 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, TrendingUp, Sparkles, Target, BookOpen, IndianRupee } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ArrowLeft, Loader2, TrendingUp, Target, Briefcase,
+  BookOpen, Award, ChevronRight, Sparkles, Rocket,
+  GraduationCap, Calendar, IndianRupee, Zap, ArrowUpRight
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { simulateCareer } from '../../services/aiService';
 
-const sampleRoadmap = {
-  current: { role: 'Junior Frontend Dev', salary: 6 },
-  target: { role: 'Senior Frontend Engineer', salary: 22 },
-  milestones: [
-    { month: 'M1', salary: 6, focus: 'TypeScript fundamentals' },
-    { month: 'M2', salary: 7, focus: 'Build 2 portfolio projects' },
-    { month: 'M3', salary: 9, focus: 'System design basics' },
-    { month: 'M4', salary: 12, focus: 'Advanced React patterns' },
-    { month: 'M5', salary: 16, focus: 'Lead a small team feature' },
-    { month: 'M6', salary: 22, focus: 'Switch / promotion' },
-  ],
-  courses: [
-    { name: 'Total TypeScript', provider: 'Matt Pocock', price: 'Free trial' },
-    { name: 'Frontend System Design', provider: 'GreatFrontEnd', price: '₹4,500' },
-    { name: 'Advanced React Patterns', provider: 'Epic React', price: '₹6,000' },
-  ],
-};
+const SAMPLE_SKILLS = ['HTML/CSS', 'Basic Excel', 'Communication', 'Data Entry', 'Social Media', 'Cooking', 'Teaching'];
+const SAMPLE_ROLES = ['Frontend Developer', 'Data Analyst', 'Digital Marketing Manager', 'UX Designer', 'Content Strategist', 'Product Manager'];
 
 export default function CareerSimulator() {
-  const [skills, setSkills] = useState('React, JavaScript, CSS');
-  const [target, setTarget] = useState('Senior Frontend Engineer');
-  const [result, setResult] = useState(null);
+  const navigate = useNavigate();
+  const [currentSkills, setCurrentSkills] = useState('');
+  const [targetRole, setTargetRole] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [simulation, setSimulation] = useState(null);
 
-  const simulate = () => setResult(sampleRoadmap);
+  const handleSimulate = async () => {
+    if (!currentSkills.trim() || !targetRole.trim()) return toast.error('Fill in both fields');
+    setLoading(true);
+    setSimulation(null);
+    try {
+      const data = await simulateCareer(currentSkills, targetRole);
+      setSimulation(data);
+      toast.success('Career path simulated!');
+    } catch {
+      toast.error('Simulation failed');
+    }
+    setLoading(false);
+  };
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <Link to="/jobs" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-amber-600 mb-4">
-        <ArrowLeft size={16} /> Back to Jobs
-      </Link>
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a12] via-[#0d0b1a] to-[#0a0a12] pb-32 px-4 pt-6 max-w-[960px] mx-auto font-sans">
+      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-white/50 hover:text-white transition-colors mb-6 group">
+        <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /> Back
+      </button>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-[var(--color-surface-lowest)] rounded-3xl p-6 md:p-8 mb-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[var(--color-shakti-primary)]/10"
-      >
-        <div className="flex items-center gap-5">
-          <div className="w-14 h-14 rounded-2xl bg-[var(--color-shakti-primary)]/10 flex items-center justify-center text-[var(--color-shakti-primary)] flex-shrink-0">
-            <TrendingUp size={28} />
+      {/* Hero */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-[2rem] p-7 md:p-9 mb-6 border border-white/[0.06]"
+        style={{ background: 'linear-gradient(135deg, #1a0d25 0%, #2d1050 50%, #1a0d30 100%)' }}>
+        <div className="absolute top-0 right-0 w-72 h-72 bg-fuchsia-500/10 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-56 h-56 bg-purple-500/8 blur-[80px] rounded-full pointer-events-none" />
+        <div className="flex items-center gap-5 relative z-10">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-fuchsia-400/20 to-purple-400/20 backdrop-blur-md flex items-center justify-center text-fuchsia-300 flex-shrink-0 border border-fuchsia-400/20 shadow-lg shadow-fuchsia-500/10">
+            <Rocket size={30} strokeWidth={1.5} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-1">Career Growth Simulator</h1>
-            <p className="text-sm text-[var(--color-text-secondary)]">See your 6-month path to your dream role.</p>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-1.5 tracking-tight">Career Simulator</h1>
+            <p className="text-fuchsia-200/60 text-sm font-medium">AI-powered 6-month roadmap to your dream role.</p>
           </div>
         </div>
       </motion.div>
 
-      <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 mb-6 border border-[var(--color-surface-highlight)] shadow-sm space-y-4">
-        <div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)] mb-2 block">Your current skills</label>
-          <input
-            type="text" value={skills} onChange={(e) => setSkills(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-surface-highlight)] text-sm focus:border-[var(--color-shakti-primary)] outline-none"
-          />
+      {/* Input */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+        className="bg-white/[0.03] backdrop-blur-xl rounded-2xl p-6 border border-white/[0.06] shadow-xl mb-6">
+        
+        <div className="mb-5">
+          <label className="text-[11px] font-bold text-white/40 uppercase tracking-[0.15em] mb-2 block ml-1">Current Skills</label>
+          <div className="relative">
+            <Target className="absolute left-4 top-1/2 -translate-y-1/2 text-fuchsia-400" size={16} />
+            <input value={currentSkills} onChange={(e) => setCurrentSkills(e.target.value)}
+              placeholder="e.g. HTML, Excel, Communication"
+              className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:border-fuchsia-500/40 focus:ring-1 focus:ring-fuchsia-500/20 outline-none transition-all" />
+          </div>
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {SAMPLE_SKILLS.map(s => (
+              <button key={s} onClick={() => setCurrentSkills(prev => prev ? `${prev}, ${s}` : s)}
+                className="px-2.5 py-1 rounded-md text-[10px] font-medium bg-white/[0.03] text-white/30 border border-white/[0.06] hover:bg-fuchsia-500/10 hover:text-fuchsia-400 hover:border-fuchsia-500/20 transition-all">
+                + {s}
+              </button>
+            ))}
+          </div>
         </div>
-        <div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)] mb-2 block">Target role</label>
-          <input
-            type="text" value={target} onChange={(e) => setTarget(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-surface-highlight)] text-sm focus:border-[var(--color-shakti-primary)] outline-none"
-          />
+
+        <div className="mb-5">
+          <label className="text-[11px] font-bold text-white/40 uppercase tracking-[0.15em] mb-2 block ml-1">Dream Role</label>
+          <div className="relative">
+            <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-purple-400" size={16} />
+            <input value={targetRole} onChange={(e) => setTargetRole(e.target.value)}
+              placeholder="e.g. Frontend Developer"
+              className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:border-fuchsia-500/40 focus:ring-1 focus:ring-fuchsia-500/20 outline-none transition-all" />
+          </div>
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {SAMPLE_ROLES.map(r => (
+              <button key={r} onClick={() => setTargetRole(r)}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-all ${
+                  targetRole === r ? 'bg-fuchsia-500/15 text-fuchsia-400 border-fuchsia-500/20' : 'bg-white/[0.03] text-white/30 border-white/[0.06] hover:bg-fuchsia-500/10 hover:text-fuchsia-400 hover:border-fuchsia-500/20'
+                }`}>
+                {r}
+              </button>
+            ))}
+          </div>
         </div>
-        <button
-          onClick={simulate}
-          className="w-full py-3 rounded-xl bg-[var(--color-shakti-primary)] text-white text-sm font-semibold hover:bg-[var(--color-shakti-primary-container)] transition-all flex items-center justify-center gap-2"
-        >
-          <Sparkles size={16} /> Simulate Path
+
+        <button onClick={handleSimulate} disabled={loading}
+          className="w-full py-4 rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white text-sm font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-fuchsia-500/20 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50">
+          {loading ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
+          {loading ? 'Simulating career path…' : 'Generate 6-Month Roadmap'}
         </button>
-      </div>
+      </motion.div>
 
-      {result && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)] mb-1">From</p>
-              <p className="text-base font-semibold text-[var(--color-text-primary)]">{result.current.role}</p>
-              <p className="text-sm text-[var(--color-text-secondary)] mt-1 flex items-center gap-1">
-                <IndianRupee size={12} /> {result.current.salary} LPA
-              </p>
+      {/* Results */}
+      <AnimatePresence>
+        {simulation && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+            {/* Summary */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white/[0.03] rounded-2xl p-5 border border-white/[0.06] text-center">
+                <p className="text-[10px] font-bold text-white/30 uppercase tracking-wider mb-1">From</p>
+                <p className="text-sm font-bold text-white">{simulation.currentLevel}</p>
+                <p className="text-xs text-fuchsia-400 font-semibold mt-1">{simulation.currentSalary}</p>
+              </div>
+              <div className="bg-gradient-to-br from-fuchsia-500/10 to-purple-500/10 rounded-2xl p-5 border border-fuchsia-500/20 text-center">
+                <p className="text-[10px] font-bold text-fuchsia-400/60 uppercase tracking-wider mb-1">Target</p>
+                <p className="text-sm font-bold text-white">{simulation.targetLevel}</p>
+                <p className="text-xs text-emerald-400 font-semibold mt-1">{simulation.targetSalary}</p>
+              </div>
             </div>
-            <div className="bg-gradient-to-br from-[var(--color-shakti-primary)]/5 to-[var(--color-shakti-secondary)]/5 rounded-2xl p-5 border border-[var(--color-shakti-primary)]/20">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-shakti-primary-container)] mb-1">In 6 months</p>
-              <p className="text-base font-semibold text-[var(--color-text-primary)]">{result.target.role}</p>
-              <p className="text-sm text-[var(--color-shakti-success)] mt-1 font-semibold flex items-center gap-1">
-                <IndianRupee size={12} /> {result.target.salary} LPA · +{Math.round((result.target.salary - result.current.salary) / result.current.salary * 100)}%
-              </p>
-            </div>
-          </div>
 
-          <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm">
-            <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Projected salary growth</h3>
-            <div className="h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={result.milestones}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis dataKey="month" stroke="#9ca3af" fontSize={11} />
-                  <YAxis stroke="#9ca3af" fontSize={11} unit=" L" />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: 12, border: '1px solid #e5e7eb',
-                      fontSize: 12, padding: '8px 12px',
-                    }}
-                  />
-                  <Line
-                    type="monotone" dataKey="salary"
-                    stroke="var(--color-shakti-primary)" strokeWidth={3}
-                    dot={{ fill: 'var(--color-shakti-primary)', r: 5 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            {/* Monthly Roadmap */}
+            <div className="px-1">
+              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Calendar size={18} className="text-fuchsia-400" /> Monthly Roadmap
+              </h2>
             </div>
-          </div>
 
-          <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm">
-            <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
-              <Target size={16} className="text-[var(--color-shakti-primary)]" /> Monthly milestones
-            </h3>
-            <div className="space-y-2">
-              {result.milestones.map((m, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm">
-                  <span className="w-10 text-[var(--color-shakti-primary)] font-semibold text-xs">{m.month}</span>
-                  <span className="flex-1 text-[var(--color-text-primary)]">{m.focus}</span>
-                  <span className="text-[var(--color-outline)] text-xs">₹{m.salary}L</span>
-                </div>
-              ))}
-            </div>
-          </div>
+            <div className="relative">
+              {/* Timeline line */}
+              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-fuchsia-500/40 via-purple-500/30 to-transparent" />
 
-          <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm">
-            <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
-              <BookOpen size={16} className="text-[var(--color-shakti-success)]" /> Recommended courses
-            </h3>
-            <div className="space-y-2">
-              {result.courses.map((c, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-surface-low)]">
-                  <div>
-                    <p className="text-sm font-semibold text-[var(--color-text-primary)]">{c.name}</p>
-                    <p className="text-xs text-[var(--color-text-secondary)]">{c.provider}</p>
-                  </div>
-                  <span className="text-xs font-semibold text-[var(--color-shakti-success)]">{c.price}</span>
-                </div>
-              ))}
+              <div className="space-y-4">
+                {simulation.months?.map((m, i) => (
+                  <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
+                    className="relative pl-14">
+                    {/* Timeline dot */}
+                    <div className="absolute left-4 top-5 w-5 h-5 rounded-full bg-gradient-to-br from-fuchsia-500 to-purple-500 border-2 border-[#0d0b1a] shadow-lg shadow-fuchsia-500/30 z-10 flex items-center justify-center">
+                      <span className="text-[8px] font-black text-white">{m.month}</span>
+                    </div>
+
+                    <div className="bg-white/[0.03] rounded-2xl p-5 border border-white/[0.06] hover:border-fuchsia-500/20 transition-all">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <span className="text-[10px] font-bold text-fuchsia-400 uppercase tracking-wider">Month {m.month}</span>
+                          <h3 className="text-sm font-bold text-white mt-0.5">{m.milestone}</h3>
+                        </div>
+                        <div className="text-right flex-shrink-0 ml-3">
+                          <p className="text-sm font-black text-emerald-400 flex items-center gap-1">
+                            <IndianRupee size={12} />{m.salary?.replace('₹', '')}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-1.5 mb-3">
+                        {m.skills?.map((s, j) => (
+                          <span key={j} className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-500/10 text-purple-300 border border-purple-500/15">{s}</span>
+                        ))}
+                      </div>
+
+                      {m.course && (
+                        <div className="flex items-center gap-2 pt-2 border-t border-white/[0.04]">
+                          <GraduationCap size={12} className="text-amber-400 flex-shrink-0" />
+                          <span className="text-xs text-white/40">{m.course}</span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </div>
-        </motion.div>
-      )}
+
+            <button onClick={() => setSimulation(null)}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white text-sm font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-fuchsia-500/20 transition-all mt-2">
+              <Sparkles size={16} /> Try Another Career Path
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

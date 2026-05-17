@@ -76,16 +76,17 @@ export default function MenstrualTracker() {
   return (
     <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6 max-w-[960px] mx-auto">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-[2rem] p-6 shadow-sm bg-[var(--color-surface-lowest)] relative overflow-hidden"
+        className="rounded-[2rem] p-6 shadow-lg relative overflow-hidden bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--color-shakti-secondary)]/10 to-transparent blur-3xl opacity-50 pointer-events-none" />
+        <div className="absolute -top-20 -left-20 w-60 h-60 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-purple-500/15 rounded-full blur-3xl pointer-events-none" />
         <div className="flex items-center gap-4 relative z-10">
-          <div className="w-14 h-14 rounded-[1.25rem] bg-[var(--color-shakti-secondary)]/10 flex items-center justify-center text-[var(--color-shakti-secondary)] flex-shrink-0 shadow-inner">
+          <div className="w-14 h-14 rounded-[1.25rem] bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-pink-400 flex-shrink-0 shadow-lg shadow-pink-500/10">
             <Droplet size={28} strokeWidth={1.5} />
           </div>
           <div>
-            <h1 className="text-2xl font-display font-bold text-[var(--color-text-primary)] tracking-tight">Cycle Tracker</h1>
-            <p className="text-sm text-[var(--color-text-secondary)]">Private. Secure. Understand your body's rhythm.</p>
+            <h1 className="text-2xl font-display font-bold text-white tracking-tight">Cycle Tracker</h1>
+            <p className="text-sm text-white/60">Private. Secure. Understand your body's rhythm.</p>
           </div>
         </div>
       </motion.div>
