@@ -49,10 +49,10 @@ export default function MoodTracker() {
 
   const chartData = moodHistory.length > 0
     ? moodHistory.slice(0, 7).reverse().map((e, i) => ({
-        date: `Day ${i + 1}`,
-        score: MOOD_SCORE[e.mood] || 5,
-        mood: e.mood,
-      }))
+      date: `Day ${i + 1}`,
+      score: MOOD_SCORE[e.mood] || 5,
+      mood: e.mood,
+    }))
     : DEMO_HISTORY;
 
   const avg = chartData.reduce((a, b) => a + b.score, 0) / chartData.length;
@@ -92,7 +92,7 @@ export default function MoodTracker() {
       {/* INPUT SECTION */}
       <div style={{ background: 'var(--color-surface-lowest)', borderRadius: '1.5rem', padding: '24px', marginBottom: '20px', boxShadow: '0 1px 6px rgba(24,20,69,0.03)' }}>
         <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-shakti-dark-text)', margin: '0 0 16px 0' }}>How are you feeling today?</h3>
-        
+
         <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '12px', marginBottom: '20px', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
           {MOODS.map(m => (
             <button key={m.id} onClick={() => setTodayMood(m.id)}
@@ -136,8 +136,8 @@ export default function MoodTracker() {
           style={{
             width: '100%', padding: '16px', borderRadius: '16px', background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', color: 'white', border: 'none', fontSize: '15px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontFamily: 'var(--font-sans)', transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 8px 24px rgba(236,72,153,0.3)', opacity: loading ? 0.7 : 1
           }}
-          onMouseEnter={(e) => { if(!loading) { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(236,72,153,0.4)'; } }}
-          onMouseLeave={(e) => { if(!loading) { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(236,72,153,0.3)'; } }}
+          onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(236,72,153,0.4)'; } }}
+          onMouseLeave={(e) => { if (!loading) { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(236,72,153,0.3)'; } }}
         >
           {loading ? <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} /> : <Sparkles size={18} />}
           {loading ? 'Analyzing...' : 'Log Mood'}

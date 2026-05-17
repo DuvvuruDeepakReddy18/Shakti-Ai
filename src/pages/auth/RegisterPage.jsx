@@ -51,10 +51,23 @@ export default function RegisterPage() {
   const handleDemoSignUp = async () => {
     setLoading(true);
     try {
-      await signUp('demo@shakti.ai', 'Demo1234', 'Shakti Warrior');
+      const demoUser = { uid: 'demo-user-001', email: 'demo@shakti.ai', displayName: 'Shakti Warrior', photoURL: null };
+      const demoProfile = {
+        uid: 'demo-user-001', name: 'Shakti Warrior', email: 'demo@shakti.ai',
+        phone: '+91 9876543210', photoURL: '', mode: 'student',
+        emergencyContacts: [{ name: 'Mom', phone: '+91 9000000001', relation: 'Mother' }],
+        location: { lat: 12.9716, lng: 77.5946 }, isVolunteer: false,
+        skills: ['Coding', 'Design'], interests: ['AI', 'Web Dev'],
+        safetyScore: 100, moodHistory: [], menstrualData: { lastPeriod: null, cycleLength: 28, periodLength: 5 },
+        onboardingComplete: true, ageRange: '18-24', city: 'Bangalore', shePoints: 60, sheLevel: 'Beginner',
+      };
+      localStorage.setItem('shakti_demo_user', JSON.stringify(demoUser));
+      localStorage.setItem('shakti_demo_profile_demo@shakti.ai', JSON.stringify(demoProfile));
+      useAuthStore.setState({ user: demoUser, userProfile: demoProfile, loading: false, isDemo: true });
       toast.success('Welcome to SHAKTI AI Demo! 🎉');
       navigate('/');
     } catch (err) {
+      console.error('Demo signup error:', err);
       toast.error('Demo failed.');
     }
     setLoading(false);

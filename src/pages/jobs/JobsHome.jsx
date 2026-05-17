@@ -18,11 +18,12 @@ const jobListings = [
 ];
 
 const aiTools = [
-  { to: '/jobs/resume-analyzer', icon: Target, title: 'ATS Scanner', desc: 'Resume match score', color: 'var(--color-shakti-tertiary)', bg: 'var(--color-shakti-tertiary-container)' },
-  { to: '/jobs/skill-translator', icon: Zap, title: 'Skill Translator', desc: 'Skills into income', color: 'var(--color-shakti-primary)', bg: 'var(--color-shakti-primary-container)' },
-  { to: '/jobs/career-simulator', icon: TrendingUp, title: 'Career Simulator', desc: '6-month roadmap', color: 'var(--color-shakti-success)', bg: 'var(--color-shakti-success-container)' },
-  { to: '/jobs/marketplace', icon: Store, title: 'Marketplace', desc: 'Women-owned biz', color: 'var(--color-shakti-secondary)', bg: 'var(--color-shakti-secondary-container)' },
-  { to: '/jobs/exchange', icon: MapPin, title: 'Job Exchange', desc: 'Hyperlocal tasks', color: 'var(--color-shakti-warning)', bg: 'var(--color-shakti-warning-container)' },
+  { to: '/jobs/resume-analyzer', icon: Target, title: 'ATS Scanner', desc: 'Resume match score', color: '#4f46e5', bg: '#eef2ff' },
+  { to: '/jobs/skill-translator', icon: Zap, title: 'Skill Translator', desc: 'Skills into income', color: '#10b981', bg: '#ecfdf5' },
+  { to: '/jobs/career-simulator', icon: TrendingUp, title: 'Career Simulator', desc: '6-month roadmap', color: '#c026d3', bg: '#fdf4ff' },
+  { to: '/jobs/marketplace', icon: Store, title: 'Marketplace', desc: 'Women-owned biz', color: '#e11d48', bg: '#fef2f2' },
+  { to: '/jobs/exchange', icon: MapPin, title: 'Job Exchange', desc: 'Hyperlocal tasks', color: '#f59e0b', bg: '#fffbeb' },
+  { to: '/jobs/internships', icon: Sparkles, title: 'Micro-Internships', desc: 'Short paid sprints', color: '#0891b2', bg: '#ecfeff' },
 ];
 
 const cs = { background: 'var(--color-surface-lowest)', borderRadius: '1rem', boxShadow: '0 1px 6px rgba(24,20,69,0.03)' };
@@ -63,11 +64,11 @@ export default function JobsHome() {
       {/* HERO */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
         style={{ position: 'relative', borderRadius: '1.5rem', padding: '28px 24px', marginBottom: '20px', overflow: 'hidden', background: 'var(--color-surface-lowest)', boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}>
-        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'color-mix(in srgb, var(--color-shakti-primary) 8%, transparent)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '-40px', left: '-30px', width: '160px', height: '160px', background: 'color-mix(in srgb, var(--color-shakti-tertiary) 6%, transparent)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(124,58,237,0.10)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-40px', left: '-30px', width: '160px', height: '160px', background: 'rgba(236,72,153,0.08)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
         <div style={{ position: 'relative', zIndex: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
-            <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'linear-gradient(135deg, var(--color-shakti-primary), var(--color-shakti-tertiary))', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 20px color-mix(in srgb, var(--color-shakti-primary) 25%, transparent)' }}>
+            <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'linear-gradient(135deg, #7c3aed, #ec4899)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 20px rgba(124,58,237,0.30)' }}>
               <Briefcase size={24} color="white" strokeWidth={2.2} />
             </div>
             <div>
@@ -77,9 +78,9 @@ export default function JobsHome() {
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {[
-              { l: '128 active', c: 'var(--color-shakti-primary)', bg: 'var(--color-shakti-primary-container)', bd: 'color-mix(in srgb, var(--color-shakti-primary) 20%, transparent)', I: Briefcase },
-              { l: '5 matches', c: 'var(--color-shakti-success)', bg: 'var(--color-shakti-success-container)', bd: 'color-mix(in srgb, var(--color-shakti-success) 20%, transparent)', I: Sparkles },
-              { l: 'Trending', c: 'var(--color-shakti-warning)', bg: 'var(--color-shakti-warning-container)', bd: 'color-mix(in srgb, var(--color-shakti-warning) 20%, transparent)', I: TrendingUp }
+              { l: '128 active', c: '#7c3aed', bg: '#f5f3ff', bd: 'rgba(124,58,237,0.22)', I: Briefcase },
+              { l: '5 matches', c: '#047857', bg: '#ecfdf5', bd: 'rgba(16,185,129,0.22)', I: Sparkles },
+              { l: 'Trending', c: '#b45309', bg: '#fffbeb', bd: 'rgba(245,158,11,0.22)', I: TrendingUp }
             ].map((b, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '5px 12px', borderRadius: '999px', background: b.bg, border: `1px solid ${b.bd}`, fontSize: '11px', fontWeight: 700, color: b.c }}><b.I size={12} />{b.l}</div>
             ))}

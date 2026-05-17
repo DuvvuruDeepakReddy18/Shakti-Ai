@@ -52,74 +52,74 @@ export default function IsThisNormal() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface-base)] pb-32 px-4 pt-8 max-w-[700px] mx-auto font-sans">
-      <Link to="/safety" className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-shakti-primary)] transition-colors mb-8">
+    <div className="min-h-screen bg-[var(--color-surface-base)] pb-32 px-4 pt-6 max-w-[760px] mx-auto font-sans">
+      <Link to="/safety" className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-shakti-primary)] transition-colors mb-4">
         <ArrowLeft size={16} /> Back to Safety
       </Link>
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden bg-gradient-to-br from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] rounded-[2rem] p-8 mb-10 shadow-xl shadow-[var(--color-shakti-primary-light)]/30"
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-3xl p-6 md:p-7 mb-5 bg-[var(--color-surface-lowest)]"
+        style={{ boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 blur-2xl rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none" />
-        
-        <div className="flex items-center gap-6 relative z-10">
-          <div className="w-16 h-16 rounded-[1.25rem] bg-white/20 backdrop-blur-md flex items-center justify-center text-white flex-shrink-0 shadow-inner border border-white/20">
-            <MessageSquareWarning size={32} strokeWidth={1.5} />
+        <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(168,85,247,0.10)', borderRadius: '50%', filter: 'blur(60px)' }} />
+
+        <div className="flex items-center gap-3.5 relative z-10">
+          <div
+            className="rounded-2xl flex items-center justify-center flex-shrink-0"
+            style={{ width: '52px', height: '52px', background: 'linear-gradient(135deg, #a855f7, #ec4899)', boxShadow: '0 6px 20px rgba(168,85,247,0.30)' }}
+          >
+            <MessageSquareWarning size={24} color="white" strokeWidth={2.2} />
           </div>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">Is This Normal?</h1>
-            <p className="text-white/90 text-base md:text-lg leading-relaxed font-medium">Describe a situation. AI gives an honest, supportive read.</p>
+          <div className="min-w-0">
+            <h1 className="text-2xl md:text-[26px] font-extrabold mb-0.5 tracking-tight" style={{ color: 'var(--color-shakti-dark-text)', fontFamily: 'var(--font-display)' }}>Is This Normal?</h1>
+            <p className="text-sm font-medium leading-snug" style={{ color: 'var(--color-outline)' }}>Describe a situation. AI gives an honest, supportive read.</p>
           </div>
         </div>
       </motion.div>
 
-      <div className="relative group mb-10">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-shakti-primary)]/20 to-[var(--color-shakti-secondary)]/20 rounded-[2.5rem] blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="relative bg-[var(--color-surface-lowest)]/80 backdrop-blur-xl rounded-[2rem] p-4 shadow-sm border border-[var(--color-surface-highlight)]"
-        >
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
+        className="bg-[var(--color-surface-lowest)] rounded-3xl p-5 shadow-[0_1px_6px_rgba(24,20,69,0.03)] border border-[var(--color-surface-highlight)] mb-6"
+      >
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Describe what happened. The more detail, the better the analysis…"
-          rows={6}
-          className="w-full px-5 py-5 rounded-[1.5rem] bg-[var(--color-surface)] border-transparent text-[var(--color-text-primary)] text-base focus:bg-[var(--color-surface-lowest)] focus:border-[var(--color-shakti-primary-light)] focus:ring-4 focus:ring-[var(--color-shakti-primary-light)]/20 outline-none resize-none mb-3 transition-all placeholder:text-[var(--color-text-secondary)]"
+          rows={5}
+          className="w-full px-4 py-4 rounded-2xl bg-[var(--color-surface-low)] border border-transparent text-[var(--color-text-primary)] text-sm focus:bg-[var(--color-surface-lowest)] focus:border-[var(--color-shakti-primary-light)] focus:ring-2 focus:ring-[var(--color-shakti-primary-light)]/20 outline-none resize-none mb-3 transition-all placeholder:text-[var(--color-text-secondary)]"
         />
-        <div className="flex justify-between items-center px-3 pb-2">
+        <div className="flex justify-between items-center px-1">
           <p className="text-xs font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
-            <ShieldCheck size={14} className="text-[var(--color-shakti-success)]" /> Anonymous & Secure
+            <ShieldCheck size={13} className="text-[var(--color-shakti-success)]" /> Anonymous & Secure
           </p>
           <button
             onClick={analyze}
             disabled={!text.trim() || loading}
-            className="px-8 py-3.5 rounded-xl bg-[var(--color-shakti-dark-text)] text-white text-sm font-bold hover:bg-[var(--color-shakti-primary)] hover:shadow-lg hover:shadow-[var(--color-shakti-primary)]/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:transform-none disabled:hover:bg-[var(--color-shakti-dark-text)] disabled:hover:shadow-none transition-all duration-200 flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl bg-[var(--color-shakti-dark-text)] text-white text-sm font-bold hover:bg-[var(--color-shakti-primary)] hover:shadow-md hover:shadow-[var(--color-shakti-primary)]/25 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:transform-none disabled:hover:bg-[var(--color-shakti-dark-text)] disabled:hover:shadow-none transition-all duration-200 flex items-center gap-2"
           >
-            <Sparkles size={16} className={loading ? "animate-spin" : ""} /> 
-            {loading ? 'Analyzing...' : 'Analyze'}
+            <Sparkles size={15} className={loading ? "animate-spin" : ""} />
+            {loading ? 'Analyzing…' : 'Analyze'}
           </button>
         </div>
-        </motion.div>
-      </div>
+      </motion.div>
 
       {!analysis && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-8">
-          <div className="flex items-center gap-3 mb-5 ml-2">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-6">
+          <div className="flex items-center gap-3 mb-3 px-1">
             <div className="h-px bg-[var(--color-surface-highlight)] flex-1"></div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)]">Try an example</p>
             <div className="h-px bg-[var(--color-surface-highlight)] flex-1"></div>
           </div>
-          <div className="grid gap-3">
+          <div className="grid gap-2">
             {examples.map((ex, i) => (
               <button
                 key={i}
                 onClick={() => setText(ex)}
-                className="w-full text-left px-6 py-4 rounded-[1.25rem] bg-[var(--color-surface-lowest)] border border-[var(--color-surface-highlight)] text-sm font-medium text-[var(--color-text-primary)] hover:border-[var(--color-shakti-primary-light)] hover:bg-[var(--color-surface-low)] hover:text-[var(--color-shakti-primary)] hover:shadow-sm transition-all duration-200 flex items-center justify-between group"
+                className="w-full text-left px-4 py-3 rounded-2xl bg-[var(--color-surface-lowest)] border border-[var(--color-surface-highlight)] text-sm font-medium text-[var(--color-text-primary)] hover:border-[var(--color-shakti-primary-light)] hover:bg-[var(--color-surface-low)] hover:text-[var(--color-shakti-primary)] transition-all duration-200 flex items-center justify-between group"
               >
-                <span className="pr-4 leading-relaxed">"{ex}"</span>
-                <ChevronRight size={18} className="text-[var(--color-outline)] group-hover:text-[var(--color-shakti-primary)] transition-colors flex-shrink-0" />
+                <span className="pr-3 leading-relaxed text-[13px]">"{ex}"</span>
+                <ChevronRight size={16} className="text-[var(--color-outline)] group-hover:text-[var(--color-shakti-primary)] transition-colors flex-shrink-0" />
               </button>
             ))}
           </div>

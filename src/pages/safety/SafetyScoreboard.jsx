@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Award, Star, MapPin, Plus, TrendingUp, TrendingDown,
   X, ArrowRight, ShieldCheck, ChevronRight, ArrowLeft,
-  Users, Shield, AlertTriangle, BarChart3,
+  Users, AlertTriangle,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -24,10 +24,10 @@ const WORST = [
 
 const TAGS = ['Well-lit', 'Crowded', 'Isolated', 'Friendly locals', 'Unsafe transport', 'Harassment reported', 'Police nearby', 'Metro nearby'];
 
-const getScoreColor = (score) => {
-  if (score >= 7) return { gradient: 'from-emerald-500 to-emerald-600', bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' };
-  if (score >= 5) return { gradient: 'from-amber-500 to-amber-600', bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20' };
-  return { gradient: 'from-rose-500 to-rose-600', bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/20' };
+const getScoreMeta = (score) => {
+  if (score >= 7) return { color: '#10b981', gradient: 'linear-gradient(135deg, #10b981, #059669)', bg: '#ecfdf5', text: '#047857', border: 'rgba(16,185,129,0.22)' };
+  if (score >= 5) return { color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', bg: '#fffbeb', text: '#b45309', border: 'rgba(245,158,11,0.25)' };
+  return { color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444, #dc2626)', bg: '#fef2f2', text: '#b91c1c', border: 'rgba(239,68,68,0.25)' };
 };
 
 export default function SafetyScoreboard() {
@@ -51,84 +51,119 @@ export default function SafetyScoreboard() {
   const totalReviews = [...DEMO_RATINGS, ...WORST].reduce((s, i) => s + i.reviews, 0);
   const avgScore = (DEMO_RATINGS.reduce((s, i) => s + i.score, 0) / DEMO_RATINGS.length).toFixed(1);
 
+  const cardStyle = {
+    background: 'var(--color-surface-lowest)',
+    borderRadius: '1.5rem',
+    boxShadow: '0 1px 6px rgba(24,20,69,0.03)',
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a12] via-[#0d0b1a] to-[#0a0a12] pb-32 px-4 pt-6 max-w-[960px] mx-auto font-sans">
-      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-white/50 hover:text-white transition-colors mb-6 group">
-        <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /> Back
+    <div>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          fontSize: '13px', color: 'var(--color-outline)', background: 'none',
+          border: 'none', cursor: 'pointer', marginBottom: '16px',
+          fontFamily: 'var(--font-sans)',
+        }}
+      >
+        <ArrowLeft size={16} /> Back
       </button>
 
-      {/* Hero */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] p-7 md:p-9 mb-6 border border-white/[0.06]" style={{ background: 'linear-gradient(135deg, #1a1025 0%, #2d1b4e 50%, #1a1040 100%)' }}>
-        <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-56 h-56 bg-pink-500/8 blur-[80px] rounded-full pointer-events-none" />
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400/20 to-pink-400/20 backdrop-blur-md flex items-center justify-center text-purple-300 flex-shrink-0 border border-purple-400/20 shadow-lg shadow-purple-500/10">
-            <Award size={30} strokeWidth={1.5} />
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{
+          position: 'relative', borderRadius: '1.5rem', padding: '28px 24px',
+          marginBottom: '20px', overflow: 'hidden',
+          background: 'var(--color-surface-lowest)',
+          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+        }}
+      >
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(168,85,247,0.08)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '16px',
+            background: 'linear-gradient(135deg, #a855f7, #ec4899)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 6px 20px rgba(168,85,247,0.25)',
+          }}>
+            <Award size={24} color="white" strokeWidth={2.2} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-1.5 tracking-tight">Safety Scoreboard</h1>
-            <p className="text-purple-200/60 text-sm font-medium">Crowdsourced safety data from real women.</p>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>Safety Scoreboard</h1>
+            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0' }}>Crowdsourced safety data from real women.</p>
           </div>
         </div>
 
-        {/* Stats cards */}
-        <div className="grid grid-cols-3 gap-3 mt-6 relative z-10">
-          <div className="bg-white/[0.05] backdrop-blur-sm rounded-xl p-3 border border-white/[0.06] text-center">
-            <p className="text-xl font-black text-white">{DEMO_RATINGS.length + WORST.length}</p>
-            <p className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Zones Rated</p>
-          </div>
-          <div className="bg-white/[0.05] backdrop-blur-sm rounded-xl p-3 border border-white/[0.06] text-center">
-            <p className="text-xl font-black text-emerald-400">{avgScore}</p>
-            <p className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Avg Safety</p>
-          </div>
-          <div className="bg-white/[0.05] backdrop-blur-sm rounded-xl p-3 border border-white/[0.06] text-center">
-            <p className="text-xl font-black text-white">{totalReviews.toLocaleString()}</p>
-            <p className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Reviews</p>
-          </div>
+        {/* Stat tiles */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '18px', position: 'relative', zIndex: 10 }}>
+          <StatTile value={DEMO_RATINGS.length + WORST.length} label="Zones Rated" />
+          <StatTile value={avgScore} label="Avg Safety" accent="#10b981" />
+          <StatTile value={totalReviews.toLocaleString()} label="Reviews" />
         </div>
       </motion.div>
 
       {/* Rate a location toggle */}
       {!showRating ? (
         <motion.button
-          whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
+          whileHover={{ scale: 1.005 }} whileTap={{ scale: 0.995 }}
           onClick={() => setShowRating(true)}
-          className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-bold flex items-center justify-center gap-2.5 hover:shadow-lg hover:shadow-purple-500/20 transition-all mb-6"
+          style={{
+            width: '100%', padding: '14px', borderRadius: '12px',
+            background: 'linear-gradient(135deg, #a855f7, #ec4899)',
+            color: 'white', border: 'none', fontSize: '14px', fontWeight: 700,
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+            cursor: 'pointer', marginBottom: '20px',
+            boxShadow: '0 6px 16px rgba(168,85,247,0.22)',
+            fontFamily: 'var(--font-sans)'
+          }}
         >
           <Plus size={18} /> Rate a Location
         </motion.button>
       ) : (
         <motion.div
           initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white/[0.03] backdrop-blur-xl rounded-2xl p-6 border border-white/[0.06] shadow-xl mb-6"
+          style={{ ...cardStyle, padding: '24px', marginBottom: '20px' }}
         >
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-lg font-bold text-white">Contribute Safety Data</h3>
-            <button onClick={() => setShowRating(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.1] transition-all">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0 }}>Contribute Safety Data</h3>
+            <button onClick={() => setShowRating(false)} style={{
+              width: '32px', height: '32px', borderRadius: '10px',
+              background: 'var(--color-surface-low)', border: 'none',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--color-outline)', cursor: 'pointer'
+            }}>
               <X size={16} />
             </button>
           </div>
 
-          <div className="space-y-5">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <p className="text-[11px] font-bold text-white/40 uppercase tracking-wider mb-2">Location</p>
+              <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Location</p>
               <input
                 value={location} onChange={(e) => setLocation(e.target.value)}
                 placeholder="Search area or landmark"
-                className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:border-purple-500/40 focus:ring-1 focus:ring-purple-500/20 outline-none transition-all"
+                style={{
+                  width: '100%', padding: '12px 14px',
+                  background: 'var(--color-surface-low)', border: '1px solid rgba(24,20,69,0.05)',
+                  borderRadius: '12px', fontSize: '14px', color: 'var(--color-shakti-dark-text)',
+                  boxSizing: 'border-box', outline: 'none', fontFamily: 'var(--font-sans)'
+                }}
               />
             </div>
 
-            <div className="bg-white/[0.03] p-5 rounded-xl border border-white/[0.06]">
-              <p className="text-[11px] font-bold text-white/40 uppercase tracking-wider mb-4 text-center">Your Safety Rating</p>
-              <div className="flex justify-center gap-3">
+            <div style={{ background: 'var(--color-surface-low)', padding: '18px', borderRadius: '14px', border: '1px solid rgba(24,20,69,0.04)' }}>
+              <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px', textAlign: 'center' }}>Your Safety Rating</p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <button key={s} onClick={() => setRating(s)} className="active:scale-90 transition-transform p-1 group">
+                  <button key={s} onClick={() => setRating(s)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
                     <Star
-                      size={36}
+                      size={34}
                       fill={s <= rating ? '#ec4899' : 'transparent'}
-                      className={`transition-all ${s <= rating ? 'text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.5)]' : 'text-white/20 group-hover:text-pink-300/40'}`}
+                      style={{ color: s <= rating ? '#ec4899' : '#cbd5e1', transition: 'all 0.15s' }}
                     />
                   </button>
                 ))}
@@ -136,26 +171,34 @@ export default function SafetyScoreboard() {
             </div>
 
             <div>
-              <p className="text-[11px] font-bold text-white/40 uppercase tracking-wider mb-2">Your review (optional)</p>
+              <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Your review (optional)</p>
               <textarea
                 value={review} onChange={(e) => setReview(e.target.value)}
                 placeholder="Share your experience to help other women..."
                 rows={2}
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:border-purple-500/40 focus:ring-1 focus:ring-purple-500/20 outline-none transition-all resize-none"
+                style={{
+                  width: '100%', padding: '12px 14px',
+                  background: 'var(--color-surface-low)', border: '1px solid rgba(24,20,69,0.05)',
+                  borderRadius: '12px', fontSize: '14px', color: 'var(--color-shakti-dark-text)',
+                  boxSizing: 'border-box', outline: 'none', resize: 'none', fontFamily: 'var(--font-sans)'
+                }}
               />
             </div>
 
             <div>
-              <p className="text-[11px] font-bold text-white/40 uppercase tracking-wider mb-2.5">Add Safety Tags</p>
-              <div className="flex flex-wrap gap-2">
+              <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>Add Safety Tags</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {TAGS.map((t) => (
                   <button
-                    key={t} onClick={() => toggleTag(t)}
-                    className={`px-3 py-2 rounded-lg text-xs font-bold transition-all border ${
-                      selectedTags.includes(t)
-                        ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-                        : 'bg-white/[0.03] text-white/40 border-white/[0.06] hover:bg-white/[0.06] hover:text-white/60'
-                    }`}
+                    key={t}
+                    onClick={() => toggleTag(t)}
+                    style={{
+                      padding: '7px 11px', borderRadius: '8px', fontSize: '11px', fontWeight: 700,
+                      background: selectedTags.includes(t) ? 'rgba(168,85,247,0.12)' : 'var(--color-surface-low)',
+                      color: selectedTags.includes(t) ? '#7c3aed' : 'var(--color-outline)',
+                      border: `1px solid ${selectedTags.includes(t) ? 'rgba(168,85,247,0.25)' : 'rgba(24,20,69,0.05)'}`,
+                      cursor: 'pointer', fontFamily: 'var(--font-sans)', transition: 'all 0.15s'
+                    }}
                   >
                     {t}
                   </button>
@@ -163,83 +206,141 @@ export default function SafetyScoreboard() {
               </div>
             </div>
 
-            <div className="flex gap-3 pt-3 border-t border-white/[0.06]">
-              <button onClick={submitRating} className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-bold hover:shadow-lg hover:shadow-purple-500/20 transition-all">Submit Rating</button>
-              <button onClick={() => setShowRating(false)} className="px-5 py-3.5 rounded-xl bg-white/[0.04] text-white/50 text-sm font-bold border border-white/[0.06] hover:bg-white/[0.08] transition-all">Cancel</button>
+            <div style={{ display: 'flex', gap: '10px', paddingTop: '12px', borderTop: '1px solid var(--color-surface-low)' }}>
+              <button
+                onClick={submitRating}
+                style={{
+                  flex: 1, padding: '12px', borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #a855f7, #ec4899)',
+                  color: 'white', border: 'none', fontSize: '13px', fontWeight: 700,
+                  cursor: 'pointer', boxShadow: '0 4px 12px rgba(168,85,247,0.22)',
+                  fontFamily: 'var(--font-sans)'
+                }}
+              >
+                Submit Rating
+              </button>
+              <button
+                onClick={() => setShowRating(false)}
+                style={{
+                  padding: '12px 18px', borderRadius: '12px',
+                  background: 'var(--color-surface-low)', color: 'var(--color-outline)',
+                  border: '1px solid rgba(24,20,69,0.05)', fontSize: '13px', fontWeight: 700,
+                  cursor: 'pointer', fontFamily: 'var(--font-sans)'
+                }}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </motion.div>
       )}
 
       {/* Tab Switcher */}
-      <div className="bg-white/[0.03] p-1.5 rounded-xl border border-white/[0.06] flex mb-6 max-w-sm mx-auto">
-        <button onClick={() => setTab('best')}
-          className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-            tab === 'best' ? 'bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 text-emerald-400 border border-emerald-500/20' : 'text-white/40 hover:text-white/60'
-          }`}>
+      <div style={{
+        background: 'var(--color-surface-lowest)', padding: '6px', borderRadius: '12px',
+        display: 'flex', marginBottom: '20px', maxWidth: '380px', margin: '0 auto 20px',
+        boxShadow: '0 1px 6px rgba(24,20,69,0.03)'
+      }}>
+        <button
+          onClick={() => setTab('best')}
+          style={{
+            flex: 1, padding: '10px 14px', borderRadius: '8px',
+            background: tab === 'best' ? 'rgba(16,185,129,0.12)' : 'transparent',
+            color: tab === 'best' ? '#047857' : 'var(--color-outline)',
+            border: tab === 'best' ? '1px solid rgba(16,185,129,0.22)' : '1px solid transparent',
+            fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+            fontFamily: 'var(--font-sans)'
+          }}
+        >
           <ShieldCheck size={14} /> Safe Zones
         </button>
-        <button onClick={() => setTab('worst')}
-          className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-            tab === 'worst' ? 'bg-gradient-to-r from-rose-500/20 to-rose-600/20 text-rose-400 border border-rose-500/20' : 'text-white/40 hover:text-white/60'
-          }`}>
+        <button
+          onClick={() => setTab('worst')}
+          style={{
+            flex: 1, padding: '10px 14px', borderRadius: '8px',
+            background: tab === 'worst' ? 'rgba(239,68,68,0.12)' : 'transparent',
+            color: tab === 'worst' ? '#b91c1c' : 'var(--color-outline)',
+            border: tab === 'worst' ? '1px solid rgba(239,68,68,0.22)' : '1px solid transparent',
+            fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+            fontFamily: 'var(--font-sans)'
+          }}
+        >
           <AlertTriangle size={14} /> Red Zones
         </button>
       </div>
 
       {/* Zone List */}
-      <div className="space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {items.map((item, i) => {
-          const colors = getScoreColor(item.score);
+          const meta = getScoreMeta(item.score);
           return (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className="bg-white/[0.03] backdrop-blur-sm rounded-2xl p-5 border border-white/[0.06] hover:border-white/[0.12] transition-all group"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+              style={{ ...cardStyle, padding: '18px' }}
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className={`w-13 h-13 rounded-xl flex items-center justify-center font-black text-lg text-white flex-shrink-0 bg-gradient-to-br ${colors.gradient} shadow-lg`} style={{ width: '52px', height: '52px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
+                  <div style={{
+                    width: '52px', height: '52px', borderRadius: '14px',
+                    background: meta.gradient, color: 'white', fontSize: '18px', fontWeight: 800,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                    boxShadow: `0 4px 12px ${meta.color}33`
+                  }}>
                     {item.score}
                   </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <MapPin size={13} className="text-purple-400 flex-shrink-0" />
-                      <h3 className="text-sm font-bold text-white truncate">{item.location}</h3>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <MapPin size={13} style={{ color: '#a855f7', flexShrink: 0 }} />
+                      <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.location}</h3>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-white/40">
-                      <span className="flex items-center gap-1"><Users size={11} /> {item.reviews} reviews</span>
-                      <span className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border ${colors.bg} ${colors.text} ${colors.border}`}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: 'var(--color-outline)' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}><Users size={11} /> {item.reviews} reviews</span>
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '3px',
+                        padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700,
+                        background: meta.bg, color: meta.text, border: `1px solid ${meta.border}`,
+                        textTransform: 'uppercase', letterSpacing: '0.04em'
+                      }}>
                         <ShieldCheck size={10} /> Verified
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                  item.trend === 'up' ? 'bg-emerald-500/10 text-emerald-400' : item.trend === 'down' ? 'bg-rose-500/10 text-rose-400' : 'bg-white/[0.04] text-white/30'
-                }`}>
-                  {item.trend === 'up' && <TrendingUp size={16} />}
-                  {item.trend === 'down' && <TrendingDown size={16} />}
-                  {item.trend === 'stable' && <ArrowRight size={16} />}
-                </div>
+                <TrendBadge trend={item.trend} />
               </div>
 
-              <div className="flex flex-wrap gap-1.5 mb-3">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
                 {item.tags.map((t, j) => (
-                  <span key={j} className="px-2.5 py-1 rounded-lg bg-white/[0.04] text-white/50 text-[10px] font-bold border border-white/[0.06]">
+                  <span key={j} style={{
+                    padding: '4px 10px', borderRadius: '6px', fontSize: '10px', fontWeight: 600,
+                    background: 'var(--color-surface-low)', color: 'var(--color-outline)',
+                    border: '1px solid rgba(24,20,69,0.05)'
+                  }}>
                     {t}
                   </span>
                 ))}
               </div>
 
-              <div className="pt-3 border-t border-white/[0.04] flex items-center justify-between">
-                <button className="text-xs font-bold text-white/30 hover:text-purple-400 transition-colors flex items-center gap-1">
-                  Read community reviews <ChevronRight size={14} />
+              <div style={{ paddingTop: '10px', borderTop: '1px solid var(--color-surface-low)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <button style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: '11px', fontWeight: 700, color: '#7c3aed',
+                  display: 'inline-flex', alignItems: 'center', gap: '4px',
+                  padding: 0, fontFamily: 'var(--font-sans)'
+                }}>
+                  Read community reviews <ChevronRight size={13} />
                 </button>
-                <div className="flex -space-x-1.5">
+                <div style={{ display: 'flex', marginLeft: '-6px' }}>
                   {[1, 2, 3].map((p) => (
-                    <div key={p} className="w-7 h-7 rounded-full border-2 border-[#0d0b1a] overflow-hidden">
-                      <img src={`https://i.pravatar.cc/100?u=${item.id}${p}`} alt="user" className="w-full h-full object-cover" />
+                    <div key={p} style={{
+                      width: '26px', height: '26px', borderRadius: '50%',
+                      border: '2px solid var(--color-surface-lowest)', overflow: 'hidden',
+                      marginLeft: '-6px'
+                    }}>
+                      <img src={`https://i.pravatar.cc/100?u=${item.id}${p}`} alt="user" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                   ))}
                 </div>
@@ -248,6 +349,35 @@ export default function SafetyScoreboard() {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function StatTile({ value, label, accent }) {
+  return (
+    <div style={{
+      background: 'var(--color-surface-low)', borderRadius: '12px', padding: '12px 8px',
+      textAlign: 'center', border: '1px solid rgba(24,20,69,0.04)'
+    }}>
+      <p style={{ fontSize: '20px', fontWeight: 800, color: accent || 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.1 }}>{value}</p>
+      <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '4px 0 0' }}>{label}</p>
+    </div>
+  );
+}
+
+function TrendBadge({ trend }) {
+  const cfg = trend === 'up'
+    ? { bg: '#ecfdf5', color: '#047857', Icon: TrendingUp }
+    : trend === 'down'
+      ? { bg: '#fef2f2', color: '#b91c1c', Icon: TrendingDown }
+      : { bg: 'var(--color-surface-low)', color: 'var(--color-outline)', Icon: ArrowRight };
+  return (
+    <div style={{
+      width: '34px', height: '34px', borderRadius: '10px',
+      background: cfg.bg, color: cfg.color,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+    }}>
+      <cfg.Icon size={15} />
     </div>
   );
 }

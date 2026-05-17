@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Code, ArrowLeft, Sparkles, Target, Clock, Layers, Star, Plus, Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Code, ArrowLeft, Sparkles, Target, Clock, Layers, Star, Check, Loader2, CheckCircle2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+const ACCENT = '#6366f1';
+const ACCENT_LIGHT = '#a855f7';
 
 const sampleProjects = [
   {
@@ -11,8 +14,7 @@ const sampleProjects = [
     difficulty: 'Beginner',
     time: '1 week',
     impact: 'Master CLI tools & basic database design',
-    gradient: 'from-emerald-400 to-teal-500',
-    shadow: 'shadow-emerald-500/20',
+    color: '#10b981',
   },
   {
     title: 'AI-Powered Recipe Generator',
@@ -21,8 +23,7 @@ const sampleProjects = [
     difficulty: 'Intermediate',
     time: '2 weeks',
     impact: 'Learn vision APIs & responsive UI',
-    gradient: 'from-blue-500 to-indigo-500',
-    shadow: 'shadow-blue-500/20',
+    color: '#3b82f6',
   },
   {
     title: 'Real-time Chat with E2E Encryption',
@@ -31,8 +32,7 @@ const sampleProjects = [
     difficulty: 'Advanced',
     time: '4 weeks',
     impact: 'Deep dive into encryption & WebSockets',
-    gradient: 'from-violet-500 to-purple-600',
-    shadow: 'shadow-purple-500/20',
+    color: '#a855f7',
   },
 ];
 
@@ -40,13 +40,14 @@ const skillOptions = ['Python', 'JavaScript', 'React', 'AI/ML', 'Mobile', 'DevOp
 const interestOptions = ['Health', 'Finance', 'Education', 'Climate', 'Safety', 'Productivity', 'Gaming', 'Art'];
 
 export default function ProjectGenerator() {
+  const navigate = useNavigate();
   const [skills, setSkills] = useState(['Python']);
   const [interests, setInterests] = useState(['Health']);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
 
   const toggle = (arr, setArr, val) =>
-    setArr(arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val]);
+    setArr(arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val]);
 
   const handleGenerate = () => {
     setIsGenerating(true);
@@ -57,195 +58,254 @@ export default function ProjectGenerator() {
     }, 1500);
   };
 
+  const cardStyle = {
+    background: 'var(--color-surface-lowest)',
+    borderRadius: '1.25rem',
+    boxShadow: '0 1px 6px rgba(24,20,69,0.03)',
+  };
+
+  const difficultyMeta = (d) => {
+    if (d === 'Beginner') return { bg: '#ecfdf5', text: '#047857', border: 'rgba(16,185,129,0.22)' };
+    if (d === 'Intermediate') return { bg: '#eff6ff', text: '#1d4ed8', border: 'rgba(59,130,246,0.22)' };
+    return { bg: '#fdf4ff', text: '#a21caf', border: 'rgba(168,85,247,0.22)' };
+  };
+
   return (
-    <div className="min-h-screen bg-[#faf9fc] pb-32 relative overflow-hidden">
-      {/* Background Ambient Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-300/20 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-pink-300/20 blur-[120px] pointer-events-none" />
+    <div>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          fontSize: '13px', color: 'var(--color-outline)', background: 'none',
+          border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'var(--font-sans)',
+        }}
+      >
+        <ArrowLeft size={16} /> Back
+      </button>
 
-      <div className="max-w-[960px] mx-auto px-4 pt-8 relative z-10">
-        <Link to="/tech" className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors mb-6 group">
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-          Back to Tech
-        </Link>
-
-        {/* Header Section */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-[2rem] p-8 mb-8 shadow-2xl border border-white/10 bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-500/20 blur-[80px]" />
-            <div className="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-purple-500/20 blur-[60px]" />
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{
+          position: 'relative', borderRadius: '1.5rem', padding: '28px 24px',
+          marginBottom: '18px', overflow: 'hidden',
+          background: 'var(--color-surface-lowest)',
+          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+        }}
+      >
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: `${ACCENT}14`, borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '16px',
+            background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: `0 6px 20px ${ACCENT}40`,
+          }}>
+            <Code size={24} color="white" strokeWidth={2.2} />
           </div>
-          <div className="flex items-center gap-6 relative z-10">
-            <div className="w-16 h-16 rounded-[1.25rem] bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center text-white flex-shrink-0 border border-white/5">
-              <Code size={32} />
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 tracking-tight">Project Generator</h1>
-              <p className="text-base text-white/70">Discover your next big idea. Tailored to your unique skills and passions.</p>
-            </div>
+          <div>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>Project Generator</h1>
+            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0' }}>Discover your next big idea. Tailored to your unique skills and passions.</p>
           </div>
-        </motion.div>
+        </div>
+      </motion.div>
 
-        {/* Configuration Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="bg-[var(--color-surface-lowest)] rounded-[2rem] p-6 md:p-8 mb-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative overflow-hidden"
+      {/* Configuration */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+        style={{ ...cardStyle, padding: '22px', marginBottom: '18px' }}
+      >
+        {/* Skills */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+            <div style={{
+              width: '28px', height: '28px', borderRadius: '8px',
+              background: '#fffbeb', color: '#d97706',
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <Star size={14} />
+            </div>
+            <h3 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Your Arsenal (Skills)</h3>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {skillOptions.map((s) => {
+              const isSelected = skills.includes(s);
+              return (
+                <button
+                  key={s}
+                  onClick={() => toggle(skills, setSkills, s)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '5px',
+                    padding: '7px 12px', borderRadius: '10px',
+                    fontSize: '12px', fontWeight: 700,
+                    background: isSelected ? `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})` : 'var(--color-surface-low)',
+                    color: isSelected ? 'white' : 'var(--color-outline)',
+                    border: isSelected ? 'none' : '1px solid rgba(24,20,69,0.05)',
+                    cursor: 'pointer', fontFamily: 'var(--font-sans)',
+                    boxShadow: isSelected ? `0 4px 10px ${ACCENT}33` : 'none',
+                    transition: 'all 0.15s'
+                  }}
+                >
+                  {isSelected && <Check size={12} />} {s}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Interests */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+            <div style={{
+              width: '28px', height: '28px', borderRadius: '8px',
+              background: '#fef2f2', color: '#e11d48',
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <Target size={14} />
+            </div>
+            <h3 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Your Focus (Interests)</h3>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {interestOptions.map((i) => {
+              const isSelected = interests.includes(i);
+              return (
+                <button
+                  key={i}
+                  onClick={() => toggle(interests, setInterests, i)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '5px',
+                    padding: '7px 12px', borderRadius: '10px',
+                    fontSize: '12px', fontWeight: 700,
+                    background: isSelected ? 'linear-gradient(135deg, #e11d48, #ec4899)' : 'var(--color-surface-low)',
+                    color: isSelected ? 'white' : 'var(--color-outline)',
+                    border: isSelected ? 'none' : '1px solid rgba(24,20,69,0.05)',
+                    cursor: 'pointer', fontFamily: 'var(--font-sans)',
+                    boxShadow: isSelected ? '0 4px 10px rgba(225,29,72,0.25)' : 'none',
+                    transition: 'all 0.15s'
+                  }}
+                >
+                  {isSelected && <Check size={12} />} {i}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Action */}
+        <button
+          disabled={isGenerating || skills.length === 0 || interests.length === 0}
+          onClick={handleGenerate}
+          style={{
+            width: '100%', padding: '14px', borderRadius: '12px',
+            background: (isGenerating || skills.length === 0 || interests.length === 0) ? '#94a3b8' : `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+            color: 'white', border: 'none', fontSize: '14px', fontWeight: 700,
+            cursor: (isGenerating || skills.length === 0 || interests.length === 0) ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+            boxShadow: (isGenerating || skills.length === 0 || interests.length === 0) ? 'none' : `0 4px 12px ${ACCENT}33`,
+            fontFamily: 'var(--font-sans)', transition: 'all 0.2s'
+          }}
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-b from-indigo-50/50 to-transparent rounded-bl-full pointer-events-none" />
+          {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+          {isGenerating ? 'AI is generating…' : 'Generate Project Ideas'}
+        </button>
+      </motion.div>
 
-          <div className="relative z-10 space-y-8">
-            {/* Skills */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Star size={18} className="text-amber-500" />
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800">Your Arsenal (Skills)</h3>
-              </div>
-              <div className="flex flex-wrap gap-2.5">
-                {skillOptions.map(s => {
-                  const isSelected = skills.includes(s);
-                  return (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      key={s}
-                      onClick={() => toggle(skills, setSkills, s)}
-                      className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
-                        isSelected
-                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 border border-indigo-500'
-                          : 'bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200/50'
-                      }`}
-                    >
-                      {isSelected && <Check size={14} />}
-                      {s}
-                    </motion.button>
-                  );
-                })}
-              </div>
+      {/* Results */}
+      <AnimatePresence>
+        {generated && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '6px 4px 4px' }}>
+              <h2 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Code size={16} style={{ color: ACCENT }} /> Your Personalized Roadmap
+              </h2>
+              <span style={{
+                fontSize: '11px', fontWeight: 700, color: '#047857',
+                background: '#ecfdf5', padding: '4px 10px', borderRadius: '999px',
+                border: '1px solid rgba(16,185,129,0.22)',
+                display: 'inline-flex', alignItems: 'center', gap: '4px'
+              }}>
+                <CheckCircle2 size={12} /> 3 Matches Found
+              </span>
             </div>
 
-            {/* Interests */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Target size={18} className="text-pink-500" />
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800">Your Focus (Interests)</h3>
-              </div>
-              <div className="flex flex-wrap gap-2.5">
-                {interestOptions.map(i => {
-                  const isSelected = interests.includes(i);
-                  return (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      key={i}
-                      onClick={() => toggle(interests, setInterests, i)}
-                      className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
-                        isSelected
-                          ? 'bg-pink-500 text-white shadow-md shadow-pink-500/20 border border-pink-400'
-                          : 'bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200/50'
-                      }`}
-                    >
-                      {isSelected && <Check size={14} />}
-                      {i}
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Action */}
-            <div className="pt-2">
-              <button
-                disabled={isGenerating || skills.length === 0 || interests.length === 0}
-                onClick={handleGenerate}
-                className="w-full relative group overflow-hidden rounded-2xl p-0.5 transition-transform active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-300 animate-gradient-xy"></span>
-                <div className="relative flex items-center justify-center gap-3 bg-slate-900 px-8 py-4 rounded-[14px] text-white font-semibold">
-                  {isGenerating ? (
-                    <motion.div 
-                      animate={{ rotate: 360 }} 
-                      transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                      className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                    />
-                  ) : (
-                    <>
-                      <Sparkles size={18} className="text-pink-300" /> 
-                      <span className="text-base tracking-wide">Generate Project Ideas</span>
-                    </>
-                  )}
-                </div>
-              </button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Results Section */}
-        <AnimatePresence>
-          {generated && (
-            <div className="space-y-6">
-              <motion.div 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                className="flex items-center justify-between px-2 mb-2"
-              >
-                <h2 className="text-xl font-bold text-slate-800 tracking-tight">Your Personalized Roadmap</h2>
-                <span className="text-sm font-medium px-3 py-1 bg-green-100 text-green-700 rounded-full flex items-center gap-1">
-                  <Check size={14} /> 3 Matches Found
-                </span>
-              </motion.div>
-
-              {sampleProjects.map((p, i) => (
+            {sampleProjects.map((p, i) => {
+              const dm = difficultyMeta(p.difficulty);
+              return (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.15, type: 'spring', stiffness: 200, damping: 20 }}
-                  className="bg-[var(--color-surface-lowest)] rounded-[2rem] p-6 md:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.06)] transition-all duration-300 group"
+                  initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
+                  style={{ ...cardStyle, padding: '20px' }}
                 >
-                  <div className="flex flex-col md:flex-row items-start gap-6">
-                    <div
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br ${p.gradient} text-white shadow-lg ${p.shadow} group-hover:scale-110 transition-transform duration-300`}
-                    >
-                      <Code size={26} />
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '12px' }}>
+                    <div style={{
+                      width: '48px', height: '48px', borderRadius: '14px',
+                      background: `linear-gradient(135deg, ${p.color}, ${p.color}cc)`,
+                      color: 'white', flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: `0 4px 12px ${p.color}33`
+                    }}>
+                      <Code size={22} />
                     </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
-                        <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{p.title}</h3>
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 uppercase tracking-wider">
-                          <Target size={12} /> {p.difficulty}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap', marginBottom: '6px' }}>
+                        <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.3 }}>{p.title}</h3>
+                        <span style={{
+                          padding: '3px 10px', borderRadius: '999px',
+                          fontSize: '10px', fontWeight: 700,
+                          background: dm.bg, color: dm.text, border: `1px solid ${dm.border}`,
+                          textTransform: 'uppercase', letterSpacing: '0.05em',
+                          display: 'inline-flex', alignItems: 'center', gap: '4px'
+                        }}>
+                          <Target size={11} /> {p.difficulty}
                         </span>
                       </div>
-                      
-                      <p className="text-base text-slate-600 mb-5 leading-relaxed">{p.desc}</p>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                        <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                          <Layers size={16} className="text-indigo-500" />
-                          <span className="text-sm font-semibold text-slate-700 truncate">{p.stack.join(' · ')}</span>
-                        </div>
-                        <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                          <Clock size={16} className="text-pink-500" />
-                          <span className="text-sm font-semibold text-slate-700">{p.time} estimated</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50/50 border border-emerald-100">
-                        <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
-                          <Sparkles size={16} />
-                        </div>
-                        <p className="text-sm font-semibold text-emerald-800">
-                          {p.impact}
-                        </p>
-                      </div>
+                      <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: 0, lineHeight: 1.55 }}>{p.desc}</p>
                     </div>
                   </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '8px', marginBottom: '12px' }}>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '6px',
+                      padding: '8px 12px', borderRadius: '10px',
+                      background: 'var(--color-surface-low)', border: '1px solid rgba(24,20,69,0.04)',
+                      fontSize: '12px', color: 'var(--color-shakti-dark-text)'
+                    }}>
+                      <Layers size={13} style={{ color: ACCENT, flexShrink: 0 }} />
+                      <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.stack.join(' · ')}</span>
+                    </div>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '6px',
+                      padding: '8px 12px', borderRadius: '10px',
+                      background: 'var(--color-surface-low)', border: '1px solid rgba(24,20,69,0.04)',
+                      fontSize: '12px', color: 'var(--color-shakti-dark-text)'
+                    }}>
+                      <Clock size={13} style={{ color: '#e11d48', flexShrink: 0 }} />
+                      <span style={{ fontWeight: 600 }}>{p.time} estimated</span>
+                    </div>
+                  </div>
+
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: '10px',
+                    padding: '12px', borderRadius: '12px',
+                    background: '#ecfdf5', border: '1px solid rgba(16,185,129,0.18)'
+                  }}>
+                    <div style={{
+                      width: '28px', height: '28px', borderRadius: '8px',
+                      background: 'rgba(16,185,129,0.18)', color: '#047857',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                    }}>
+                      <Sparkles size={14} />
+                    </div>
+                    <p style={{ fontSize: '12px', fontWeight: 600, color: '#065f46', margin: 0, lineHeight: 1.4 }}>
+                      {p.impact}
+                    </p>
+                  </div>
                 </motion.div>
-              ))}
-            </div>
-          )}
-        </AnimatePresence>
-      </div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

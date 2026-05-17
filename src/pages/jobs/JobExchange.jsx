@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowLeft, MapPin, Clock, IndianRupee, Plus, X,
-  Briefcase, Search, Filter, Star, User, Calendar,
-  ChevronRight, MessageCircle, Heart, Zap, CheckCircle2,
-  Phone, Tag
+  ArrowLeft, MapPin, Clock, Plus, X,
+  Briefcase, Search, User,
+  ChevronRight, Heart, Zap, CheckCircle2, Tag
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+
+const ACCENT = '#f59e0b';
+const ACCENT_LIGHT = '#fb923c';
 
 const CATEGORIES = ['All', 'Tutoring', 'Cooking', 'Tailoring', 'Cleaning', 'Childcare', 'Delivery', 'Tech', 'Beauty'];
 
@@ -28,11 +30,12 @@ export default function JobExchange() {
   const [applied, setApplied] = useState(new Set());
   const [saved, setSaved] = useState(new Set());
   const [expandedId, setExpandedId] = useState(null);
+  const [postedJobs, setPostedJobs] = useState([]);
 
-  // Post form state
   const [newJob, setNewJob] = useState({ title: '', desc: '', location: '', pay: '', category: 'Tutoring', time: '' });
 
-  const filtered = DEMO_JOBS.filter(j => {
+  const allJobs = [...postedJobs, ...DEMO_JOBS];
+  const filtered = allJobs.filter(j => {
     const matchCat = activeCategory === 'All' || j.category === activeCategory;
     const matchSearch = !search || j.title.toLowerCase().includes(search.toLowerCase()) || j.location.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
@@ -54,47 +57,105 @@ export default function JobExchange() {
 
   const handlePost = () => {
     if (!newJob.title || !newJob.location || !newJob.pay) return toast.error('Fill required fields');
+    const job = {
+      id: `posted-${Date.now()}`,
+      title: newJob.title,
+      poster: 'You',
+      avatar: `https://api.dicebear.com/7.x/initials/svg?seed=You&backgroundColor=f59e0b&textColor=ffffff`,
+      location: newJob.location,
+      pay: newJob.pay.startsWith('₹') ? newJob.pay : `₹${newJob.pay}`,
+      category: newJob.category,
+      time: newJob.time || 'Flexible',
+      posted: 'Just now',
+      verified: false,
+      applicants: 0,
+      desc: newJob.desc || 'No description provided.',
+    };
+    setPostedJobs(prev => [job, ...prev]);
+    if (activeCategory !== 'All' && activeCategory !== newJob.category) setActiveCategory('All');
     toast.success('Task posted successfully!');
     setShowPostForm(false);
     setNewJob({ title: '', desc: '', location: '', pay: '', category: 'Tutoring', time: '' });
   };
 
+  const cardStyle = {
+    background: 'var(--color-surface-lowest)',
+    borderRadius: '1.25rem',
+    boxShadow: '0 1px 6px rgba(24,20,69,0.03)',
+  };
+
+  const inputStyle = {
+    width: '100%', padding: '12px 14px',
+    background: 'var(--color-surface-low)', border: '1px solid rgba(24,20,69,0.05)',
+    borderRadius: '12px', fontSize: '14px', color: 'var(--color-shakti-dark-text)',
+    boxSizing: 'border-box', outline: 'none', fontFamily: 'var(--font-sans)'
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a12] via-[#0d0b1a] to-[#0a0a12] pb-32 px-4 pt-6 max-w-[960px] mx-auto font-sans">
-      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-white/50 hover:text-white transition-colors mb-6 group">
-        <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /> Back
+    <div>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          fontSize: '13px', color: 'var(--color-outline)', background: 'none',
+          border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'var(--font-sans)',
+        }}
+      >
+        <ArrowLeft size={16} /> Back
       </button>
 
-      {/* Hero */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] p-7 md:p-9 mb-6 border border-white/[0.06]"
-        style={{ background: 'linear-gradient(135deg, #1a1505 0%, #2a2010 50%, #1a1508 100%)' }}>
-        <div className="absolute top-0 right-0 w-72 h-72 bg-amber-500/10 blur-[100px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-56 h-56 bg-orange-500/8 blur-[80px] rounded-full pointer-events-none" />
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400/20 to-orange-400/20 backdrop-blur-md flex items-center justify-center text-amber-300 flex-shrink-0 border border-amber-400/20 shadow-lg shadow-amber-500/10">
-            <Briefcase size={30} strokeWidth={1.5} />
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{
+          position: 'relative', borderRadius: '1.5rem', padding: '28px 24px',
+          marginBottom: '18px', overflow: 'hidden',
+          background: 'var(--color-surface-lowest)',
+          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+        }}
+      >
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: `${ACCENT}14`, borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '16px',
+            background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: `0 6px 20px ${ACCENT}40`,
+          }}>
+            <Briefcase size={24} color="white" strokeWidth={2.2} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-1.5 tracking-tight">Job Exchange</h1>
-            <p className="text-amber-200/60 text-sm font-medium">Hyperlocal gigs & tasks from your community.</p>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>Job Exchange</h1>
+            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0' }}>Hyperlocal gigs & tasks from your community.</p>
           </div>
         </div>
-        <div className="flex gap-3 mt-5 relative z-10">
-          <div className="px-3 py-1.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-xs font-semibold text-white/60">{DEMO_JOBS.length} Active</div>
-          <div className="px-3 py-1.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-xs font-semibold text-white/60">Hyderabad</div>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap', position: 'relative', zIndex: 10 }}>
+          <Chip text={`${DEMO_JOBS.length} Active`} />
+          <Chip text="Hyderabad" />
         </div>
       </motion.div>
 
-      {/* Search & Post */}
-      <div className="flex gap-3 mb-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={16} />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search tasks…"
-            className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 focus:border-amber-500/40 outline-none transition-all" />
+      {/* Search + Post */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
+        <div style={{ flex: 1, position: 'relative' }}>
+          <Search size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-outline)' }} />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search tasks…"
+            style={{ ...inputStyle, paddingLeft: '40px' }}
+          />
         </div>
-        <button onClick={() => setShowPostForm(!showPostForm)}
-          className="px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg hover:shadow-amber-500/20 transition-all flex-shrink-0">
+        <button
+          onClick={() => setShowPostForm(!showPostForm)}
+          style={{
+            padding: '0 20px', borderRadius: '12px',
+            background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`, color: 'white',
+            border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            boxShadow: `0 4px 12px ${ACCENT}33`, fontFamily: 'var(--font-sans)', flexShrink: 0
+          }}
+        >
           <Plus size={16} /> Post
         </button>
       </div>
@@ -103,32 +164,40 @@ export default function JobExchange() {
       <AnimatePresence>
         {showPostForm && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden mb-4">
-            <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl p-6 border border-white/[0.06]">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-base font-bold text-white">Post a Task</h3>
-                <button onClick={() => setShowPostForm(false)} className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-white/50 hover:text-white transition-all"><X size={16} /></button>
+            style={{ overflow: 'hidden', marginBottom: '14px' }}>
+            <div style={{ ...cardStyle, padding: '22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+                <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0 }}>Post a Task</h3>
+                <button onClick={() => setShowPostForm(false)} style={{
+                  width: '32px', height: '32px', borderRadius: '10px',
+                  background: 'var(--color-surface-low)', border: 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'var(--color-outline)', cursor: 'pointer'
+                }}><X size={16} /></button>
               </div>
-              <div className="space-y-4">
-                <input value={newJob.title} onChange={(e) => setNewJob({...newJob, title: e.target.value})} placeholder="Task title *"
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 outline-none focus:border-amber-500/40 transition-all" />
-                <textarea value={newJob.desc} onChange={(e) => setNewJob({...newJob, desc: e.target.value})} placeholder="Description" rows={2}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 outline-none focus:border-amber-500/40 transition-all resize-none" />
-                <div className="grid grid-cols-2 gap-3">
-                  <input value={newJob.location} onChange={(e) => setNewJob({...newJob, location: e.target.value})} placeholder="Location *"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 outline-none focus:border-amber-500/40 transition-all" />
-                  <input value={newJob.pay} onChange={(e) => setNewJob({...newJob, pay: e.target.value})} placeholder="Pay (₹) *"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 outline-none focus:border-amber-500/40 transition-all" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <input value={newJob.title} onChange={(e) => setNewJob({...newJob, title: e.target.value})} placeholder="Task title *" style={inputStyle} />
+                <textarea value={newJob.desc} onChange={(e) => setNewJob({...newJob, desc: e.target.value})} placeholder="Description" rows={2} style={{ ...inputStyle, resize: 'none' }} />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                  <input value={newJob.location} onChange={(e) => setNewJob({...newJob, location: e.target.value})} placeholder="Location *" style={inputStyle} />
+                  <input value={newJob.pay} onChange={(e) => setNewJob({...newJob, pay: e.target.value})} placeholder="Pay (₹) *" style={inputStyle} />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <select value={newJob.category} onChange={(e) => setNewJob({...newJob, category: e.target.value})}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm outline-none focus:border-amber-500/40 transition-all">
-                    {CATEGORIES.filter(c => c !== 'All').map(c => <option key={c} value={c} className="bg-[#0d0b1a]">{c}</option>)}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                  <select value={newJob.category} onChange={(e) => setNewJob({...newJob, category: e.target.value})} style={inputStyle}>
+                    {CATEGORIES.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
-                  <input value={newJob.time} onChange={(e) => setNewJob({...newJob, time: e.target.value})} placeholder="Time (e.g. 2 hrs/day)"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-white/25 outline-none focus:border-amber-500/40 transition-all" />
+                  <input value={newJob.time} onChange={(e) => setNewJob({...newJob, time: e.target.value})} placeholder="Time (e.g. 2 hrs/day)" style={inputStyle} />
                 </div>
-                <button onClick={handlePost} className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-bold hover:shadow-lg transition-all">
+                <button
+                  onClick={handlePost}
+                  style={{
+                    width: '100%', padding: '12px', borderRadius: '12px',
+                    background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+                    color: 'white', border: 'none', fontSize: '13px', fontWeight: 700,
+                    cursor: 'pointer', boxShadow: `0 4px 12px ${ACCENT}33`,
+                    fontFamily: 'var(--font-sans)'
+                  }}
+                >
                   Publish Task
                 </button>
               </div>
@@ -138,73 +207,105 @@ export default function JobExchange() {
       </AnimatePresence>
 
       {/* Categories */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-5 no-scrollbar">
+      <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '8px', marginBottom: '14px' }}>
         {CATEGORIES.map(c => (
-          <button key={c} onClick={() => setActiveCategory(c)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap border transition-all ${
-              activeCategory === c ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' : 'bg-white/[0.03] text-white/40 border-white/[0.06] hover:text-white/60'
-            }`}>
+          <button
+            key={c}
+            onClick={() => setActiveCategory(c)}
+            style={{
+              padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 700,
+              whiteSpace: 'nowrap',
+              background: activeCategory === c ? `${ACCENT}1a` : 'var(--color-surface-lowest)',
+              color: activeCategory === c ? '#b45309' : 'var(--color-outline)',
+              border: `1px solid ${activeCategory === c ? `${ACCENT}33` : 'rgba(24,20,69,0.05)'}`,
+              cursor: 'pointer', fontFamily: 'var(--font-sans)', transition: 'all 0.15s'
+            }}
+          >
             {c}
           </button>
         ))}
       </div>
 
       {/* Job List */}
-      <div className="space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {filtered.map((job, i) => (
-          <motion.div key={job.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-            className="bg-white/[0.03] backdrop-blur-sm rounded-2xl border border-white/[0.06] hover:border-white/[0.12] transition-all overflow-hidden">
-            <div className="p-5">
-              <div className="flex items-start gap-3 mb-3">
-                <img src={job.avatar} alt={job.poster} className="w-10 h-10 rounded-xl object-cover flex-shrink-0 border border-white/[0.08]" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="text-sm font-bold text-white truncate">{job.title}</h3>
-                    {job.verified && <CheckCircle2 size={13} className="text-emerald-400 flex-shrink-0" />}
+          <motion.div
+            key={job.id}
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+            style={{ ...cardStyle, overflow: 'hidden' }}
+          >
+            <div style={{ padding: '18px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
+                <img src={job.avatar} alt={job.poster} style={{ width: '40px', height: '40px', borderRadius: '12px', objectFit: 'cover', flexShrink: 0, border: '1px solid var(--color-surface-low)' }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{job.title}</h3>
+                    {job.verified && <CheckCircle2 size={13} style={{ color: '#10b981', flexShrink: 0 }} />}
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-white/40">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--color-outline)' }}>
                     <span>{job.poster}</span>
                     <span>•</span>
-                    <span className="flex items-center gap-1"><Clock size={10} /> {job.posted}</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}><Clock size={10} /> {job.posted}</span>
                   </div>
                 </div>
-                <div className="text-right flex-shrink-0 ml-2">
-                  <p className="text-base font-black text-amber-400">{job.pay}</p>
+                <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '8px' }}>
+                  <p style={{ fontSize: '15px', fontWeight: 800, color: ACCENT, margin: 0 }}>{job.pay}</p>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/15 flex items-center gap-1"><Tag size={9} /> {job.category}</span>
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white/[0.04] text-white/40 border border-white/[0.06] flex items-center gap-1"><MapPin size={9} /> {job.location}</span>
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white/[0.04] text-white/40 border border-white/[0.06] flex items-center gap-1"><Clock size={9} /> {job.time}</span>
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white/[0.04] text-white/40 border border-white/[0.06] flex items-center gap-1"><User size={9} /> {job.applicants} applied</span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
+                <Tagline icon={<Tag size={9} />} text={job.category} accent />
+                <Tagline icon={<MapPin size={9} />} text={job.location} />
+                <Tagline icon={<Clock size={9} />} text={job.time} />
+                <Tagline icon={<User size={9} />} text={`${job.applicants} applied`} />
               </div>
 
-              {/* Expandable description */}
               <AnimatePresence>
                 {expandedId === job.id && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                    <p className="text-xs text-white/50 leading-relaxed mb-3 pl-1 border-l-2 border-amber-500/20 ml-1">{job.desc}</p>
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: 'hidden' }}>
+                    <p style={{ fontSize: '12px', color: 'var(--color-shakti-dark-muted)', lineHeight: 1.6, margin: '0 0 12px', paddingLeft: '10px', borderLeft: `3px solid ${ACCENT}33` }}>{job.desc}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <div className="flex items-center gap-2 pt-3 border-t border-white/[0.04]">
-                <button onClick={() => setExpandedId(expandedId === job.id ? null : job.id)}
-                  className="text-xs font-bold text-white/30 hover:text-amber-400 transition-colors flex items-center gap-1">
-                  {expandedId === job.id ? 'Show less' : 'Details'} <ChevronRight size={12} className={`transition-transform ${expandedId === job.id ? 'rotate-90' : ''}`} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '12px', borderTop: '1px solid var(--color-surface-low)' }}>
+                <button
+                  onClick={() => setExpandedId(expandedId === job.id ? null : job.id)}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    fontSize: '11px', fontWeight: 700, color: ACCENT,
+                    display: 'inline-flex', alignItems: 'center', gap: '4px', padding: 0, fontFamily: 'var(--font-sans)'
+                  }}
+                >
+                  {expandedId === job.id ? 'Show less' : 'Details'} <ChevronRight size={12} style={{ transform: expandedId === job.id ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }} />
                 </button>
-                <div className="flex-1" />
-                <button onClick={() => handleSave(job.id)}
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all border ${
-                    saved.has(job.id) ? 'bg-rose-500/15 text-rose-400 border-rose-500/20' : 'bg-white/[0.04] text-white/30 border-white/[0.06] hover:text-rose-400'
-                  }`}>
+                <div style={{ flex: 1 }} />
+                <button
+                  onClick={() => handleSave(job.id)}
+                  style={{
+                    width: '36px', height: '36px', borderRadius: '10px',
+                    background: saved.has(job.id) ? '#fef2f2' : 'var(--color-surface-low)',
+                    color: saved.has(job.id) ? '#e11d48' : 'var(--color-outline)',
+                    border: `1px solid ${saved.has(job.id) ? 'rgba(225,29,72,0.22)' : 'rgba(24,20,69,0.05)'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                  }}
+                >
                   <Heart size={14} fill={saved.has(job.id) ? 'currentColor' : 'none'} />
                 </button>
-                <button onClick={() => applied.has(job.id) ? null : handleApply(job.id)} disabled={applied.has(job.id)}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                    applied.has(job.id) ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:shadow-amber-500/20'
-                  }`}>
+                <button
+                  onClick={() => applied.has(job.id) ? null : handleApply(job.id)}
+                  disabled={applied.has(job.id)}
+                  style={{
+                    padding: '8px 16px', borderRadius: '10px', fontSize: '12px', fontWeight: 700,
+                    background: applied.has(job.id) ? '#ecfdf5' : `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+                    color: applied.has(job.id) ? '#047857' : 'white',
+                    border: applied.has(job.id) ? '1px solid rgba(16,185,129,0.22)' : 'none',
+                    cursor: applied.has(job.id) ? 'default' : 'pointer',
+                    display: 'inline-flex', alignItems: 'center', gap: '6px',
+                    boxShadow: applied.has(job.id) ? 'none' : `0 4px 12px ${ACCENT}33`,
+                    fontFamily: 'var(--font-sans)'
+                  }}
+                >
                   {applied.has(job.id) ? <><CheckCircle2 size={13} /> Applied</> : <><Zap size={13} /> Apply</>}
                 </button>
               </div>
@@ -213,12 +314,38 @@ export default function JobExchange() {
         ))}
 
         {filtered.length === 0 && (
-          <div className="text-center py-16">
-            <Search size={40} className="text-white/10 mx-auto mb-3" />
-            <p className="text-sm text-white/30">No tasks found matching your search.</p>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--color-outline)' }}>
+            <Search size={40} style={{ margin: '0 auto 10px', display: 'block', color: 'var(--color-surface-low)' }} />
+            <p style={{ fontSize: '13px', margin: 0 }}>No tasks found matching your search.</p>
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+function Chip({ text }) {
+  return (
+    <div style={{
+      padding: '5px 12px', borderRadius: '999px',
+      background: 'var(--color-surface-low)', border: '1px solid rgba(24,20,69,0.05)',
+      fontSize: '11px', fontWeight: 600, color: 'var(--color-shakti-dark-text)'
+    }}>
+      {text}
+    </div>
+  );
+}
+
+function Tagline({ icon, text, accent }) {
+  return (
+    <span style={{
+      padding: '4px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
+      background: accent ? '#fffbeb' : 'var(--color-surface-low)',
+      color: accent ? '#b45309' : 'var(--color-outline)',
+      border: `1px solid ${accent ? 'rgba(245,158,11,0.22)' : 'rgba(24,20,69,0.05)'}`,
+      display: 'inline-flex', alignItems: 'center', gap: '4px'
+    }}>
+      {icon} {text}
+    </span>
   );
 }

@@ -56,7 +56,7 @@ export default function LoginPage() {
         location: { lat: 12.9716, lng: 77.5946 }, isVolunteer: false,
         skills: ['Coding', 'Design'], interests: ['AI', 'Web Dev'],
         safetyScore: 100, moodHistory: [], menstrualData: { lastPeriod: null, cycleLength: 28, periodLength: 5 },
-        onboardingComplete: false, ageRange: '18-24', city: 'Bangalore', shePoints: 60, sheLevel: 'Beginner',
+        onboardingComplete: true, ageRange: '18-24', city: 'Bangalore', shePoints: 60, sheLevel: 'Beginner',
       };
       localStorage.setItem('shakti_demo_user', JSON.stringify(demoUser));
       localStorage.setItem('shakti_demo_profile_demo@shakti.ai', JSON.stringify(demoProfile));

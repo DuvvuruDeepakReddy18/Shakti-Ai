@@ -5,6 +5,10 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const ACCENT = '#0891b2';
+const ACCENT_LIGHT = '#06b6d4';
+const ACCENT_BG = '#ecfeff';
+
 const INTERNSHIPS = [
   { id: 1, title: 'Content Writing Sprint', company: 'StartupLabs', duration: '1 week', stipend: '5,000', mode: 'Remote', skills: ['Writing', 'SEO'], slots: 3 },
   { id: 2, title: 'UI Design Challenge', company: 'DesignHub', duration: '3 days', stipend: '3,000', mode: 'Remote', skills: ['Figma', 'UI'], slots: 5 },
@@ -16,88 +20,149 @@ const INTERNSHIPS = [
 export default function MicroInternships() {
   const navigate = useNavigate();
 
+  const cardStyle = {
+    background: 'var(--color-surface-lowest)',
+    borderRadius: '1.25rem',
+    boxShadow: '0 1px 6px rgba(24,20,69,0.03)',
+  };
+
   return (
-    <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-amber-600 mb-4">
+    <div>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          fontSize: '13px', color: 'var(--color-outline)', background: 'none',
+          border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'var(--font-sans)',
+        }}
+      >
         <ArrowLeft size={16} /> Back
       </button>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] p-6 md:p-8 mb-6 shadow-2xl border border-white/10 bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-[var(--color-shakti-primary)]/20 blur-[80px]" />
-          <div className="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-shakti-secondary)]/20 blur-[60px]" />
-        </div>
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="w-14 h-14 rounded-[1.25rem] bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center text-white flex-shrink-0 border border-white/5">
-            <Rocket size={28} />
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{
+          position: 'relative', borderRadius: '1.5rem', padding: '28px 24px',
+          marginBottom: '18px', overflow: 'hidden',
+          background: 'var(--color-surface-lowest)',
+          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+        }}
+      >
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: `${ACCENT}14`, borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '16px',
+            background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: `0 6px 20px ${ACCENT}40`,
+          }}>
+            <Rocket size={24} color="white" strokeWidth={2.2} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Micro-Internships</h1>
-            <p className="text-sm text-white/70">Short-term paid projects to build your portfolio.</p>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>Micro-Internships</h1>
+            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0' }}>Short-term paid projects to build your portfolio.</p>
           </div>
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-4 border border-[var(--color-surface-highlight)] shadow-sm">
-          <Zap size={18} className="text-amber-500 mb-2" />
-          <h4 className="text-2xl font-bold text-[var(--color-text-primary)]">12</h4>
-          <p className="text-xs text-[var(--color-text-secondary)] font-medium">Live sprints</p>
+      {/* Stat tiles */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '18px' }}>
+        <div style={{ ...cardStyle, padding: '16px' }}>
+          <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: ACCENT_BG, color: ACCENT, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+            <Zap size={16} />
+          </div>
+          <h4 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1 }}>12</h4>
+          <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '4px 0 0' }}>Live sprints</p>
         </div>
-        <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-4 border border-[var(--color-surface-highlight)] shadow-sm">
-          <Sparkles size={18} className="text-emerald-500 mb-2" />
-          <h4 className="text-2xl font-bold text-[var(--color-text-primary)]">₹25k+</h4>
-          <p className="text-xs text-[var(--color-text-secondary)] font-medium">Stipends distributed</p>
+        <div style={{ ...cardStyle, padding: '16px' }}>
+          <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: '#ecfdf5', color: '#047857', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+            <Sparkles size={16} />
+          </div>
+          <h4 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1 }}>₹25k+</h4>
+          <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '4px 0 0' }}>Stipends distributed</p>
         </div>
       </div>
 
-      <h3 className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-3 flex items-center gap-2">
-        <Briefcase size={13} className="text-amber-500" /> Active opportunities
+      <h3 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 4px 12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <Briefcase size={13} style={{ color: ACCENT }} /> Active opportunities
       </h3>
 
-      <div className="space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {INTERNSHIPS.map((job, i) => (
           <motion.div
-            key={job.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-            className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm hover:shadow-md hover:border-amber-100 transition-all"
+            key={job.id}
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+            style={{ ...cardStyle, padding: '18px', transition: 'box-shadow 0.2s' }}
+            whileHover={{ y: -2 }}
+            onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 6px 18px rgba(24,20,69,0.06)'}
+            onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 1px 6px rgba(24,20,69,0.03)'}
           >
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <h3 className="text-base font-semibold text-[var(--color-text-primary)] leading-tight">{job.title}</h3>
-                  <span className="px-2 py-0.5 bg-amber-50 text-amber-700 text-[11px] font-semibold rounded-md border border-amber-100">
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '12px' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.3 }}>{job.title}</h3>
+                  <span style={{
+                    padding: '2px 8px', borderRadius: '6px',
+                    background: ACCENT_BG, color: ACCENT,
+                    fontSize: '10px', fontWeight: 700,
+                    border: `1px solid ${ACCENT}33`
+                  }}>
                     {job.slots} slots
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)]">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--color-outline)' }}>
                   <Building2 size={12} /> {job.company}
                 </div>
               </div>
-              <div className="flex items-center gap-1 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 flex-shrink-0">
-                <IndianRupee size={13} className="text-emerald-600" />
-                <span className="text-sm font-bold text-emerald-700">{job.stipend}</span>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '3px',
+                padding: '6px 12px', borderRadius: '10px',
+                background: '#ecfdf5', border: '1px solid rgba(16,185,129,0.22)',
+                flexShrink: 0
+              }}>
+                <IndianRupee size={13} style={{ color: '#047857' }} />
+                <span style={{ fontSize: '13px', fontWeight: 800, color: '#047857' }}>{job.stipend}</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-primary)] p-2 rounded-lg bg-[var(--color-surface-low)]">
-                <Clock size={12} className="text-blue-500" /> {job.duration}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', marginBottom: '12px' }}>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                padding: '8px 12px', borderRadius: '10px',
+                background: 'var(--color-surface-low)', fontSize: '12px', color: 'var(--color-shakti-dark-text)',
+                border: '1px solid rgba(24,20,69,0.04)'
+              }}>
+                <Clock size={12} style={{ color: ACCENT }} /> {job.duration}
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-primary)] p-2 rounded-lg bg-[var(--color-surface-low)]">
-                <MapPin size={12} className="text-rose-500" /> {job.mode}
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                padding: '8px 12px', borderRadius: '10px',
+                background: 'var(--color-surface-low)', fontSize: '12px', color: 'var(--color-shakti-dark-text)',
+                border: '1px solid rgba(24,20,69,0.04)'
+              }}>
+                <MapPin size={12} style={{ color: '#e11d48' }} /> {job.mode}
               </div>
             </div>
 
-            <div className="flex items-center justify-between gap-4 pt-3 border-t border-[var(--color-surface-highlight)] flex-wrap">
-              <div className="flex flex-wrap gap-1.5">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', paddingTop: '12px', borderTop: '1px solid var(--color-surface-low)', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {job.skills.map((s) => (
-                  <span key={s} className="px-2 py-0.5 bg-[var(--color-surface-low)] text-[11px] font-medium text-[var(--color-text-secondary)] rounded-md border border-[var(--color-surface-highlight)]">
+                  <span key={s} style={{
+                    padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 600,
+                    background: 'var(--color-surface-low)', color: 'var(--color-outline)',
+                    border: '1px solid rgba(24,20,69,0.05)'
+                  }}>
                     {s}
                   </span>
                 ))}
               </div>
-              <button className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 hover:underline whitespace-nowrap">
+              <button style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                fontSize: '12px', fontWeight: 700, color: ACCENT,
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontFamily: 'var(--font-sans)', padding: 0
+              }}>
                 Apply sprint <ArrowRight size={13} />
               </button>
             </div>
@@ -105,10 +170,15 @@ export default function MicroInternships() {
         ))}
       </div>
 
-      <div className="mt-6 flex items-center justify-center">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-surface-lowest)] border border-[var(--color-surface-highlight)] shadow-sm">
-          <ShieldCheck size={14} className="text-emerald-500" />
-          <span className="text-xs font-semibold text-[var(--color-text-secondary)]">Verified partner enterprises</span>
+      <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: '8px',
+          padding: '8px 16px', borderRadius: '999px',
+          background: 'var(--color-surface-lowest)', border: '1px solid rgba(24,20,69,0.05)',
+          boxShadow: '0 1px 6px rgba(24,20,69,0.03)'
+        }}>
+          <ShieldCheck size={14} style={{ color: '#10b981' }} />
+          <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-outline)' }}>Verified partner enterprises</span>
         </div>
       </div>
     </div>

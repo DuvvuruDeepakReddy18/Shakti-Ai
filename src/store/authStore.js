@@ -51,7 +51,7 @@ const DEMO_PROFILE = {
   safetyScore: 100,
   moodHistory: [],
   menstrualData: { lastPeriod: null, cycleLength: 28, periodLength: 5 },
-  onboardingComplete: false,
+  onboardingComplete: true,
   ageRange: '18-24',
   city: 'Bangalore',
   shePoints: 60,
@@ -92,7 +92,12 @@ const useAuthStore = create((set, get) => ({
           set({ user, userProfile: null, loading: false });
         }
       } else {
-        set({ user: null, userProfile: null, loading: false });
+        // Don't wipe an active demo session set by the Demo button
+        if (get().isDemo) {
+          set({ loading: false });
+        } else {
+          set({ user: null, userProfile: null, loading: false });
+        }
       }
     });
   },

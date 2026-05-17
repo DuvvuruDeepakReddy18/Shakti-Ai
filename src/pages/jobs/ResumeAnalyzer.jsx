@@ -14,6 +14,10 @@ import { analyzeResume } from '../../services/aiService';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
+const ACCENT = '#4f46e5';
+const ACCENT_LIGHT = '#6366f1';
+const ACCENT_BG = '#eef2ff';
+
 const LOADING_STEPS = [
   { icon: FileText, label: 'Extracting text from your resume…', duration: 8 },
   { icon: Search, label: 'Identifying skills & keywords…', duration: 12 },
@@ -37,7 +41,7 @@ export default function ResumeAnalyzer() {
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [, setSelectedFile] = useState(null);
   const [loadingStep, setLoadingStep] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [tipIndex, setTipIndex] = useState(0);
@@ -46,14 +50,12 @@ export default function ResumeAnalyzer() {
 
   const MIN_WAIT = 60;
 
-  // Timer + step progression during loading
   useEffect(() => {
     if (!isAnalyzing) return;
     const interval = setInterval(() => {
       setElapsed(prev => {
         const next = prev + 1;
         if (next >= MIN_WAIT) setMinWaitDone(true);
-        // Progress through steps
         let acc = 0;
         for (let i = 0; i < LOADING_STEPS.length; i++) {
           acc += LOADING_STEPS[i].duration;
@@ -66,14 +68,12 @@ export default function ResumeAnalyzer() {
     return () => clearInterval(interval);
   }, [isAnalyzing]);
 
-  // Rotate tips every 8 seconds
   useEffect(() => {
     if (!isAnalyzing) return;
     const interval = setInterval(() => setTipIndex(p => (p + 1) % TIPS.length), 8000);
     return () => clearInterval(interval);
   }, [isAnalyzing]);
 
-  // Show result once both API + min wait are done
   useEffect(() => {
     if (minWaitDone && pendingResult) {
       setResult(pendingResult);
@@ -148,106 +148,153 @@ export default function ResumeAnalyzer() {
   const remaining = Math.max(MIN_WAIT - elapsed, 0);
   const StepIcon = LOADING_STEPS[loadingStep]?.icon || Loader2;
 
+  const cardStyle = {
+    background: 'var(--color-surface-lowest)',
+    borderRadius: '1.25rem',
+    boxShadow: '0 1px 6px rgba(24,20,69,0.03)',
+  };
+
+  const scoreMeta = (score) =>
+    score > 80
+      ? { color: '#10b981', bg: '#ecfdf5', text: '#047857', border: 'rgba(16,185,129,0.22)', label: 'Excellent Match' }
+      : score > 60
+        ? { color: '#f59e0b', bg: '#fffbeb', text: '#b45309', border: 'rgba(245,158,11,0.22)', label: 'Good — Room to Improve' }
+        : { color: '#ef4444', bg: '#fef2f2', text: '#b91c1c', border: 'rgba(239,68,68,0.22)', label: 'Needs Optimization' };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a12] via-[#0d0b1a] to-[#0a0a12] pb-32 px-4 pt-6 max-w-[960px] mx-auto font-sans">
-      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-white/50 hover:text-white transition-colors mb-6 group">
-        <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /> Back
+    <div>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          fontSize: '13px', color: 'var(--color-outline)', background: 'none',
+          border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'var(--font-sans)',
+        }}
+      >
+        <ArrowLeft size={16} /> Back
       </button>
 
-      {/* Hero */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] p-7 md:p-9 mb-6 border border-white/[0.06]"
-        style={{ background: 'linear-gradient(135deg, #1a1030 0%, #2a1545 50%, #151030 100%)' }}>
-        <div className="absolute top-0 right-0 w-72 h-72 bg-violet-500/10 blur-[100px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-56 h-56 bg-fuchsia-500/8 blur-[80px] rounded-full pointer-events-none" />
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-400/20 to-fuchsia-400/20 backdrop-blur-md flex items-center justify-center text-violet-300 flex-shrink-0 border border-violet-400/20 shadow-lg shadow-violet-500/10">
-            <Target size={30} strokeWidth={1.5} />
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{
+          position: 'relative', borderRadius: '1.5rem', padding: '28px 24px',
+          marginBottom: '18px', overflow: 'hidden',
+          background: 'var(--color-surface-lowest)',
+          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+        }}
+      >
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: `${ACCENT}14`, borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '16px',
+            background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: `0 6px 20px ${ACCENT}40`,
+          }}>
+            <Target size={24} color="white" strokeWidth={2.2} />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-1.5 tracking-tight">AI Resume Analyzer</h1>
-            <p className="text-violet-200/60 text-sm font-medium">ATS scoring, role matching & AI rewrite suggestions.</p>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>ATS Scanner</h1>
+            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0' }}>ATS scoring, role matching & AI rewrite suggestions.</p>
           </div>
         </div>
       </motion.div>
 
-      {/* Info */}
-      <div className="bg-violet-500/5 p-4 rounded-xl mb-6 flex gap-3 items-start border border-violet-500/10">
-        <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 flex-shrink-0">
+      {/* Info banner */}
+      <div style={{
+        background: ACCENT_BG, padding: '14px', borderRadius: '14px', marginBottom: '18px',
+        display: 'flex', gap: '12px', alignItems: 'flex-start',
+        border: `1px solid ${ACCENT}22`
+      }}>
+        <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: `${ACCENT}1a`, color: ACCENT, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <Zap size={16} />
         </div>
-        <p className="text-sm text-white/60 leading-relaxed">
+        <p style={{ fontSize: '13px', color: '#3730a3', margin: 0, lineHeight: 1.5 }}>
           Our AI extracts your skills, scores ATS compatibility, and suggests improvements.
-          <span className="text-violet-400 font-semibold"> Analysis takes about a minute — we show helpful tips while you wait!</span>
+          <span style={{ fontWeight: 700 }}> Analysis takes about a minute — we show tips while you wait!</span>
         </p>
       </div>
 
-      {/* Upload Area */}
+      {/* Upload */}
       {!result && !isAnalyzing && (
-        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
           onClick={() => fileInputRef.current?.click()}
-          className="w-full py-20 rounded-2xl bg-white/[0.02] border-2 border-dashed border-white/[0.08] flex flex-col items-center justify-center gap-5 cursor-pointer hover:border-violet-500/30 hover:bg-violet-500/[0.02] transition-all group">
-          <div className="w-18 h-18 rounded-2xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15 flex items-center justify-center border border-violet-500/20 group-hover:scale-105 transition-transform" style={{ width: '72px', height: '72px' }}>
-            <FileUp size={32} className="text-violet-400" />
+          style={{
+            width: '100%', padding: '60px 24px', borderRadius: '20px',
+            background: 'var(--color-surface-lowest)',
+            border: `2px dashed ${ACCENT}40`,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '18px',
+            cursor: 'pointer', transition: 'all 0.2s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = ACCENT; e.currentTarget.style.background = ACCENT_BG; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = `${ACCENT}40`; e.currentTarget.style.background = 'var(--color-surface-lowest)'; }}
+        >
+          <div style={{ width: '72px', height: '72px', borderRadius: '20px', background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT_LIGHT}15)`, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${ACCENT}22` }}>
+            <FileUp size={32} style={{ color: ACCENT }} />
           </div>
-          <div className="text-center">
-            <h3 className="text-base font-bold text-white mb-1">Drop your resume here</h3>
-            <p className="text-xs text-white/40">PDF or TXT · Max 5 MB</p>
+          <div style={{ textAlign: 'center' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0 }}>Drop your resume here</h3>
+            <p style={{ fontSize: '12px', color: 'var(--color-outline)', margin: '6px 0 0' }}>PDF or TXT · Max 5 MB</p>
           </div>
-          <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white text-sm font-bold hover:shadow-lg hover:shadow-violet-500/20 transition-all">
+          <button style={{
+            padding: '12px 24px', borderRadius: '12px',
+            background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`, color: 'white',
+            border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer',
+            boxShadow: `0 4px 12px ${ACCENT}33`, fontFamily: 'var(--font-sans)'
+          }}>
             Browse files
           </button>
-          <input type="file" ref={fileInputRef} onChange={handleUpload} accept=".pdf,.txt" className="hidden" />
+          <input type="file" ref={fileInputRef} onChange={handleUpload} accept=".pdf,.txt" style={{ display: 'none' }} />
         </motion.div>
       )}
 
-      {/* Loading State */}
+      {/* Loading */}
       {isAnalyzing && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.06] shadow-xl overflow-hidden">
-          {/* Progress bar */}
-          <div className="h-1.5 bg-white/[0.04] relative">
-            <motion.div className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-r-full"
-              style={{ width: `${progressPct}%` }} transition={{ duration: 0.5 }} />
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ ...cardStyle, overflow: 'hidden' }}>
+          <div style={{ height: '6px', background: 'var(--color-surface-low)', position: 'relative' }}>
+            <motion.div
+              style={{ height: '100%', background: `linear-gradient(90deg, ${ACCENT}, ${ACCENT_LIGHT})`, width: `${progressPct}%` }}
+              transition={{ duration: 0.5 }}
+            />
           </div>
-
-          <div className="p-8 flex flex-col items-center text-center">
-            {/* Animated icon */}
+          <div style={{ padding: '36px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
             <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15 flex items-center justify-center mb-6 border border-violet-500/20">
-              <StepIcon size={36} className="text-violet-400" />
+              style={{
+                width: '76px', height: '76px', borderRadius: '20px',
+                background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT_LIGHT}15)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: '20px', border: `1px solid ${ACCENT}22`
+              }}>
+              <StepIcon size={32} style={{ color: ACCENT }} />
             </motion.div>
-
-            {/* Current step */}
             <AnimatePresence mode="wait">
               <motion.p key={loadingStep} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
-                className="text-base font-bold text-white mb-2">
+                style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: '0 0 6px' }}>
                 {LOADING_STEPS[loadingStep]?.label}
               </motion.p>
             </AnimatePresence>
-
-            {/* Timer */}
-            <div className="flex items-center gap-2 mb-6">
-              <Clock size={14} className="text-white/30" />
-              <span className="text-sm text-white/40 font-mono">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '20px' }}>
+              <Clock size={14} style={{ color: 'var(--color-outline)' }} />
+              <span style={{ fontSize: '13px', color: 'var(--color-outline)', fontFamily: 'monospace' }}>
                 {remaining > 0 ? `~${remaining}s remaining` : 'Wrapping up…'}
               </span>
             </div>
-
-            {/* Step indicators */}
-            <div className="flex gap-2 mb-8">
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '24px' }}>
               {LOADING_STEPS.map((_, i) => (
-                <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${
-                  i <= loadingStep ? 'w-8 bg-gradient-to-r from-violet-500 to-fuchsia-500' : 'w-4 bg-white/[0.06]'
-                }`} />
+                <div key={i} style={{
+                  height: '6px', borderRadius: '999px',
+                  width: i <= loadingStep ? '28px' : '14px',
+                  background: i <= loadingStep ? `linear-gradient(90deg, ${ACCENT}, ${ACCENT_LIGHT})` : 'var(--color-surface-low)',
+                  transition: 'all 0.4s'
+                }} />
               ))}
             </div>
-
-            {/* Rotating tips */}
-            <div className="bg-white/[0.03] rounded-xl p-4 border border-white/[0.06] max-w-md">
+            <div style={{ background: 'var(--color-surface-low)', borderRadius: '12px', padding: '12px 16px', border: '1px solid rgba(24,20,69,0.04)', maxWidth: '420px' }}>
               <AnimatePresence mode="wait">
                 <motion.p key={tipIndex} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  className="text-xs text-white/50 leading-relaxed">
+                  style={{ fontSize: '12px', color: 'var(--color-shakti-dark-muted)', margin: 0, lineHeight: 1.6 }}>
                   {TIPS[tipIndex]}
                 </motion.p>
               </AnimatePresence>
@@ -259,118 +306,134 @@ export default function ResumeAnalyzer() {
       {/* Results */}
       <AnimatePresence>
         {result && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-            {/* Score Card */}
-            <div className="bg-white/[0.03] backdrop-blur-sm rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 border border-white/[0.06] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/5 blur-[60px] rounded-full pointer-events-none" />
-              <div className="relative w-32 h-32 flex items-center justify-center flex-shrink-0">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <path className="text-white/[0.06]" stroke="currentColor" strokeWidth="2.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  <motion.path
-                    initial={{ strokeDasharray: '0, 100' }}
-                    animate={{ strokeDasharray: `${result.score}, 100` }}
-                    transition={{ duration: 1.5, ease: 'easeOut', delay: 0.2 }}
-                    className={result.score > 80 ? 'text-emerald-400' : result.score > 60 ? 'text-amber-400' : 'text-rose-400'}
-                    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  />
-                </svg>
-                <div className="absolute flex flex-col items-center">
-                  <span className="text-3xl font-black text-white leading-none">{result.score}</span>
-                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-1">ATS Score</span>
-                </div>
-              </div>
-              <div className="flex-1 text-center md:text-left">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border mb-2 ${result.score > 80 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : result.score > 60 ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
-                  {result.score > 80 ? 'Excellent Match' : result.score > 60 ? 'Good — Room to Improve' : 'Needs Optimization'}
-                </span>
-                <h3 className="text-lg font-bold text-white mb-1">Resume Analyzed</h3>
-                <p className="text-sm text-white/50">Skills extracted and matched against career paths.</p>
-              </div>
-            </div>
-
-            {/* Top Roles */}
-            <div className="bg-white/[0.03] rounded-2xl p-5 border border-white/[0.06]">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400"><Briefcase size={18} /></div>
-                <h4 className="text-base font-bold text-white">Top Role Matches</h4>
-              </div>
-              <div className="space-y-4">
-                {result.roles?.map((role, i) => (
-                  <div key={i} className="flex items-center justify-between gap-4">
-                    <span className="text-sm font-medium text-white/80 truncate flex-1">{role.title}</span>
-                    <div className="flex items-center gap-3 w-32 sm:w-48 flex-shrink-0">
-                      <div className="flex-1 h-2.5 bg-white/[0.06] rounded-full overflow-hidden">
-                        <motion.div initial={{ width: 0 }} animate={{ width: `${role.matchScore}%` }} transition={{ duration: 1, delay: i * 0.2 }}
-                          className={`h-full rounded-full ${role.matchScore > 80 ? 'bg-emerald-500' : role.matchScore > 60 ? 'bg-amber-500' : 'bg-rose-500'}`} />
-                      </div>
-                      <span className="text-xs font-bold text-white w-8 text-right">{role.matchScore}%</span>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {(() => {
+              const sm = scoreMeta(result.score);
+              return (
+                <div style={{ ...cardStyle, padding: '24px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '20px', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ position: 'absolute', top: '-40px', right: '-30px', width: '160px', height: '160px', background: `${sm.color}10`, borderRadius: '50%', filter: 'blur(50px)', pointerEvents: 'none' }} />
+                  <div style={{ position: 'relative', width: '128px', height: '128px', flexShrink: 0 }}>
+                    <svg style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} viewBox="0 0 36 36">
+                      <path style={{ color: 'var(--color-surface-low)' }} stroke="currentColor" strokeWidth="2.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                      <motion.path
+                        initial={{ strokeDasharray: '0, 100' }}
+                        animate={{ strokeDasharray: `${result.score}, 100` }}
+                        transition={{ duration: 1.5, ease: 'easeOut', delay: 0.2 }}
+                        stroke={sm.color} strokeWidth="2.8" strokeLinecap="round" fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                    </svg>
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: '32px', fontWeight: 900, color: 'var(--color-shakti-dark-text)', lineHeight: 1 }}>{result.score}</span>
+                      <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '4px' }}>ATS Score</span>
                     </div>
                   </div>
-                ))}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '999px', fontSize: '11px', fontWeight: 700, background: sm.bg, color: sm.text, border: `1px solid ${sm.border}`, marginBottom: '8px' }}>
+                      {sm.label}
+                    </span>
+                    <h3 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--color-shakti-dark-text)', margin: '0 0 4px' }}>Resume Analyzed</h3>
+                    <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: 0 }}>Skills extracted and matched against career paths.</p>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Top roles */}
+            <div style={{ ...cardStyle, padding: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: ACCENT_BG, color: ACCENT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Briefcase size={18} /></div>
+                <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0 }}>Top Role Matches</h4>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {result.roles?.map((role, i) => {
+                  const c = role.matchScore > 80 ? '#10b981' : role.matchScore > 60 ? '#f59e0b' : '#ef4444';
+                  return (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-shakti-dark-text)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{role.title}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '180px', flexShrink: 0 }}>
+                        <div style={{ flex: 1, height: '8px', background: 'var(--color-surface-low)', borderRadius: '999px', overflow: 'hidden' }}>
+                          <motion.div initial={{ width: 0 }} animate={{ width: `${role.matchScore}%` }} transition={{ duration: 1, delay: i * 0.15 }}
+                            style={{ height: '100%', background: c, borderRadius: '999px' }} />
+                        </div>
+                        <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', width: '36px', textAlign: 'right' }}>{role.matchScore}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             {/* Keywords + Strengths */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white/[0.03] rounded-2xl p-5 border border-white/[0.06]">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400"><Target size={18} /></div>
-                  <h4 className="text-base font-bold text-white">Missing Keywords</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+              <div style={{ ...cardStyle, padding: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#fffbeb', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Target size={18} /></div>
+                  <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0 }}>Missing Keywords</h4>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {result.missingKeywords?.map((kw, i) => (
-                    <span key={i} className="px-3 py-1.5 bg-amber-500/10 text-amber-400 rounded-lg text-xs font-bold border border-amber-500/15">{kw}</span>
+                    <span key={i} style={{ padding: '5px 10px', background: '#fffbeb', color: '#b45309', borderRadius: '8px', fontSize: '11px', fontWeight: 700, border: '1px solid rgba(245,158,11,0.22)' }}>{kw}</span>
                   ))}
                 </div>
               </div>
-              <div className="bg-white/[0.03] rounded-2xl p-5 border border-white/[0.06]">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400"><Trophy size={18} /></div>
-                  <h4 className="text-base font-bold text-white">Strengths</h4>
+              <div style={{ ...cardStyle, padding: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#ecfdf5', color: '#047857', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trophy size={18} /></div>
+                  <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0 }}>Strengths</h4>
                 </div>
-                <div className="space-y-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {result.strengths?.map((s, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm text-white/60">
-                      <CheckCircle2 size={14} className="text-emerald-400 flex-shrink-0" /> {s}
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--color-shakti-dark-text)' }}>
+                      <CheckCircle2 size={14} style={{ color: '#10b981', flexShrink: 0 }} /> {s}
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* AI Rewrite */}
-            <div className="bg-white/[0.03] rounded-2xl p-5 border border-violet-500/10 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-violet-500/5 to-transparent pointer-events-none" />
-              <div className="flex items-center gap-3 mb-5 relative z-10">
-                <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400"><Sparkles size={18} /></div>
+            {/* Rewrite */}
+            <div style={{ ...cardStyle, padding: '20px', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 0, right: 0, width: '140px', height: '100%', background: `linear-gradient(to left, ${ACCENT}08, transparent)`, pointerEvents: 'none' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', position: 'relative', zIndex: 1 }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: ACCENT_BG, color: ACCENT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Sparkles size={18} /></div>
                 <div>
-                  <h4 className="text-base font-bold text-white">AI Rewrite Suggestion</h4>
-                  <p className="text-xs text-white/40">A stronger version of one of your bullets</p>
+                  <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0 }}>AI Rewrite Suggestion</h4>
+                  <p style={{ fontSize: '11px', color: 'var(--color-outline)', margin: '2px 0 0' }}>A stronger version of one of your bullets</p>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 relative z-10">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', position: 'relative', zIndex: 1 }}>
                 <div>
-                  <p className="text-[10px] font-bold text-white/30 uppercase tracking-wider mb-2 flex items-center gap-1.5">Current <ArrowRight size={10} /></p>
-                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] min-h-[90px]">
-                    <p className="text-sm text-white/50 leading-relaxed">{result.improvement?.original}</p>
+                  <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: '5px' }}>Current <ArrowRight size={10} /></p>
+                  <div style={{ padding: '14px', borderRadius: '12px', background: 'var(--color-surface-low)', border: '1px solid rgba(24,20,69,0.05)', minHeight: '90px' }}>
+                    <p style={{ fontSize: '13px', color: 'var(--color-shakti-dark-muted)', lineHeight: 1.55, margin: 0 }}>{result.improvement?.original}</p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-violet-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">Enhanced <Zap size={10} /></p>
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white min-h-[90px]">
-                    <p className="text-sm font-medium leading-relaxed">{result.improvement?.rewritten}</p>
+                  <p style={{ fontSize: '10px', fontWeight: 700, color: ACCENT, textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: '5px' }}>Enhanced <Zap size={10} /></p>
+                  <div style={{ padding: '14px', borderRadius: '12px', background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`, color: 'white', minHeight: '90px' }}>
+                    <p style={{ fontSize: '13px', lineHeight: 1.55, margin: 0, fontWeight: 500 }}>{result.improvement?.rewritten}</p>
                   </div>
                 </div>
               </div>
-              <div className="mt-4 p-3 rounded-xl bg-violet-500/5 border border-violet-500/10 flex items-center gap-3 relative z-10">
-                <Info size={14} className="text-violet-400 flex-shrink-0" />
-                <p className="text-sm text-white/50"><span className="text-violet-400 font-semibold mr-1">Why:</span>{result.improvement?.reason}</p>
+              <div style={{ marginTop: '14px', padding: '12px', borderRadius: '12px', background: ACCENT_BG, border: `1px solid ${ACCENT}22`, display: 'flex', alignItems: 'flex-start', gap: '10px', position: 'relative', zIndex: 1 }}>
+                <Info size={14} style={{ color: ACCENT, flexShrink: 0, marginTop: '2px' }} />
+                <p style={{ fontSize: '12px', color: 'var(--color-shakti-dark-muted)', margin: 0, lineHeight: 1.5 }}>
+                  <span style={{ color: ACCENT, fontWeight: 700, marginRight: '4px' }}>Why:</span>{result.improvement?.reason}
+                </p>
               </div>
             </div>
 
-            <button onClick={() => { setResult(null); setSelectedFile(null); }}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white text-sm font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-violet-500/20 transition-all">
+            <button
+              onClick={() => { setResult(null); setSelectedFile(null); }}
+              style={{
+                width: '100%', padding: '14px', borderRadius: '12px',
+                background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`, color: 'white',
+                border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                boxShadow: `0 4px 12px ${ACCENT}33`, fontFamily: 'var(--font-sans)', marginTop: '4px'
+              }}
+            >
               <RefreshCcw size={16} /> Analyze Another Resume
             </button>
           </motion.div>
