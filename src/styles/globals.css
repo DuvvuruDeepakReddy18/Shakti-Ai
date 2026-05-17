@@ -16,15 +16,23 @@
   --color-shakti-secondary-light: #ffb0cd;
   --color-shakti-secondary-dark: #8c0053;
   --color-shakti-secondary-container: #fd56a7;
-  
+
+  /* Tertiary accent — pink, used as gradient endpoint with primary */
+  --color-shakti-tertiary: #ec4899;
+  --color-shakti-tertiary-light: #fbcfe8;
+  --color-shakti-tertiary-container: #fce7f3;
+
   /* Functional Colors */
   --color-shakti-safety: #a20017;
   --color-shakti-safety-light: #ffdad7;
   --color-shakti-success: #10B981;
   --color-shakti-success-light: #6EE7B7;
+  --color-shakti-success-container: #d1fae5;
   --color-shakti-warning: #F59E0B;
   --color-shakti-warning-light: #FCD34D;
+  --color-shakti-warning-container: #fef3c7;
   --color-shakti-info: #3B82F6;
+  --color-shakti-info-container: #dbeafe;
   --color-shakti-error: #ba1a1a;
   --color-shakti-error-container: #ffdad6;
   

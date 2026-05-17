@@ -173,7 +173,7 @@ export default function JobsHome() {
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button onClick={(e) => { e.stopPropagation(); if (!applied.includes(job.id)) handleApplyClick(job); }} disabled={applied.includes(job.id)}
-                        style={{ flex: 1, padding: '12px', borderRadius: '12px', border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontFamily: 'var(--font-sans)', background: applied.includes(job.id) ? 'var(--color-shakti-success-container)' : 'linear-gradient(135deg, var(--color-shakti-primary), var(--color-shakti-tertiary))', color: applied.includes(job.id) ? 'var(--color-shakti-success)' : 'white', boxShadow: applied.includes(job.id) ? 'none' : '0 4px 12px color-mix(in srgb, var(--color-shakti-primary) 25%, transparent)' }}>
+                        style={{ flex: 1, padding: '12px', borderRadius: '12px', border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontFamily: 'var(--font-sans)', background: applied.includes(job.id) ? '#ecfdf5' : 'linear-gradient(135deg, #7c3aed, #ec4899)', color: applied.includes(job.id) ? '#047857' : 'white', boxShadow: applied.includes(job.id) ? 'none' : '0 4px 12px rgba(124,58,237,0.30)' }}>
                         {applied.includes(job.id) ? <><CheckCircle size={16} />Applied</> : <><ExternalLink size={16} />Fast Apply</>}
                       </button>
                       <button onClick={(e) => { e.stopPropagation(); handleSave(job.id); }}
@@ -222,8 +222,8 @@ export default function JobsHome() {
                 </div>
                 <div>
                   <label style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-outline)', display: 'block', marginBottom: '6px' }}>Resume</label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '12px', border: '2px dashed color-mix(in srgb, var(--color-shakti-primary) 30%, transparent)', background: 'color-mix(in srgb, var(--color-shakti-primary-container) 40%, transparent)', cursor: 'pointer' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--color-surface-lowest)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-shakti-primary)', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}><Upload size={18} /></div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '12px', border: '2px dashed rgba(124,58,237,0.30)', background: 'rgba(124,58,237,0.06)', cursor: 'pointer' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--color-surface-lowest)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}><Upload size={18} /></div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{resume ? resume.name : 'Upload resume'}</p>
                       <p style={{ fontSize: '11px', color: 'var(--color-outline)', margin: '2px 0 0' }}>{resume ? 'Attached' : 'PDF format'}</p>
@@ -235,7 +235,7 @@ export default function JobsHome() {
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button onClick={() => setApplyingJob(null)} style={{ padding: '12px 16px', background: 'none', border: 'none', fontSize: '13px', fontWeight: 600, color: 'var(--color-outline)', cursor: 'pointer', fontFamily: 'var(--font-sans)' }}>Cancel</button>
-                <button onClick={handleConfirmApply} style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--color-shakti-primary), var(--color-shakti-tertiary))', color: 'white', border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontFamily: 'var(--font-sans)', boxShadow: '0 4px 12px color-mix(in srgb, var(--color-shakti-primary) 25%, transparent)' }}>
+                <button onClick={handleConfirmApply} style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, #7c3aed, #ec4899)', color: 'white', border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontFamily: 'var(--font-sans)', boxShadow: '0 4px 12px rgba(124,58,237,0.30)' }}>
                   Submit application <ArrowRight size={16} />
                 </button>
               </div>
