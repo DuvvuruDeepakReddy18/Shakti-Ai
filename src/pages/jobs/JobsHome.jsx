@@ -155,9 +155,9 @@ export default function JobsHome() {
                   <span style={{ fontSize: '12px', color: 'var(--color-outline)', display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={11} />{job.location}</span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                  <span style={{ padding: '2px 8px', borderRadius: '6px', background: 'var(--color-shakti-primary-container)', color: 'var(--color-shakti-primary)', fontSize: '11px', fontWeight: 700 }}>{job.type}</span>
-                  <span style={{ padding: '2px 8px', borderRadius: '6px', background: 'var(--color-shakti-success-container)', color: 'var(--color-shakti-success)', fontSize: '11px', fontWeight: 700 }}>{job.salary}</span>
-                  {job.tags.map((tag) => <span key={tag} style={{ padding: '2px 8px', borderRadius: '6px', background: 'var(--color-surface-low)', color: 'var(--color-shakti-dark-muted)', fontSize: '11px', fontWeight: 600 }}>{tag}</span>)}
+                  <span style={{ padding: '3px 10px', borderRadius: '999px', background: '#f5f3ff', color: '#6d28d9', fontSize: '11px', fontWeight: 700, border: '1px solid rgba(124,58,237,0.18)' }}>{job.type}</span>
+                  <span style={{ padding: '3px 10px', borderRadius: '999px', background: '#ecfdf5', color: '#047857', fontSize: '11px', fontWeight: 700, border: '1px solid rgba(16,185,129,0.22)' }}>{job.salary}</span>
+                  {job.tags.map((tag) => <span key={tag} style={{ padding: '3px 10px', borderRadius: '999px', background: 'var(--color-surface-low)', color: 'var(--color-shakti-dark-muted)', fontSize: '11px', fontWeight: 600, border: '1px solid rgba(24,20,69,0.05)' }}>{tag}</span>)}
                 </div>
               </div>
               <ChevronRight size={18} style={{ color: expanded === job.id ? 'var(--color-shakti-primary)' : 'var(--color-outline-variant)', flexShrink: 0, transform: expanded === job.id ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }} />
