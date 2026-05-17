@@ -35,7 +35,7 @@ export default function HackathonArena() {
         </div>
       </motion.div>
 
-      <div className="flex gap-2 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
+      <div className="flex gap-2.5 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
         {[
           { id: 'all', label: 'All' },
           { id: 'live', label: 'Live' },
@@ -44,12 +44,15 @@ export default function HackathonArena() {
           <button
             key={t.id}
             onClick={() => setFilter(t.id)}
-            className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all flex-shrink-0 ${
+            className={`px-5 py-3 rounded-2xl text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 ${
               filter === t.id
-                ? 'text-white'
-                : 'bg-[var(--color-surface-lowest)] text-[var(--color-outline)] border border-[var(--color-surface-highlight)] hover:text-[var(--color-shakti-dark-text)]'
+                ? 'text-white scale-[1.02]'
+                : 'bg-[var(--color-surface-lowest)] text-[var(--color-shakti-dark-text)] hover:scale-[1.02]'
             }`}
-            style={filter === t.id ? { background: 'linear-gradient(135deg, #e11d48, #f97316)', boxShadow: '0 4px 12px rgba(225,29,72,0.30)' } : undefined}
+            style={filter === t.id
+              ? { background: 'linear-gradient(135deg, #e11d48, #f97316)', boxShadow: '0 6px 18px rgba(225,29,72,0.35)' }
+              : { boxShadow: '0 1px 6px rgba(24,20,69,0.04)', border: '1px solid rgba(24,20,69,0.06)' }
+            }
           >
             {t.label}
           </button>

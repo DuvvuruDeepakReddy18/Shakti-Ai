@@ -72,17 +72,20 @@ export default function LearningCenter() {
         </div>
       </motion.div>
 
-      <div className="flex gap-2 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
+      <div className="flex gap-2.5 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
         {tracks.map(t => (
           <button
             key={t.id}
             onClick={() => setActiveTrack(t.id)}
-            className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all flex-shrink-0 ${
+            className={`px-5 py-3 rounded-2xl text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 ${
               activeTrack === t.id
-                ? 'text-white'
-                : 'bg-[var(--color-surface-lowest)] text-[var(--color-outline)] border border-[var(--color-surface-highlight)] hover:text-[var(--color-shakti-dark-text)]'
+                ? 'text-white scale-[1.02]'
+                : 'bg-[var(--color-surface-lowest)] text-[var(--color-shakti-dark-text)] hover:scale-[1.02]'
             }`}
-            style={activeTrack === t.id ? { background: 'linear-gradient(135deg, #0284c7, #06b6d4)', boxShadow: '0 4px 12px rgba(2,132,199,0.30)' } : undefined}
+            style={activeTrack === t.id
+              ? { background: 'linear-gradient(135deg, #0284c7, #06b6d4)', boxShadow: '0 6px 18px rgba(2,132,199,0.35)' }
+              : { boxShadow: '0 1px 6px rgba(24,20,69,0.04)', border: '1px solid rgba(24,20,69,0.06)' }
+            }
           >
             {t.label}
           </button>

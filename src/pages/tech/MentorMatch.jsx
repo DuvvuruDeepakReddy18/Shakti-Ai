@@ -50,25 +50,30 @@ export default function MentorMatch() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
-        <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[var(--color-surface-lowest)] border border-[var(--color-surface-highlight)] flex-shrink-0">
+      <div className="mb-5">
+        <div className="flex items-center gap-1.5 mb-2 px-1">
           <Filter size={13} className="text-[var(--color-outline)]" />
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--color-outline)]">Filter</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-outline)]">Filter mentors</span>
         </div>
-        {filters.map(f => (
-          <button
-            key={f}
-            onClick={() => setActiveFilter(f)}
-            className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all flex-shrink-0 ${
-              activeFilter === f
-                ? 'text-white shadow-md'
-                : 'bg-[var(--color-surface-lowest)] text-[var(--color-outline)] border border-[var(--color-surface-highlight)] hover:text-[var(--color-shakti-dark-text)]'
-            }`}
-            style={activeFilter === f ? { background: 'linear-gradient(135deg, #f59e0b, #f97316)', boxShadow: '0 4px 12px rgba(245,158,11,0.30)' } : undefined}
-          >
-            {f}
-          </button>
-        ))}
+        <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-1 px-1">
+          {filters.map(f => (
+            <button
+              key={f}
+              onClick={() => setActiveFilter(f)}
+              className={`px-5 py-3 rounded-2xl text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 ${
+                activeFilter === f
+                  ? 'text-white scale-[1.02]'
+                  : 'bg-[var(--color-surface-lowest)] text-[var(--color-shakti-dark-text)] hover:scale-[1.02]'
+              }`}
+              style={activeFilter === f
+                ? { background: 'linear-gradient(135deg, #f59e0b, #f97316)', boxShadow: '0 6px 18px rgba(245,158,11,0.35)' }
+                : { boxShadow: '0 1px 6px rgba(24,20,69,0.04)', border: '1px solid rgba(24,20,69,0.06)' }
+              }
+            >
+              {f}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
