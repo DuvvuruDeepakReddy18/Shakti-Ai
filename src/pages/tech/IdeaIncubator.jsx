@@ -16,29 +16,28 @@ export default function IdeaIncubator() {
 
   return (
     <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-blue-600 mb-4">
+      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-[var(--color-outline)] hover:text-[var(--color-shakti-dark-text)] mb-4">
         <ArrowLeft size={16} /> Back to Tech
       </Link>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] p-6 md:p-8 mb-6 shadow-2xl border border-white/10 bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-amber-500/20 blur-[80px]" />
-          <div className="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-orange-500/20 blur-[60px]" />
-        </div>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-3xl p-6 mb-5 bg-[var(--color-surface-lowest)]"
+        style={{ boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}>
+        <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(16,185,129,0.14)', borderRadius: '50%', filter: 'blur(60px)' }} />
         <div className="flex items-center justify-between gap-4 relative z-10">
-          <div className="flex items-center gap-5">
-            <div className="w-14 h-14 rounded-[1.25rem] bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center text-white flex-shrink-0 border border-white/5">
-              <Lightbulb size={28} />
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="rounded-2xl flex items-center justify-center flex-shrink-0" style={{ width: '52px', height: '52px', background: 'linear-gradient(135deg, #10b981, #14b8a6)', boxShadow: '0 6px 20px rgba(16,185,129,0.32)' }}>
+              <Lightbulb size={24} color="white" strokeWidth={2.2} />
             </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Idea Incubator</h1>
-              <p className="text-sm text-white/70">Pitch ideas. Find collaborators. Build together.</p>
+            <div className="min-w-0">
+              <h1 className="text-2xl md:text-[26px] font-extrabold tracking-tight mb-0.5" style={{ color: 'var(--color-shakti-dark-text)', fontFamily: 'var(--font-display)' }}>Idea Incubator</h1>
+              <p className="text-sm font-medium" style={{ color: 'var(--color-outline)' }}>Pitch ideas. Find collaborators. Build together.</p>
             </div>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md text-white text-sm font-semibold hover:bg-white/20 transition-colors flex-shrink-0 border border-white/10"
+            className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl text-white text-sm font-bold transition-all flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, #10b981, #14b8a6)', boxShadow: '0 4px 12px rgba(16,185,129,0.30)' }}
           >
             <Plus size={16} /> Pitch Idea
           </button>
@@ -46,23 +45,25 @@ export default function IdeaIncubator() {
       </motion.div>
 
       {showForm && (
-        <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 mb-6 border border-amber-100">
-          <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-3">Pitch a new idea</h3>
+        <div className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 mb-5 border" style={{ borderColor: 'rgba(16,185,129,0.22)' }}>
+          <h3 className="text-base font-bold text-[var(--color-shakti-dark-text)] mb-3">Pitch a new idea</h3>
           <input
             type="text"
             placeholder="Idea title (e.g., Period Pain Tracker for Athletes)"
-            className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-surface-highlight)] text-sm mb-3 focus:border-amber-400 outline-none"
+            className="w-full px-4 py-2.5 rounded-xl border text-sm mb-3 outline-none"
+            style={{ background: 'var(--color-surface-low)', borderColor: 'rgba(24,20,69,0.05)' }}
           />
           <textarea
             placeholder="Brief description, tech stack, what kind of teammates you need..."
             rows={3}
-            className="w-full px-4 py-2.5 rounded-xl border border-[var(--color-surface-highlight)] text-sm mb-3 focus:border-amber-400 outline-none resize-none"
+            className="w-full px-4 py-2.5 rounded-xl border text-sm mb-3 outline-none resize-none"
+            style={{ background: 'var(--color-surface-low)', borderColor: 'rgba(24,20,69,0.05)' }}
           />
           <div className="flex justify-end gap-2">
-            <button onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-low)]">
+            <button onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg text-sm text-[var(--color-outline)] hover:bg-[var(--color-surface-low)]">
               Cancel
             </button>
-            <button className="px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600">
+            <button className="px-4 py-2 rounded-lg text-white text-sm font-bold" style={{ background: 'linear-gradient(135deg, #10b981, #14b8a6)', boxShadow: '0 4px 12px rgba(16,185,129,0.30)' }}>
               Publish
             </button>
           </div>
@@ -95,7 +96,7 @@ export default function IdeaIncubator() {
                 </div>
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-4 text-xs text-[var(--color-text-secondary)]">
-                    <button className="flex items-center gap-1 hover:text-amber-600">
+                    <button className="flex items-center gap-1 hover:text-emerald-600">
                       <ThumbsUp size={14} /> {idea.votes}
                     </button>
                     <span className="flex items-center gap-1">
@@ -105,7 +106,7 @@ export default function IdeaIncubator() {
                       <Users size={14} /> Needs {idea.looking}
                     </span>
                   </div>
-                  <button className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 text-xs font-semibold hover:bg-amber-100">
+                  <button className="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors" style={{ background: '#ecfdf5', color: '#047857', border: '1px solid rgba(16,185,129,0.22)' }}>
                     Join Project
                   </button>
                 </div>

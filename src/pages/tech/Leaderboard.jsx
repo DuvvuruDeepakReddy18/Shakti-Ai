@@ -19,23 +19,21 @@ const others = [
 export default function Leaderboard() {
   return (
     <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-blue-600 mb-4">
+      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-[var(--color-outline)] hover:text-[var(--color-shakti-dark-text)] mb-4">
         <ArrowLeft size={16} /> Back to Tech
       </Link>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] p-6 md:p-8 mb-6 shadow-2xl border border-white/10 bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-emerald-500/20 blur-[80px]" />
-          <div className="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-teal-500/20 blur-[60px]" />
-        </div>
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="w-14 h-14 rounded-[1.25rem] bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center text-white flex-shrink-0 border border-white/5">
-            <Award size={28} />
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-3xl p-6 mb-5 bg-[var(--color-surface-lowest)]"
+        style={{ boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}>
+        <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(234,179,8,0.16)', borderRadius: '50%', filter: 'blur(60px)' }} />
+        <div className="flex items-center gap-3.5 relative z-10">
+          <div className="rounded-2xl flex items-center justify-center flex-shrink-0" style={{ width: '52px', height: '52px', background: 'linear-gradient(135deg, #eab308, #f59e0b)', boxShadow: '0 6px 20px rgba(234,179,8,0.34)' }}>
+            <Award size={24} color="white" strokeWidth={2.2} />
           </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Leaderboard</h1>
-            <p className="text-sm text-white/70">Top builders this week. Keep the streak going.</p>
+          <div className="min-w-0">
+            <h1 className="text-2xl md:text-[26px] font-extrabold tracking-tight mb-0.5" style={{ color: 'var(--color-shakti-dark-text)', fontFamily: 'var(--font-display)' }}>Leaderboard</h1>
+            <p className="text-sm font-medium" style={{ color: 'var(--color-outline)' }}>Top builders this week. Keep the streak going.</p>
           </div>
         </div>
       </motion.div>
@@ -67,18 +65,18 @@ export default function Leaderboard() {
       </div>
 
       {/* Your Rank */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-5 mb-6 text-white">
+      <div className="rounded-2xl p-5 mb-6 text-white" style={{ background: 'linear-gradient(135deg, #eab308, #f97316)', boxShadow: '0 6px 24px rgba(234,179,8,0.30)' }}>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-white/25 flex items-center justify-center backdrop-blur-sm border border-white/30">
             <Crown size={22} />
           </div>
-          <div className="flex-1">
-            <p className="text-xs uppercase tracking-wider text-white/80 mb-0.5">Your Rank</p>
-            <p className="text-xl font-bold">#42 · 1,840 points</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs uppercase tracking-wider text-white/85 mb-0.5 font-bold">Your Rank</p>
+            <p className="text-xl font-extrabold">#42 · 1,840 points</p>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-white/80">Next reward</p>
-            <p className="text-sm font-semibold">160 pts away</p>
+          <div className="text-right flex-shrink-0">
+            <p className="text-xs text-white/85 font-semibold">Next reward</p>
+            <p className="text-sm font-bold">160 pts away</p>
           </div>
         </div>
       </div>

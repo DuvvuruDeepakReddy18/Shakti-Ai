@@ -21,34 +21,32 @@ export default function MentorMatch() {
 
   return (
     <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto">
-      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-[var(--color-text-secondary)] hover:text-blue-600 mb-4">
+      <Link to="/tech" className="inline-flex items-center gap-1 text-sm text-[var(--color-outline)] hover:text-[var(--color-shakti-dark-text)] mb-4">
         <ArrowLeft size={16} /> Back to Tech
       </Link>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] p-6 md:p-8 mb-6 shadow-2xl border border-white/10 bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-purple-500/20 blur-[80px]" />
-          <div className="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-pink-500/20 blur-[60px]" />
-        </div>
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="w-14 h-14 rounded-[1.25rem] bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center text-white flex-shrink-0 border border-white/5">
-            <Users size={28} />
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-3xl p-6 mb-5 bg-[var(--color-surface-lowest)]"
+        style={{ boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}>
+        <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(245,158,11,0.14)', borderRadius: '50%', filter: 'blur(60px)' }} />
+        <div className="flex items-center gap-3.5 relative z-10">
+          <div className="rounded-2xl flex items-center justify-center flex-shrink-0" style={{ width: '52px', height: '52px', background: 'linear-gradient(135deg, #f59e0b, #f97316)', boxShadow: '0 6px 20px rgba(245,158,11,0.32)' }}>
+            <Users size={24} color="white" strokeWidth={2.2} />
           </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Mentor Match</h1>
-            <p className="text-sm text-white/70">AI-paired mentors who match your goals & schedule.</p>
+          <div className="min-w-0">
+            <h1 className="text-2xl md:text-[26px] font-extrabold tracking-tight mb-0.5" style={{ color: 'var(--color-shakti-dark-text)', fontFamily: 'var(--font-display)' }}>Mentor Match</h1>
+            <p className="text-sm font-medium" style={{ color: 'var(--color-outline)' }}>AI-paired mentors who match your goals & schedule.</p>
           </div>
         </div>
       </motion.div>
 
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 mb-6 border border-purple-100 flex items-start gap-4">
-        <div className="w-10 h-10 rounded-xl bg-[var(--color-surface-lowest)] flex items-center justify-center text-purple-600 shadow-sm flex-shrink-0">
-          <Sparkles size={20} />
+      <div className="rounded-2xl p-4 mb-5 flex items-start gap-3" style={{ background: '#fffbeb', border: '1px solid rgba(245,158,11,0.25)' }}>
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(245,158,11,0.15)', color: '#b45309' }}>
+          <Sparkles size={18} />
         </div>
-        <div>
-          <p className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">AI suggests: <span className="text-purple-700">Priya Krishnan</span></p>
-          <p className="text-xs text-[var(--color-text-secondary)]">Based on your interest in frontend & leadership growth.</p>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-[var(--color-shakti-dark-text)] mb-1">AI suggests: <span style={{ color: '#b45309' }}>Priya Krishnan</span></p>
+          <p className="text-xs" style={{ color: 'var(--color-outline)' }}>Based on your interest in frontend & leadership growth.</p>
         </div>
       </div>
 
@@ -60,8 +58,8 @@ export default function MentorMatch() {
             onClick={() => setActiveFilter(f)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
               activeFilter === f
-                ? 'bg-purple-600 text-white shadow-sm'
-                : 'bg-[var(--color-surface-lowest)] text-[var(--color-text-secondary)] border border-[var(--color-surface-highlight)] hover:border-purple-200'
+                ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/25'
+                : 'bg-[var(--color-surface-lowest)] text-[var(--color-outline)] border border-[var(--color-surface-highlight)] hover:border-amber-200'
             }`}
           >
             {f}
@@ -100,13 +98,13 @@ export default function MentorMatch() {
 
             <div className="flex items-center gap-1.5 mb-4 flex-wrap">
               {m.expertise.map(e => (
-                <span key={e} className="px-2 py-1 rounded-md bg-purple-50 text-purple-700 text-[10px] font-medium">
+                <span key={e} className="px-2 py-1 rounded-md text-[10px] font-semibold" style={{ background: '#fffbeb', color: '#b45309', border: '1px solid rgba(245,158,11,0.22)' }}>
                   {e}
                 </span>
               ))}
             </div>
 
-            <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition-colors">
+            <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-white text-sm font-bold transition-all" style={{ background: 'linear-gradient(135deg, #f59e0b, #f97316)', boxShadow: '0 4px 12px rgba(245,158,11,0.30)' }}>
               <MessageCircle size={14} /> Request Session
             </button>
           </motion.div>

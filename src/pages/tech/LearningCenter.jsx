@@ -53,23 +53,21 @@ export default function LearningCenter() {
 
   return (
     <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto font-sans">
-      <Link to="/tech" className="inline-flex items-center gap-1 text-sm font-bold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-6">
+      <Link to="/tech" className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-outline)] hover:text-[var(--color-shakti-dark-text)] transition-colors mb-4">
         <ArrowLeft size={16} /> Back to Tech
       </Link>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] p-6 md:p-8 mb-8 shadow-2xl border border-white/10 bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-cyan-500/20 blur-[80px]" />
-          <div className="absolute bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-blue-500/20 blur-[60px]" />
-        </div>
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="w-14 h-14 rounded-[1.25rem] bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center text-white flex-shrink-0 border border-white/5">
-            <BookOpen size={28} />
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-3xl p-6 mb-5 bg-[var(--color-surface-lowest)]"
+        style={{ boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}>
+        <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(2,132,199,0.14)', borderRadius: '50%', filter: 'blur(60px)' }} />
+        <div className="flex items-center gap-3.5 relative z-10">
+          <div className="rounded-2xl flex items-center justify-center flex-shrink-0" style={{ width: '52px', height: '52px', background: 'linear-gradient(135deg, #0284c7, #06b6d4)', boxShadow: '0 6px 20px rgba(2,132,199,0.34)' }}>
+            <BookOpen size={24} color="white" strokeWidth={2.2} />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-white mb-1 tracking-tight">Learning Center</h1>
-            <p className="text-sm font-medium text-white/70">Hand-picked premium courses to level up your skills.</p>
+          <div className="min-w-0">
+            <h1 className="text-2xl md:text-[26px] font-extrabold tracking-tight mb-0.5" style={{ color: 'var(--color-shakti-dark-text)', fontFamily: 'var(--font-display)' }}>Learning Center</h1>
+            <p className="text-sm font-medium" style={{ color: 'var(--color-outline)' }}>Hand-picked premium courses to level up your skills.</p>
           </div>
         </div>
       </motion.div>

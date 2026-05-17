@@ -2,39 +2,13 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Code, ArrowLeft, Sparkles, Target, Clock, Layers, Star, Check, Loader2, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { generateProjectIdeas } from '../../services/aiService';
 
 const ACCENT = '#6366f1';
 const ACCENT_LIGHT = '#a855f7';
 
-const sampleProjects = [
-  {
-    title: 'Personal Finance Tracker (CLI)',
-    desc: 'Track expenses, set goals, generate monthly reports — all from the terminal.',
-    stack: ['Python', 'SQLite', 'Click'],
-    difficulty: 'Beginner',
-    time: '1 week',
-    impact: 'Master CLI tools & basic database design',
-    color: '#10b981',
-  },
-  {
-    title: 'AI-Powered Recipe Generator',
-    desc: 'Take a photo of your fridge → get 3 recipes you can make right now.',
-    stack: ['React', 'OpenAI Vision', 'Tailwind'],
-    difficulty: 'Intermediate',
-    time: '2 weeks',
-    impact: 'Learn vision APIs & responsive UI',
-    color: '#3b82f6',
-  },
-  {
-    title: 'Real-time Chat with E2E Encryption',
-    desc: 'WhatsApp-clone with proper end-to-end encrypted messaging.',
-    stack: ['Next.js', 'Socket.io', 'Crypto'],
-    difficulty: 'Advanced',
-    time: '4 weeks',
-    impact: 'Deep dive into encryption & WebSockets',
-    color: '#a855f7',
-  },
-];
+const PROJECT_COLORS = ['#10b981', '#3b82f6', '#a855f7', '#f59e0b', '#ec4899'];
 
 const skillOptions = ['Python', 'JavaScript', 'React', 'AI/ML', 'Mobile', 'DevOps', 'Cloud', 'Design'];
 const interestOptions = ['Health', 'Finance', 'Education', 'Climate', 'Safety', 'Productivity', 'Gaming', 'Art'];
@@ -44,18 +18,45 @@ export default function ProjectGenerator() {
   const [skills, setSkills] = useState(['Python']);
   const [interests, setInterests] = useState(['Health']);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generated, setGenerated] = useState(false);
+  const [projects, setProjects] = useState(null);
 
   const toggle = (arr, setArr, val) =>
     setArr(arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val]);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
+    if (skills.length === 0 || interests.length === 0) {
+      toast.error('Pick at least one skill and interest');
+      return;
+    }
     setIsGenerating(true);
-    setGenerated(false);
-    setTimeout(() => {
+    setProjects(null);
+    try {
+      const ideas = await generateProjectIdeas(skills.join(', '), interests.join(', '));
+      if (!ideas || ideas.length === 0) {
+        toast.error('No ideas generated. Try different skills.');
+        setIsGenerating(false);
+        return;
+      }
+      // Normalize the LLM response into the shape this page expects
+      const normalized = ideas.slice(0, 5).map((idea, i) => ({
+        title: idea.title || 'Untitled project',
+        desc: idea.description || idea.desc || '',
+        stack: Array.isArray(idea.techStack)
+          ? idea.techStack
+          : Array.isArray(idea.stack) ? idea.stack : [],
+        difficulty: idea.difficulty || 'Intermediate',
+        time: idea.timeEstimate || idea.time || '2-3 weeks',
+        impact: idea.impact || (Array.isArray(idea.learningOutcomes) ? idea.learningOutcomes.join(' · ') : 'Builds practical skills'),
+        color: PROJECT_COLORS[i % PROJECT_COLORS.length],
+      }));
+      setProjects(normalized);
+      toast.success(`${normalized.length} ideas generated`);
+    } catch (err) {
+      console.error('Project generation failed:', err);
+      toast.error('AI models are busy — please try again in a moment.');
+    } finally {
       setIsGenerating(false);
-      setGenerated(true);
-    }, 1500);
+    }
   };
 
   const cardStyle = {
@@ -212,7 +213,7 @@ export default function ProjectGenerator() {
 
       {/* Results */}
       <AnimatePresence>
-        {generated && (
+        {projects && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '6px 4px 4px' }}>
               <h2 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -224,11 +225,11 @@ export default function ProjectGenerator() {
                 border: '1px solid rgba(16,185,129,0.22)',
                 display: 'inline-flex', alignItems: 'center', gap: '4px'
               }}>
-                <CheckCircle2 size={12} /> 3 Matches Found
+                <CheckCircle2 size={12} /> {projects.length} Match{projects.length === 1 ? '' : 'es'} Found
               </span>
             </div>
 
-            {sampleProjects.map((p, i) => {
+            {projects.map((p, i) => {
               const dm = difficultyMeta(p.difficulty);
               return (
                 <motion.div

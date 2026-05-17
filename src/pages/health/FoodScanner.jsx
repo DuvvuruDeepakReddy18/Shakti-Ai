@@ -1,9 +1,33 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Camera, Upload, AlertTriangle, CheckCircle2, Search, HeartPulse, Type } from 'lucide-react';
+import { ArrowLeft, Camera, AlertTriangle, CheckCircle2, Search, HeartPulse } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
+
+// Verified-working free models on OpenRouter (text)
+const TEXT_MODELS = [
+  'openai/gpt-oss-120b:free',
+  'z-ai/glm-4.5-air:free',
+  'openai/gpt-oss-20b:free',
+  'google/gemma-4-31b-it:free',
+  'minimax/minimax-m2.5:free',
+];
+
+// Verified-working free models with image input support
+const VISION_MODELS = [
+  'google/gemma-4-31b-it:free',
+  'google/gemma-4-26b-a4b-it:free',
+  'nvidia/nemotron-nano-12b-v2-vl:free',
+  'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+];
+
+const OR_HEADERS = () => ({
+  Authorization: `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
+  'Content-Type': 'application/json',
+  'HTTP-Referer': window.location.origin,
+  'X-Title': 'She Care AI',
+});
 
 export default function FoodScanner() {
   const navigate = useNavigate();
@@ -15,7 +39,6 @@ export default function FoodScanner() {
   const [result, setResult] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [textInput, setTextInput] = useState('');
-  const [mode, setMode] = useState('choose'); // 'choose' | 'text' | 'image'
 
   // ── Prompt for text-based analysis ──
   const makePrompt = (foodItems) => `Analyze these food items for women's hormonal health (PCOS, estrogen dominance, thyroid, endocrine disruption): "${foodItems}".
@@ -49,30 +72,26 @@ Reply ONLY with valid JSON, no markdown, no code fences:
   const analyzeByText = async (foodText) => {
     setIsScanning(true);
     setResult(null);
-    setScanStatus('🧬 Analyzing hormonal impact… (3-5 seconds)');
+    setScanStatus('🧬 Analyzing hormonal impact…');
 
-    const models = [
-      'minimax/minimax-m2.5:free',
-      'google/gemma-2-9b-it:free',
-      'meta-llama/llama-3.1-8b-instruct:free',
-    ];
-
-    for (const model of models) {
+    for (const model of TEXT_MODELS) {
       try {
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 15000);
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST", signal: controller.signal,
-          headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
-            "Content-Type": "application/json"
-          },
+        const timer = setTimeout(() => controller.abort(), 20000);
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST', signal: controller.signal,
+          headers: OR_HEADERS(),
           body: JSON.stringify({
-            model, max_tokens: 800,
-            messages: [{ role: "user", content: makePrompt(foodText) }]
-          })
+            model, max_tokens: 800, temperature: 0.3,
+            messages: [{ role: 'user', content: makePrompt(foodText) }],
+          }),
         });
         clearTimeout(timer);
+        if (!response.ok) {
+          const t = await response.text();
+          console.warn(`${model} HTTP ${response.status}:`, t.slice(0, 200));
+          continue;
+        }
         const data = await response.json();
         if (data.error) { console.warn(`${model} error:`, data.error.message); continue; }
         const text = data.choices?.[0]?.message?.content;
@@ -87,7 +106,7 @@ Reply ONLY with valid JSON, no markdown, no code fences:
           }
         }
       } catch (err) {
-        console.warn(`${model} failed:`, err.message);
+        console.warn(`${model} failed:`, err?.message || err);
         continue;
       }
     }
@@ -118,57 +137,62 @@ Reply ONLY with valid JSON, no markdown, no code fences:
     setScanStatus('📷 Compressing image…');
     const compressed = await compressImage(base64Image);
 
-    setScanStatus('🔍 Identifying food from image… (5-15 sec)');
+    // Try each vision model in turn
+    for (const model of VISION_MODELS) {
+      setScanStatus(`🔍 Analyzing with ${model.split('/')[1].split(':')[0]}…`);
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 35000);
 
-    // ── Call OpenRouter Vision Model ──
-    setScanStatus('🔄 Analyzing image…');
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 30000);
-      
-      const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST", 
-        signal: controller.signal,
-        headers: { 
-          "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json" 
-        },
-        body: JSON.stringify({
-          model: "meta-llama/llama-3.2-11b-vision-instruct:free",
-          max_tokens: 800,
-          messages: [{
-            role: "user",
-            content: [
-              { type: "text", text: VISION_PROMPT },
-              { type: "image_url", image_url: { url: compressed } }
-            ]
-          }]
-        })
-      });
+        const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          signal: controller.signal,
+          headers: OR_HEADERS(),
+          body: JSON.stringify({
+            model,
+            max_tokens: 800,
+            temperature: 0.3,
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'text', text: VISION_PROMPT },
+                { type: 'image_url', image_url: { url: compressed } },
+              ],
+            }],
+          }),
+        });
+        clearTimeout(timer);
 
-      clearTimeout(timer);
-      const d = await r.json();
-
-      if (r.ok && !d.error) {
-        const text = d.choices?.[0]?.message?.content;
-        if (text) {
-          const parsed = parseAIResponse(text);
-          if (parsed) {
-            awardPoints(15, 'Used Hormone-Safe Scanner');
-            toast.success('Scan complete! You earned 15 ShePoints 🌟');
-            setResult(parsed); 
-            setIsScanning(false); 
-            return;
-          }
+        if (!r.ok) {
+          const t = await r.text();
+          console.warn(`${model} HTTP ${r.status}:`, t.slice(0, 200));
+          continue;
         }
-      } else {
-        console.warn('OpenRouter vision error:', d.error?.message);
+        const d = await r.json();
+        if (d.error) {
+          console.warn(`${model} vision error:`, d.error.message);
+          continue;
+        }
+        const text = d.choices?.[0]?.message?.content;
+        if (!text) {
+          console.warn(`${model} returned empty content`);
+          continue;
+        }
+        const parsed = parseAIResponse(text);
+        if (parsed) {
+          awardPoints(15, 'Used Hormone-Safe Scanner');
+          toast.success('Scan complete! You earned 15 ShePoints 🌟');
+          setResult(parsed);
+          setIsScanning(false);
+          return;
+        }
+      } catch (err) {
+        console.warn(`${model} vision failed:`, err?.message || err);
+        continue;
       }
-    } catch (err) { 
-      console.warn('Vision fallback failed:', err.message); 
     }
 
-    // ── All vision pipelines failed ──
+    // All vision models failed — silently fall back to text mode if we can read filename hints
     setIsScanning(false);
     toast.error('Image scan is temporarily unavailable. Please type the food items below instead.', { duration: 5000 });
   };
