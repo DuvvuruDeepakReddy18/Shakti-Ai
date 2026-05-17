@@ -1,18 +1,35 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { MessageSquareWarning, ArrowLeft, Sparkles, ShieldCheck, ChevronRight, AlertCircle, Info } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MessageSquareWarning, ArrowLeft, Sparkles, ShieldCheck, ChevronRight, AlertCircle, Info, RotateCcw, Loader2, Phone } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { analyzeIncident } from '../../services/aiService';
 
+const ACCENT = '#a855f7';
+const ACCENT_LIGHT = '#ec4899';
+
 const examples = [
-  'My boss texts me at 11pm asking about weekend plans',
-  'Stranger on the bus said I look pretty 4 times',
-  'Roommate locks the front door without telling me',
-  'A friend keeps borrowing money but never returns it',
+  { tag: 'Work', text: 'My boss texts me at 11pm asking about weekend plans' },
+  { tag: 'Public', text: 'Stranger on the bus said I look pretty 4 times' },
+  { tag: 'Home', text: 'Roommate locks the front door without telling me' },
+  { tag: 'Friends', text: 'A friend keeps borrowing money but never returns it' },
 ];
 
+const verdictMeta = (verdict) => {
+  switch (verdict?.toLowerCase()) {
+    case 'dangerous':
+      return { bg: '#fef2f2', border: 'rgba(239,68,68,0.30)', text: '#991b1b', chipBg: '#fee2e2', accent: '#dc2626', Icon: AlertCircle };
+    case 'concerning':
+      return { bg: '#fffbeb', border: 'rgba(245,158,11,0.30)', text: '#92400e', chipBg: '#fef3c7', accent: '#d97706', Icon: MessageSquareWarning };
+    case 'normal':
+      return { bg: '#ecfdf5', border: 'rgba(16,185,129,0.30)', text: '#065f46', chipBg: '#d1fae5', accent: '#10b981', Icon: ShieldCheck };
+    default:
+      return { bg: '#eff6ff', border: 'rgba(59,130,246,0.30)', text: '#1e3a8a', chipBg: '#dbeafe', accent: '#3b82f6', Icon: Info };
+  }
+};
+
 export default function IsThisNormal() {
+  const navigate = useNavigate();
   const [text, setText] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -21,158 +38,297 @@ export default function IsThisNormal() {
     if (!text.trim()) return;
     setLoading(true);
     setAnalysis(null);
-    
     try {
-      const parsedAnalysis = await analyzeIncident(text);
-      setAnalysis(parsedAnalysis);
+      const parsed = await analyzeIncident(text);
+      setAnalysis(parsed);
     } catch (error) {
-      console.error("Analysis error:", error);
-      toast.error("Failed to analyze the situation. Please try again later.");
+      console.error('Analysis error:', error);
+      toast.error('Failed to analyze the situation. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
-  const getVerdictColors = (verdict) => {
-    switch (verdict?.toLowerCase()) {
-      case 'dangerous': return 'bg-[var(--color-shakti-error-container)]/80 border-[var(--color-shakti-error)]/30 text-[var(--color-shakti-error)] shadow-[0_8px_30px_rgba(186,26,26,0.15)]';
-      case 'concerning': return 'bg-[var(--color-shakti-warning-light)]/30 border-[var(--color-shakti-warning)]/40 text-[#b45309] shadow-[0_8px_30px_rgba(245,158,11,0.15)]';
-      case 'normal': return 'bg-[var(--color-shakti-success-light)]/20 border-[var(--color-shakti-success)]/40 text-[var(--color-shakti-success)] shadow-[0_8px_30px_rgba(16,185,129,0.15)]';
-      default: return 'bg-[var(--color-shakti-info)]/10 border-[var(--color-shakti-info)]/30 text-[var(--color-shakti-info)] shadow-[0_8px_30px_rgba(59,130,246,0.15)]';
-    }
+  const reset = () => {
+    setAnalysis(null);
+    setText('');
   };
 
-  const getVerdictIcon = (verdict) => {
-    switch (verdict?.toLowerCase()) {
-      case 'dangerous': return <AlertCircle size={24} className="text-[var(--color-shakti-error)]" />;
-      case 'concerning': return <MessageSquareWarning size={24} className="text-[#b45309]" />;
-      case 'normal': return <ShieldCheck size={24} className="text-[var(--color-shakti-success)]" />;
-      default: return <Info size={24} className="text-[var(--color-shakti-info)]" />;
-    }
-  };
+  const charCount = text.length;
+  const charMax = 600;
+  const tooLong = charCount > charMax;
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface-base)] pb-32 px-4 pt-6 max-w-[760px] mx-auto font-sans">
-      <Link to="/safety" className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-shakti-primary)] transition-colors mb-4">
-        <ArrowLeft size={16} /> Back to Safety
-      </Link>
+    <div>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          fontSize: '13px', color: 'var(--color-outline)', background: 'none',
+          border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'var(--font-sans)',
+        }}
+      >
+        <ArrowLeft size={16} /> Back
+      </button>
 
+      {/* HERO */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl p-6 md:p-7 mb-5 bg-[var(--color-surface-lowest)]"
-        style={{ boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}
+        style={{
+          position: 'relative', borderRadius: '1.5rem', padding: '24px',
+          marginBottom: '16px', overflow: 'hidden',
+          background: 'var(--color-surface-lowest)',
+          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+        }}
       >
-        <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(168,85,247,0.10)', borderRadius: '50%', filter: 'blur(60px)' }} />
-
-        <div className="flex items-center gap-3.5 relative z-10">
-          <div
-            className="rounded-2xl flex items-center justify-center flex-shrink-0"
-            style={{ width: '52px', height: '52px', background: 'linear-gradient(135deg, #a855f7, #ec4899)', boxShadow: '0 6px 20px rgba(168,85,247,0.30)' }}
-          >
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: `${ACCENT}1f`, borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '16px',
+            background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: `0 6px 20px ${ACCENT}40`,
+          }}>
             <MessageSquareWarning size={24} color="white" strokeWidth={2.2} />
           </div>
-          <div className="min-w-0">
-            <h1 className="text-2xl md:text-[26px] font-extrabold mb-0.5 tracking-tight" style={{ color: 'var(--color-shakti-dark-text)', fontFamily: 'var(--font-display)' }}>Is This Normal?</h1>
-            <p className="text-sm font-medium leading-snug" style={{ color: 'var(--color-outline)' }}>Describe a situation. AI gives an honest, supportive read.</p>
+          <div style={{ minWidth: 0 }}>
+            <h1 style={{ fontSize: '23px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>Is This Normal?</h1>
+            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0' }}>Describe a situation. AI gives an honest, supportive read.</p>
           </div>
         </div>
       </motion.div>
 
+      {/* INPUT */}
       <motion.div
-        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-        className="bg-[var(--color-surface-lowest)] rounded-3xl p-5 shadow-[0_1px_6px_rgba(24,20,69,0.03)] border border-[var(--color-surface-highlight)] mb-6"
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+        style={{
+          background: 'var(--color-surface-lowest)',
+          borderRadius: '1.25rem', padding: '16px',
+          boxShadow: '0 1px 6px rgba(24,20,69,0.03)',
+          marginBottom: '18px',
+        }}
       >
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Describe what happened. The more detail, the better the analysis…"
           rows={5}
-          className="w-full px-4 py-4 rounded-2xl bg-[var(--color-surface-low)] border border-transparent text-[var(--color-text-primary)] text-sm focus:bg-[var(--color-surface-lowest)] focus:border-[var(--color-shakti-primary-light)] focus:ring-2 focus:ring-[var(--color-shakti-primary-light)]/20 outline-none resize-none mb-3 transition-all placeholder:text-[var(--color-text-secondary)]"
+          style={{
+            width: '100%', boxSizing: 'border-box',
+            padding: '14px 16px', borderRadius: '14px',
+            background: 'var(--color-surface-low)',
+            border: `1px solid ${tooLong ? 'rgba(239,68,68,0.40)' : 'rgba(24,20,69,0.05)'}`,
+            color: 'var(--color-shakti-dark-text)',
+            fontSize: '14px', lineHeight: 1.55,
+            resize: 'none', outline: 'none',
+            fontFamily: 'var(--font-sans)',
+            transition: 'border 0.15s'
+          }}
         />
-        <div className="flex justify-between items-center px-1">
-          <p className="text-xs font-semibold text-[var(--color-text-secondary)] flex items-center gap-1.5">
-            <ShieldCheck size={13} className="text-[var(--color-shakti-success)]" /> Anonymous & Secure
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px', flexWrap: 'wrap' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontWeight: 600, color: 'var(--color-outline)' }}>
+              <ShieldCheck size={13} style={{ color: '#10b981' }} /> Anonymous & Secure
+            </span>
+            <span style={{ color: tooLong ? '#dc2626' : 'var(--color-outline)', fontWeight: 600 }}>
+              {charCount}/{charMax}
+            </span>
+          </div>
           <button
             onClick={analyze}
-            disabled={!text.trim() || loading}
-            className="px-6 py-2.5 rounded-xl bg-[var(--color-shakti-dark-text)] text-white text-sm font-bold hover:bg-[var(--color-shakti-primary)] hover:shadow-md hover:shadow-[var(--color-shakti-primary)]/25 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:transform-none disabled:hover:bg-[var(--color-shakti-dark-text)] disabled:hover:shadow-none transition-all duration-200 flex items-center gap-2"
+            disabled={!text.trim() || loading || tooLong}
+            style={{
+              padding: '11px 22px', borderRadius: '12px',
+              background: (!text.trim() || loading || tooLong) ? '#cbd5e1' : `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+              color: 'white', border: 'none',
+              fontSize: '13px', fontWeight: 700,
+              cursor: (!text.trim() || loading || tooLong) ? 'not-allowed' : 'pointer',
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              boxShadow: (!text.trim() || loading || tooLong) ? 'none' : `0 4px 12px ${ACCENT}40`,
+              fontFamily: 'var(--font-sans)', transition: 'all 0.15s'
+            }}
           >
-            <Sparkles size={15} className={loading ? "animate-spin" : ""} />
+            {loading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
             {loading ? 'Analyzing…' : 'Analyze'}
           </button>
         </div>
       </motion.div>
 
-      {!analysis && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-6">
-          <div className="flex items-center gap-3 mb-3 px-1">
-            <div className="h-px bg-[var(--color-surface-highlight)] flex-1"></div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)]">Try an example</p>
-            <div className="h-px bg-[var(--color-surface-highlight)] flex-1"></div>
-          </div>
-          <div className="grid gap-2">
+      {/* EXAMPLES (hidden once we have an analysis) */}
+      {!analysis && !loading && (
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
+          style={{ marginBottom: '12px' }}
+        >
+          <p style={{
+            fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)',
+            textTransform: 'uppercase', letterSpacing: '0.08em',
+            margin: '0 4px 10px', display: 'flex', alignItems: 'center', gap: '6px'
+          }}>
+            <Sparkles size={12} style={{ color: ACCENT }} /> Try an example
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {examples.map((ex, i) => (
               <button
                 key={i}
-                onClick={() => setText(ex)}
-                className="w-full text-left px-4 py-3 rounded-2xl bg-[var(--color-surface-lowest)] border border-[var(--color-surface-highlight)] text-sm font-medium text-[var(--color-text-primary)] hover:border-[var(--color-shakti-primary-light)] hover:bg-[var(--color-surface-low)] hover:text-[var(--color-shakti-primary)] transition-all duration-200 flex items-center justify-between group"
+                onClick={() => setText(ex.text)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '10px',
+                  width: '100%', textAlign: 'left',
+                  padding: '12px 14px', borderRadius: '12px',
+                  background: 'var(--color-surface-lowest)',
+                  border: '1px solid rgba(24,20,69,0.05)',
+                  cursor: 'pointer', fontFamily: 'var(--font-sans)',
+                  transition: 'all 0.15s'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${ACCENT}55`; e.currentTarget.style.background = `${ACCENT}08`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(24,20,69,0.05)'; e.currentTarget.style.background = 'var(--color-surface-lowest)'; }}
               >
-                <span className="pr-3 leading-relaxed text-[13px]">"{ex}"</span>
-                <ChevronRight size={16} className="text-[var(--color-outline)] group-hover:text-[var(--color-shakti-primary)] transition-colors flex-shrink-0" />
+                <span style={{
+                  flexShrink: 0,
+                  padding: '3px 9px', borderRadius: '999px',
+                  background: `${ACCENT}14`, color: ACCENT,
+                  fontSize: '10px', fontWeight: 700,
+                  textTransform: 'uppercase', letterSpacing: '0.05em',
+                  border: `1px solid ${ACCENT}33`
+                }}>{ex.tag}</span>
+                <span style={{ flex: 1, fontSize: '13px', color: 'var(--color-shakti-dark-text)', lineHeight: 1.45 }}>"{ex.text}"</span>
+                <ChevronRight size={15} style={{ color: 'var(--color-outline)', flexShrink: 0 }} />
               </button>
             ))}
           </div>
         </motion.div>
       )}
 
-      {analysis && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          className={`rounded-[2rem] p-8 border ${getVerdictColors(analysis.verdict)} transition-all`}
-        >
-          <div className="flex items-start gap-4 mb-6">
-            <div className="w-14 h-14 rounded-[1.25rem] bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-sm border border-white/40">
-              {getVerdictIcon(analysis.verdict)}
-            </div>
-            <div>
-              <span className="inline-block px-4 py-1.5 rounded-full bg-white/80 text-[10px] font-bold uppercase tracking-wider mb-2 border border-white/60 shadow-sm">
-                {analysis.verdict || 'Analysis'}
-              </span>
-              <h3 className="text-xl md:text-2xl font-extrabold text-inherit tracking-tight leading-tight">{analysis.title}</h3>
-            </div>
-          </div>
-          
-          <p className="text-base md:text-lg leading-relaxed mb-8 opacity-90 font-medium">
-            {analysis.summary}
-          </p>
+      {/* RESULT */}
+      <AnimatePresence>
+        {analysis && (() => {
+          const meta = verdictMeta(analysis.verdict);
+          const Icon = meta.Icon;
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            >
+              <div
+                style={{
+                  borderRadius: '1.5rem', padding: '22px',
+                  background: meta.bg, border: `1px solid ${meta.border}`,
+                  marginBottom: '12px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '14px' }}>
+                  <div style={{
+                    width: '48px', height: '48px', borderRadius: '14px',
+                    background: 'white', color: meta.accent,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0, border: `1px solid ${meta.border}`,
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
+                  }}>
+                    <Icon size={22} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{
+                      display: 'inline-block',
+                      padding: '3px 10px', borderRadius: '999px',
+                      background: meta.chipBg, color: meta.text,
+                      fontSize: '10px', fontWeight: 800,
+                      textTransform: 'uppercase', letterSpacing: '0.08em',
+                      marginBottom: '6px',
+                      border: `1px solid ${meta.border}`
+                    }}>
+                      {analysis.verdict || 'Analysis'}
+                    </span>
+                    <h3 style={{ fontSize: '18px', fontWeight: 800, color: meta.text, margin: 0, lineHeight: 1.3 }}>
+                      {analysis.title}
+                    </h3>
+                  </div>
+                </div>
 
-          <div className="bg-white/50 backdrop-blur-md rounded-[1.5rem] p-6 border border-white/60 mb-8 shadow-sm">
-            <p className="text-[11px] font-bold uppercase tracking-widest opacity-60 mb-5">Suggested steps</p>
-            <ol className="space-y-5">
-              {analysis.steps.map((s, i) => (
-                <li key={i} className="flex items-start gap-4">
-                  <span className="w-8 h-8 rounded-[10px] bg-white text-current flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-sm border border-white/50 mt-0.5">
-                    {i + 1}
-                  </span>
-                  <span className="text-sm font-semibold leading-relaxed opacity-90">{s}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
+                <p style={{ fontSize: '14px', color: meta.text, opacity: 0.9, margin: '0 0 16px', lineHeight: 1.6, fontWeight: 500 }}>
+                  {analysis.summary}
+                </p>
 
-          <div className="bg-white/70 backdrop-blur-md rounded-[1.5rem] p-5 border border-white/60 shadow-sm flex items-start gap-4">
-            <div className="p-2.5 bg-[var(--color-shakti-error-container)] rounded-[12px] text-[var(--color-shakti-error)] mt-1 shadow-inner">
-              <AlertCircle size={20} />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold text-[var(--color-shakti-error)] mb-1.5 uppercase tracking-wide">Need to talk to someone now?</p>
-              <p className="text-sm md:text-base font-extrabold text-[var(--color-shakti-error)]">{analysis.helplines.join(' · ')}</p>
-            </div>
-          </div>
-        </motion.div>
-      )}
+                {analysis.steps?.length > 0 && (
+                  <div style={{
+                    background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(6px)',
+                    borderRadius: '14px', padding: '14px',
+                    border: `1px solid ${meta.border}`,
+                  }}>
+                    <p style={{
+                      fontSize: '10px', fontWeight: 800, color: meta.text,
+                      textTransform: 'uppercase', letterSpacing: '0.08em',
+                      margin: '0 0 10px', opacity: 0.7
+                    }}>
+                      Suggested steps
+                    </p>
+                    <ol style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {analysis.steps.map((s, i) => (
+                        <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                          <span style={{
+                            width: '24px', height: '24px', borderRadius: '8px',
+                            background: 'white', color: meta.accent,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '11px', fontWeight: 800,
+                            flexShrink: 0,
+                            border: `1px solid ${meta.border}`,
+                            marginTop: '1px'
+                          }}>{i + 1}</span>
+                          <span style={{ fontSize: '13px', color: meta.text, lineHeight: 1.55, fontWeight: 500 }}>{s}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+              </div>
+
+              {/* Helplines */}
+              {analysis.helplines?.length > 0 && (
+                <div style={{
+                  background: 'var(--color-surface-lowest)',
+                  borderRadius: '1.25rem', padding: '14px',
+                  boxShadow: '0 1px 6px rgba(24,20,69,0.03)',
+                  border: '1px solid rgba(239,68,68,0.18)',
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                  marginBottom: '12px'
+                }}>
+                  <div style={{
+                    width: '38px', height: '38px', borderRadius: '10px',
+                    background: '#fef2f2', color: '#dc2626',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                  }}>
+                    <Phone size={16} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: '10px', fontWeight: 800, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 2px' }}>
+                      Need to talk to someone now?
+                    </p>
+                    <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0 }}>
+                      {analysis.helplines.join(' · ')}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={reset}
+                style={{
+                  width: '100%', padding: '12px',
+                  borderRadius: '12px',
+                  background: 'var(--color-surface-lowest)',
+                  color: 'var(--color-outline)',
+                  border: '1px solid rgba(24,20,69,0.05)',
+                  fontSize: '13px', fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  fontFamily: 'var(--font-sans)'
+                }}
+              >
+                <RotateCcw size={14} /> Describe something else
+              </button>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
     </div>
   );
 }
