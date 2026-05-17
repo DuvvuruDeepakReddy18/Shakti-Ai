@@ -2,22 +2,31 @@ import { safeParseJSON } from "../utils/helpers";
 
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 
-async function fetchOpenRouter(messages) {
+async function fetchOpenRouter(messages, options = {}) {
   if (!OPENROUTER_API_KEY) {
-    console.warn("OpenRouter API Key is missing. Returning demodata.");
+    console.warn("OpenRouter API Key is missing. Returning demo data.");
     throw new Error("Missing API Key");
   }
 
+  // Verified-working free models on OpenRouter (largest/strongest first).
+  // The previous list had deprecated/rate-limited models which always fell to demo.
   const models = [
+    'openai/gpt-oss-120b:free',
+    'z-ai/glm-4.5-air:free',
+    'openai/gpt-oss-20b:free',
+    'google/gemma-4-31b-it:free',
     'minimax/minimax-m2.5:free',
-    'google/gemma-2-9b-it:free',
-    'meta-llama/llama-3.1-8b-instruct:free',
   ];
 
+  // Lower temperature by default — most callers want structured JSON.
+  const temperature = options.temperature ?? 0.3;
+  const top_p = options.top_p ?? 0.9;
+
+  let lastError = null;
   for (const model of models) {
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 20000);
+      const timer = setTimeout(() => controller.abort(), 25000);
 
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -25,39 +34,44 @@ async function fetchOpenRouter(messages) {
         headers: {
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": window.location.origin, // Required by OpenRouter
+          "HTTP-Referer": window.location.origin,
           "X-Title": "She Care AI"
         },
-        body: JSON.stringify({
-          model: model,
-          messages: messages,
-          temperature: 0.7,
-          top_p: 0.95
-        })
+        body: JSON.stringify({ model, messages, temperature, top_p })
       });
 
       clearTimeout(timer);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.warn(`OpenRouter API error for ${model}: ${response.status} - ${errorText}`);
+        console.warn(`OpenRouter ${response.status} for ${model}: ${errorText.slice(0, 200)}`);
+        lastError = new Error(`HTTP ${response.status}`);
         continue;
       }
 
       const data = await response.json();
       if (data.error) {
         console.warn(`OpenRouter API error for ${model}:`, data.error);
+        lastError = new Error(data.error.message || 'API error');
         continue;
       }
-      
-      return data.choices[0].message.content;
+
+      const content = data?.choices?.[0]?.message?.content;
+      if (!content || !content.trim()) {
+        console.warn(`Empty content from ${model}`);
+        lastError = new Error('Empty response');
+        continue;
+      }
+
+      return content;
     } catch (error) {
-      console.warn(`Fetch error for ${model}:`, error);
+      console.warn(`Fetch error for ${model}:`, error?.message || error);
+      lastError = error;
       continue;
     }
   }
 
-  throw new Error("All available AI models failed.");
+  throw new Error(lastError?.message || "All available AI models failed.");
 }
 
 // 1. AI Companion Chat (Mental Health Support)
