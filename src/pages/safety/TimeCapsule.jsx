@@ -3,20 +3,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, Upload, FileText, Camera, Mic, Lock,
   ShieldCheck, Info, Loader2, CheckCircle2, Database,
-  Fingerprint, Clock, FileKey,
+  Fingerprint, Clock, FileKey, Copy, Download,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
+const ACCENT = '#4f46e5';
+const ACCENT_LIGHT = '#06b6d4';
+const ACCENT_BG = '#eef2ff';
+
+const TYPES = [
+  { id: 'text',  icon: FileText, label: 'Written log' },
+  { id: 'photo', icon: Camera,   label: 'Visual capture' },
+  { id: 'audio', icon: Mic,      label: 'Audio trace' },
+];
+
 export default function TimeCapsule() {
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [evidenceType, setEvidenceType] = useState('text');
   const [textContent, setTextContent] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
   const [isSealing, setIsSealing] = useState(false);
   const [sealedRecord, setSealedRecord] = useState(null);
-
-  const fileInputRef = useRef(null);
-  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleSeal = () => {
     if (evidenceType === 'text' && !textContent.trim()) return;
@@ -30,7 +39,7 @@ export default function TimeCapsule() {
         timestamp: new Date().toISOString(),
         hash: mockHash,
         type: evidenceType,
-        preview: evidenceType === 'text' ? textContent.substring(0, 50) + '...' : selectedFile?.name,
+        preview: evidenceType === 'text' ? textContent.substring(0, 50) + '…' : selectedFile?.name,
       });
       setIsSealing(false);
       setTextContent('');
@@ -43,167 +52,346 @@ export default function TimeCapsule() {
     if (e.target.files && e.target.files[0]) setSelectedFile(e.target.files[0]);
   };
 
-  const TYPES = [
-    { id: 'text', icon: FileText, label: 'Written log' },
-    { id: 'photo', icon: Camera, label: 'Visual capture' },
-    { id: 'audio', icon: Mic, label: 'Audio trace' },
-  ];
+  const copyHash = () => {
+    if (!sealedRecord?.hash) return;
+    navigator.clipboard?.writeText(sealedRecord.hash);
+    toast.success('Hash copied');
+  };
+
+  const downloadRecord = () => {
+    if (!sealedRecord) return;
+    const text = `EVIDENCE RECORD
+================
+ID: ${sealedRecord.id}
+Type: ${sealedRecord.type}
+Timestamp: ${new Date(sealedRecord.timestamp).toLocaleString()}
+SHA-256 Hash: ${sealedRecord.hash}
+Preview: ${sealedRecord.preview}
+
+This record is cryptographically sealed. Hash any time to verify integrity.
+`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${sealedRecord.id}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success('Record exported');
+  };
+
+  const canSeal = (evidenceType === 'text' && textContent.trim()) || (evidenceType !== 'text' && selectedFile);
+
+  const cardStyle = {
+    background: 'var(--color-surface-lowest)',
+    borderRadius: '1.25rem',
+    boxShadow: '0 1px 6px rgba(24,20,69,0.03)',
+  };
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface)] pb-32 px-4 pt-6 max-w-[960px] mx-auto font-sans">
-      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-shakti-light-text)] hover:text-[var(--color-shakti-dark-text)] transition-colors mb-6">
+    <div>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          fontSize: '13px', color: 'var(--color-outline)', background: 'none',
+          border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'var(--font-sans)',
+        }}
+      >
         <ArrowLeft size={16} /> Back
       </button>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden bg-gradient-to-br from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] rounded-[2rem] p-6 md:p-8 mb-8 shadow-xl shadow-[var(--color-shakti-primary-light)]/30">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 blur-2xl rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none" />
-        <div className="flex items-center gap-5 relative z-10">
-          <div className="w-16 h-16 rounded-[1.25rem] bg-white/20 backdrop-blur-md shadow-inner flex items-center justify-center text-white flex-shrink-0 border border-white/20">
-            <Fingerprint size={32} strokeWidth={1.5} />
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{
+          position: 'relative', borderRadius: '1.5rem', padding: '24px',
+          marginBottom: '18px', overflow: 'hidden',
+          background: 'var(--color-surface-lowest)',
+          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+        }}
+      >
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: `${ACCENT}1f`, borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '16px',
+            background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: `0 6px 20px ${ACCENT}40`,
+          }}>
+            <Fingerprint size={24} color="white" strokeWidth={2.2} />
           </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-2 tracking-tight">Digital Vault</h1>
-            <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed">Immutable evidence hashing & verification.</p>
+          <div style={{ minWidth: 0 }}>
+            <h1 style={{ fontSize: '23px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>Time Capsule</h1>
+            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0' }}>Immutable evidence hashing & verification.</p>
           </div>
         </div>
       </motion.div>
 
-      <div className="bg-emerald-50/50 p-4 rounded-[1rem] mb-6 flex gap-3 items-start border border-emerald-100">
-        <div className="w-9 h-9 rounded-full bg-[var(--color-surface-lowest)] shadow-sm flex items-center justify-center text-emerald-600 flex-shrink-0 border border-emerald-100">
+      {/* INFO BANNER */}
+      <div style={{
+        background: '#ecfdf5', padding: '14px', borderRadius: '14px', marginBottom: '14px',
+        display: 'flex', gap: '12px', alignItems: 'flex-start',
+        border: '1px solid rgba(16,185,129,0.20)',
+      }}>
+        <div style={{
+          width: '34px', height: '34px', borderRadius: '10px',
+          background: 'rgba(16,185,129,0.12)', color: '#047857',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+        }}>
           <ShieldCheck size={16} />
         </div>
-        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
-          Records here create an <span className="text-emerald-700 font-semibold">immutable digital footprint</span>.
+        <p style={{ fontSize: '13px', color: '#065f46', margin: 0, lineHeight: 1.5 }}>
+          Records here create an <span style={{ fontWeight: 800, color: '#047857' }}>immutable digital footprint</span>.
           Verification hashes ensure integrity and can be used in legal proceedings.
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-6 bg-[var(--color-surface-lowest)] p-1.5 rounded-[1rem] border border-[var(--color-surface-highlight)] shadow-sm">
-        {TYPES.map((type) => {
-          const Icon = type.icon;
-          const isActive = evidenceType === type.id;
+      {/* TYPE TABS */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px',
+        padding: '6px', marginBottom: '14px',
+        background: 'var(--color-surface-lowest)',
+        borderRadius: '14px', boxShadow: '0 1px 6px rgba(24,20,69,0.03)'
+      }}>
+        {TYPES.map(t => {
+          const Icon = t.icon;
+          const active = evidenceType === t.id;
           return (
             <button
-              key={type.id}
-              onClick={() => setEvidenceType(type.id)}
-              className={`py-3 px-2 rounded-[0.75rem] flex flex-col items-center justify-center gap-1.5 transition-all
-                ${isActive ? 'bg-gradient-to-r from-[var(--color-shakti-dark-text)] to-[#3A2D80] text-white shadow-md' : 'bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)] hover:text-[var(--color-text-primary)]'}`}
+              key={t.id}
+              onClick={() => setEvidenceType(t.id)}
+              style={{
+                padding: '10px 8px', borderRadius: '10px',
+                display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                background: active ? `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})` : 'transparent',
+                color: active ? 'white' : 'var(--color-outline)',
+                border: 'none', cursor: 'pointer',
+                fontFamily: 'var(--font-sans)', transition: 'all 0.15s',
+                boxShadow: active ? `0 4px 12px ${ACCENT}33` : 'none',
+              }}
             >
-              <Icon size={18} />
-              <span className="text-xs font-bold">{type.label}</span>
+              <Icon size={16} />
+              <span style={{ fontSize: '11px', fontWeight: 700 }}>{t.label}</span>
             </button>
           );
         })}
       </div>
 
-      <div className="relative group mb-6">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-shakti-primary)]/20 to-[var(--color-shakti-secondary)]/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
-        <motion.div
-          key={evidenceType} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-          className="relative bg-[var(--color-surface-lowest)]/80 backdrop-blur-xl rounded-[1.5rem] p-6 border border-[var(--color-surface-highlight)] shadow-sm"
-        >
+      {/* CAPTURE CARD */}
+      <motion.div
+        key={evidenceType}
+        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+        style={{ ...cardStyle, padding: '18px', marginBottom: '14px' }}
+      >
         {evidenceType === 'text' ? (
           <textarea
             value={textContent}
             onChange={(e) => setTextContent(e.target.value)}
             placeholder="Describe the incident with as much detail as possible (date, time, involved parties)…"
-            className="w-full h-44 px-5 py-4 rounded-[1rem] bg-[var(--color-surface)] border border-[var(--color-surface-highlight)] text-[var(--color-text-primary)] text-sm placeholder:text-[var(--color-outline)] focus:outline-none focus:border-[var(--color-shakti-dark-text)] focus:ring-1 focus:ring-[var(--color-shakti-dark-text)] transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] resize-none leading-relaxed"
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              minHeight: '160px',
+              padding: '14px 16px', borderRadius: '12px',
+              background: 'var(--color-surface-low)', border: '1px solid rgba(24,20,69,0.05)',
+              fontSize: '14px', color: 'var(--color-shakti-dark-text)',
+              outline: 'none', resize: 'none', lineHeight: 1.55,
+              fontFamily: 'var(--font-sans)', transition: 'border 0.15s'
+            }}
+            onFocus={(e) => { e.currentTarget.style.border = `1px solid ${ACCENT}55`; e.currentTarget.style.background = 'var(--color-surface-lowest)'; }}
+            onBlur={(e) => { e.currentTarget.style.border = '1px solid rgba(24,20,69,0.05)'; e.currentTarget.style.background = 'var(--color-surface-low)'; }}
           />
         ) : (
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="w-full h-44 rounded-[1rem] bg-[var(--color-surface)] border-2 border-dashed border-[var(--color-surface-highlight)] flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-[var(--color-shakti-dark-text)] hover:bg-[var(--color-surface-lowest)] transition-all"
+            style={{
+              width: '100%', minHeight: '160px',
+              borderRadius: '12px',
+              background: selectedFile ? '#ecfdf5' : ACCENT_BG,
+              border: `2px dashed ${selectedFile ? 'rgba(16,185,129,0.35)' : `${ACCENT}40`}`,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px',
+              cursor: 'pointer', padding: '20px', transition: 'all 0.15s', textAlign: 'center'
+            }}
           >
             {selectedFile ? (
-              <div className="text-center px-4">
-                <CheckCircle2 size={36} className="text-emerald-500 mx-auto mb-2" />
-                <p className="text-sm font-bold text-[var(--color-text-primary)] max-w-xs truncate mx-auto">{selectedFile.name}</p>
-                <p className="text-xs text-[var(--color-shakti-light-text)] mt-1">Tap to replace</p>
-              </div>
+              <>
+                <CheckCircle2 size={36} style={{ color: '#10b981' }} />
+                <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedFile.name}</p>
+                <p style={{ fontSize: '11px', color: 'var(--color-outline)', margin: 0 }}>Tap to replace</p>
+              </>
             ) : (
               <>
-                <div className="w-14 h-14 rounded-[1rem] bg-[var(--color-surface-lowest)] flex items-center justify-center text-[var(--color-shakti-dark-text)] shadow-sm border border-[var(--color-surface-highlight)]">
-                  <Upload size={24} />
+                <div style={{
+                  width: '56px', height: '56px', borderRadius: '16px',
+                  background: 'white', color: ACCENT,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: `1px solid ${ACCENT}33`, boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                }}>
+                  <Upload size={22} />
                 </div>
-                <p className="text-[11px] font-bold text-[var(--color-shakti-light-text)] uppercase tracking-wider">Upload {evidenceType === 'photo' ? 'image' : 'recording'}</p>
+                <p style={{ fontSize: '11px', fontWeight: 800, color: ACCENT, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
+                  Upload {evidenceType === 'photo' ? 'image' : 'recording'}
+                </p>
               </>
             )}
-            <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
+            <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} accept={evidenceType === 'photo' ? 'image/*' : 'audio/*'} />
           </div>
         )}
 
         <button
           onClick={handleSeal}
-          disabled={isSealing || (evidenceType === 'text' && !textContent) || (evidenceType !== 'text' && !selectedFile)}
-          className="w-full py-4 mt-6 rounded-[1rem] bg-[var(--color-shakti-primary)] text-white text-sm font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[var(--color-shakti-primary)]/30 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:hover:transform-none disabled:shadow-none"
+          disabled={isSealing || !canSeal}
+          style={{
+            width: '100%', padding: '14px', marginTop: '14px',
+            borderRadius: '12px',
+            background: (isSealing || !canSeal) ? '#cbd5e1' : `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+            color: 'white', border: 'none',
+            fontSize: '14px', fontWeight: 700,
+            cursor: (isSealing || !canSeal) ? 'not-allowed' : 'pointer',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+            boxShadow: (isSealing || !canSeal) ? 'none' : `0 4px 12px ${ACCENT}33`,
+            fontFamily: 'var(--font-sans)', transition: 'all 0.2s'
+          }}
         >
-          {isSealing ? <Loader2 size={18} className="animate-spin" /> : <Lock size={18} />}
+          {isSealing ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />}
           {isSealing ? 'Sealing cryptographic block…' : 'Seal evidence & generate hash'}
         </button>
-        </motion.div>
-      </div>
+      </motion.div>
 
+      {/* SEALED RESULT */}
       <AnimatePresence>
         {sealedRecord && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-[var(--color-surface-lowest)] rounded-2xl p-6 border border-emerald-100 shadow-sm relative"
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            style={{ ...cardStyle, padding: '18px', position: 'relative', overflow: 'hidden' }}
           >
-            <div className="absolute top-4 right-4">
-              <span className="px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1">
+            <div style={{ position: 'absolute', top: '-40px', right: '-30px', width: '160px', height: '160px', background: 'rgba(16,185,129,0.10)', borderRadius: '50%', filter: 'blur(50px)', pointerEvents: 'none' }} />
+
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <div style={{
+                width: '46px', height: '46px', borderRadius: '14px',
+                background: '#ecfdf5', color: '#047857',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0, border: '1px solid rgba(16,185,129,0.25)'
+              }}>
+                <Fingerprint size={22} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-shakti-dark-text)', margin: 0 }}>Record sealed</h3>
+                <p style={{ fontSize: '11px', color: 'var(--color-outline)', margin: '2px 0 0' }}>Evidence ID: <span style={{ color: 'var(--color-shakti-dark-text)', fontWeight: 700 }}>{sealedRecord.id}</span></p>
+              </div>
+              <span style={{
+                padding: '4px 10px', borderRadius: '999px',
+                background: '#10b981', color: 'white',
+                fontSize: '10px', fontWeight: 800,
+                textTransform: 'uppercase', letterSpacing: '0.08em',
+                display: 'inline-flex', alignItems: 'center', gap: '4px',
+                boxShadow: '0 2px 8px rgba(16,185,129,0.30)'
+              }}>
                 <ShieldCheck size={11} /> Immutable
               </span>
             </div>
 
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                <Fingerprint size={22} />
+            {/* HASH BOX */}
+            <div style={{
+              background: 'var(--color-surface-low)',
+              borderRadius: '12px', padding: '14px',
+              border: '1px solid rgba(24,20,69,0.04)',
+              marginBottom: '10px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <FileKey size={11} style={{ color: ACCENT }} /> Verification hash
+                </p>
+                <span style={{ fontSize: '10px', fontWeight: 800, color: ACCENT, textTransform: 'uppercase', letterSpacing: '0.08em' }}>SHA-256</span>
               </div>
-              <div>
-                <h3 className="text-base font-semibold text-[var(--color-text-primary)]">Record sealed</h3>
-                <p className="text-xs text-[var(--color-text-secondary)]">Evidence ID: {sealedRecord.id}</p>
+              <div style={{
+                background: 'var(--color-surface-lowest)', padding: '10px 12px',
+                borderRadius: '8px', border: '1px solid rgba(24,20,69,0.05)',
+                display: 'flex', alignItems: 'center', gap: '8px'
+              }}>
+                <p style={{
+                  flex: 1, fontSize: '11px', fontFamily: 'monospace',
+                  color: 'var(--color-shakti-dark-text)', wordBreak: 'break-all',
+                  margin: 0, lineHeight: 1.5
+                }}>
+                  {sealedRecord.hash}
+                </p>
+                <button
+                  onClick={copyHash}
+                  style={{
+                    width: '28px', height: '28px', borderRadius: '8px',
+                    background: ACCENT_BG, color: ACCENT,
+                    border: `1px solid ${ACCENT}33`,
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', flexShrink: 0
+                  }}
+                  title="Copy hash"
+                >
+                  <Copy size={13} />
+                </button>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="bg-[var(--color-surface-low)] p-4 rounded-xl border border-[var(--color-surface-highlight)]">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider flex items-center gap-1.5">
-                    <FileKey size={12} className="text-indigo-500" /> Verification hash
+            {/* META TILES */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px', marginBottom: '10px' }}>
+              <div style={{
+                background: 'var(--color-surface-low)', padding: '12px',
+                borderRadius: '10px', border: '1px solid rgba(24,20,69,0.04)',
+                display: 'flex', alignItems: 'center', gap: '10px'
+              }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--color-surface-lowest)', color: ACCENT, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Clock size={14} />
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontSize: '9px', fontWeight: 800, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 2px' }}>Timestamp</p>
+                  <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {new Date(sealedRecord.timestamp).toLocaleString()}
                   </p>
-                  <span className="text-[10px] font-semibold text-indigo-600 uppercase tracking-wider">SHA-256</span>
-                </div>
-                <p className="text-xs font-semibold text-[var(--color-text-primary)] font-mono break-all leading-relaxed p-3 bg-[var(--color-surface-lowest)] rounded-lg border border-[var(--color-surface-highlight)]">
-                  {sealedRecord.hash}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="bg-[var(--color-surface-low)] p-3 rounded-xl border border-[var(--color-surface-highlight)] flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-[var(--color-surface-lowest)] flex items-center justify-center text-[var(--color-text-secondary)] flex-shrink-0">
-                    <Clock size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-0.5">Timestamp</p>
-                    <p className="text-xs font-semibold text-[var(--color-text-primary)]">{new Date(sealedRecord.timestamp).toLocaleString()}</p>
-                  </div>
-                </div>
-                <div className="bg-[var(--color-surface-low)] p-3 rounded-xl border border-[var(--color-surface-highlight)] flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-[var(--color-surface-lowest)] flex items-center justify-center text-[var(--color-text-secondary)] flex-shrink-0">
-                    <Database size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-0.5">Storage</p>
-                    <p className="text-xs font-semibold text-[var(--color-text-primary)]">Decentralized vault</p>
-                  </div>
                 </div>
               </div>
+              <div style={{
+                background: 'var(--color-surface-low)', padding: '12px',
+                borderRadius: '10px', border: '1px solid rgba(24,20,69,0.04)',
+                display: 'flex', alignItems: 'center', gap: '10px'
+              }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--color-surface-lowest)', color: ACCENT_LIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Database size={14} />
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontSize: '9px', fontWeight: 800, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 2px' }}>Storage</p>
+                  <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: 0 }}>Decentralized vault</p>
+                </div>
+              </div>
+            </div>
 
-              <div className="flex items-center gap-2 p-3 bg-indigo-50 rounded-xl border border-indigo-100">
-                <Info size={14} className="text-indigo-600 flex-shrink-0" />
-                <p className="text-xs font-semibold text-indigo-700">Export this record to include in official reports.</p>
+            {/* ACTIONS */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                onClick={downloadRecord}
+                style={{
+                  flex: 1, minWidth: '140px',
+                  padding: '10px 14px', borderRadius: '10px',
+                  background: ACCENT_BG, color: ACCENT,
+                  border: `1px solid ${ACCENT}33`,
+                  fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  fontFamily: 'var(--font-sans)'
+                }}
+              >
+                <Download size={13} /> Export record
+              </button>
+              <div style={{
+                flex: 1, minWidth: '140px',
+                padding: '10px 14px', borderRadius: '10px',
+                background: 'var(--color-surface-low)',
+                border: '1px solid rgba(24,20,69,0.05)',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                fontSize: '11px', fontWeight: 600, color: 'var(--color-outline)'
+              }}>
+                <Info size={12} style={{ color: ACCENT }} /> Use in official reports
               </div>
             </div>
           </motion.div>

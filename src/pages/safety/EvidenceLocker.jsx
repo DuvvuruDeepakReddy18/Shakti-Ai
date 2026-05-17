@@ -1,61 +1,32 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, ArrowLeft, Mic, Video, Camera, FileText, Clock, MapPin, Shield, CheckCircle2, X, Play, Square, Download, Share2, Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import {
+  Lock, ArrowLeft, Mic, Video, Camera, FileText, Clock, MapPin,
+  Shield, CheckCircle2, X, Play, Square, Download, Share2, Plus
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+const ACCENT = '#7c3aed';
+const ACCENT_LIGHT = '#ec4899';
 
 const evidenceTypes = [
-  { id: 'audio', icon: Mic, label: 'Audio', color: 'var(--color-shakti-primary)', bg: 'var(--color-shakti-primary-light)', actionText: 'Recording Audio' },
-  { id: 'video', icon: Video, label: 'Video', color: 'var(--color-shakti-secondary)', bg: 'var(--color-shakti-secondary-light)', actionText: 'Recording Video' },
-  { id: 'photo', icon: Camera, label: 'Photo', color: 'var(--color-shakti-info)', bg: 'var(--color-surface-highest)', actionText: 'Capturing Photo' },
-  { id: 'note', icon: FileText, label: 'Note', color: 'var(--color-shakti-success)', bg: 'var(--color-shakti-success-light)', actionText: 'Writing Note' },
+  { id: 'audio', icon: Mic,      label: 'Audio', accent: '#7c3aed', bg: '#f5f3ff', actionText: 'Recording Audio' },
+  { id: 'video', icon: Video,    label: 'Video', accent: '#ec4899', bg: '#fdf2f8', actionText: 'Recording Video' },
+  { id: 'photo', icon: Camera,   label: 'Photo', accent: '#3b82f6', bg: '#eff6ff', actionText: 'Capturing Photo' },
+  { id: 'note',  icon: FileText, label: 'Note',  accent: '#10b981', bg: '#ecfdf5', actionText: 'Writing Note' },
 ];
 
 const INITIAL_EVIDENCE = [
-  { 
-    id: 1,
-    type: 'video', 
-    name: 'Dashcam_Backup_102', 
-    duration: '0:10', 
-    size: '1.2 MB', 
-    location: 'Whitefield, Bangalore', 
-    when: '2 hours ago',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4'
-  },
-  { 
-    id: 2,
-    type: 'audio', 
-    name: 'Voice_Memo_004', 
-    duration: '0:03', 
-    size: '450 KB', 
-    location: 'Indiranagar', 
-    when: 'Yesterday',
-    url: 'https://www.w3schools.com/html/horse.mp3'
-  },
-  { 
-    id: 3,
-    type: 'photo', 
-    name: 'Street_evidence_img', 
-    duration: '—', 
-    size: '2.4 MB', 
-    location: 'Koramangala', 
-    when: 'Apr 18',
-    url: 'https://images.unsplash.com/photo-1555848962-6e79363ec58f?auto=format&fit=crop&w=800&q=80'
-  },
-  { 
-    id: 4,
-    type: 'note', 
-    name: 'Incident_note_april18', 
-    duration: '—', 
-    size: '4 KB', 
-    location: 'Koramangala', 
-    when: 'Apr 18',
-    content: 'Incident logged at 8:45 PM. A suspicious vehicle (KA-01-XX-1234) was following me near the tech park. I have recorded a short video as evidence.'
-  },
+  { id: 1, type: 'video', name: 'Dashcam_Backup_102', duration: '0:10', size: '1.2 MB', location: 'Whitefield, Bangalore', when: '2 hours ago', url: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+  { id: 2, type: 'audio', name: 'Voice_Memo_004',     duration: '0:03', size: '450 KB', location: 'Indiranagar',         when: 'Yesterday',  url: 'https://www.w3schools.com/html/horse.mp3' },
+  { id: 3, type: 'photo', name: 'Street_evidence_img',duration: '—',    size: '2.4 MB', location: 'Koramangala',         when: 'Apr 18',     url: 'https://images.unsplash.com/photo-1555848962-6e79363ec58f?auto=format&fit=crop&w=800&q=80' },
+  { id: 4, type: 'note',  name: 'Incident_note_april18',duration:'—',   size: '4 KB',   location: 'Koramangala',         when: 'Apr 18',     content: 'Incident logged at 8:45 PM. A suspicious vehicle (KA-01-XX-1234) was following me near the tech park. I have recorded a short video as evidence.' },
 ];
 
 const typeMeta = (t) => evidenceTypes.find(e => e.id === t);
 
 export default function EvidenceLocker() {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState(null);
   const [recentEvidence, setRecentEvidence] = useState(INITIAL_EVIDENCE);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -66,9 +37,7 @@ export default function EvidenceLocker() {
     let interval;
     if (selected && !isProcessing) {
       setRecordingTime(0);
-      interval = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
+      interval = setInterval(() => setRecordingTime(prev => prev + 1), 1000);
     }
     return () => clearInterval(interval);
   }, [selected, isProcessing]);
@@ -82,8 +51,6 @@ export default function EvidenceLocker() {
   const handleStopAndSave = () => {
     if (!selected) return;
     setIsProcessing(true);
-    
-    // Simulate processing delay
     setTimeout(() => {
       const newEvidence = {
         id: Date.now(),
@@ -93,12 +60,11 @@ export default function EvidenceLocker() {
         size: `${(Math.random() * 4 + 1).toFixed(1)} MB`,
         location: 'Current Location',
         when: 'Just now',
-        url: selected === 'video' ? 'https://www.w3schools.com/html/mov_bbb.mp4' : 
+        url: selected === 'video' ? 'https://www.w3schools.com/html/mov_bbb.mp4' :
              selected === 'audio' ? 'https://www.w3schools.com/html/horse.mp3' :
              selected === 'photo' ? 'https://images.unsplash.com/photo-1555848962-6e79363ec58f?auto=format&fit=crop&w=800&q=80' : null,
-        content: selected === 'note' ? 'New incident note created.' : null
+        content: selected === 'note' ? 'New incident note created.' : null,
       };
-      
       setRecentEvidence([newEvidence, ...recentEvidence]);
       setSelected(null);
       setIsProcessing(false);
@@ -106,287 +72,387 @@ export default function EvidenceLocker() {
     }, 1500);
   };
 
+  const cardStyle = {
+    background: 'var(--color-surface-lowest)',
+    borderRadius: '1.25rem',
+    boxShadow: '0 1px 6px rgba(24,20,69,0.03)',
+  };
+
   return (
-    <div className="min-h-screen bg-[var(--color-surface-base)] pb-32 relative overflow-hidden font-sans">
-      {/* Background Orbs */}
-      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[var(--color-accent-blue)]/20 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[var(--color-shakti-primary)]/20 blur-[120px] pointer-events-none" />
+    <div>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          fontSize: '13px', color: 'var(--color-outline)', background: 'none',
+          border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'var(--font-sans)',
+        }}
+      >
+        <ArrowLeft size={16} /> Back
+      </button>
 
-      <div className="max-w-[960px] mx-auto px-4 pt-8 relative z-10">
-        <Link to="/safety" className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-6 group">
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-          Back to Safety
-        </Link>
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden bg-gradient-to-br from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] rounded-3xl p-5 md:p-6 mb-6 shadow-lg shadow-[var(--color-shakti-primary-light)]/25"
-        >
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/10 blur-2xl rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none" />
-          <div className="flex items-center gap-4 relative z-10">
-            <div className="w-13 h-13 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white flex-shrink-0 border border-white/25" style={{ width: '52px', height: '52px' }}>
-              <Lock size={24} strokeWidth={2.2} />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-1 tracking-tight">Evidence Locker</h1>
-              <p className="text-white/85 text-sm font-medium flex items-center gap-1.5">
-                <Shield size={14} className="text-[var(--color-shakti-success-light)] flex-shrink-0" />
-                End-to-end encrypted vault. Only you have the keys.
-              </p>
-            </div>
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{
+          position: 'relative', borderRadius: '1.5rem', padding: '24px',
+          marginBottom: '18px', overflow: 'hidden',
+          background: 'var(--color-surface-lowest)',
+          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+        }}
+      >
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: `${ACCENT}1f`, borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '16px',
+            background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: `0 6px 20px ${ACCENT}40`,
+          }}>
+            <Lock size={24} color="white" strokeWidth={2.2} />
           </div>
-        </motion.div>
-
-        {/* Capture New Evidence */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-3 px-1">
-            <h3 className="text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-wider flex items-center gap-2">
-              <Plus size={14} className="text-[var(--color-shakti-primary)]" /> Capture Evidence
-            </h3>
-            <span className="text-[10px] font-bold text-[var(--color-outline)] uppercase tracking-widest">Tap to start</span>
-          </div>
-          <div className="grid grid-cols-4 gap-2.5 md:gap-3">
-            {evidenceTypes.map(t => {
-              const Icon = t.icon;
-              const isSelected = selected === t.id;
-              return (
-                <motion.button
-                  key={t.id}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => { if(!selected) setSelected(t.id); }}
-                  className={`relative bg-[var(--color-surface-lowest)] rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2.5 transition-all border ${
-                    isSelected
-                      ? 'border-[var(--color-shakti-primary)] shadow-[0_4px_16px_rgba(124,58,237,0.12)]'
-                      : 'border-[var(--color-surface-highlight)] hover:border-[var(--color-shakti-primary-light)] hover:shadow-[0_4px_14px_rgba(24,20,69,0.05)]'
-                  }`}
-                >
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: t.bg }}
-                  >
-                    <Icon size={20} style={{ color: t.color }} strokeWidth={2} />
-                  </div>
-                  <span className="text-xs font-bold text-[var(--color-text-primary)]">{t.label}</span>
-                </motion.button>
-              );
-            })}
+          <div style={{ minWidth: 0 }}>
+            <h1 style={{ fontSize: '23px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>Evidence Locker</h1>
+            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <Shield size={13} style={{ color: '#10b981' }} /> End-to-end encrypted vault. Only you have the keys.
+            </p>
           </div>
         </div>
+      </motion.div>
 
-        {/* Recording Interface */}
-        <AnimatePresence>
-          {selected && (
+      {/* CAPTURE TILES */}
+      <div style={{ marginBottom: '18px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 4px 10px' }}>
+          <h3 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <Plus size={12} style={{ color: ACCENT }} /> Capture Evidence
+          </h3>
+          <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Tap to start</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+          {evidenceTypes.map(t => {
+            const Icon = t.icon;
+            const isSelected = selected === t.id;
+            return (
+              <motion.button
+                key={t.id}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => { if (!selected) setSelected(t.id); }}
+                style={{
+                  background: 'var(--color-surface-lowest)',
+                  borderRadius: '1rem', padding: '14px 8px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  border: `1px solid ${isSelected ? t.accent : 'rgba(24,20,69,0.05)'}`,
+                  boxShadow: isSelected ? `0 4px 14px ${t.accent}22` : '0 1px 6px rgba(24,20,69,0.03)',
+                  cursor: selected && !isSelected ? 'not-allowed' : 'pointer',
+                  opacity: selected && !isSelected ? 0.5 : 1,
+                  transition: 'all 0.15s', fontFamily: 'var(--font-sans)',
+                }}
+              >
+                <div style={{
+                  width: '40px', height: '40px', borderRadius: '12px',
+                  background: t.bg, color: t.accent,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Icon size={20} strokeWidth={2.2} />
+                </div>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-shakti-dark-text)' }}>{t.label}</span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* RECORDING INTERFACE (light) */}
+      <AnimatePresence>
+        {selected && (() => {
+          const meta = typeMeta(selected);
+          const SelectedIcon = meta.icon;
+          return (
             <motion.div
-              initial={{ opacity: 0, height: 0, scale: 0.95 }}
+              initial={{ opacity: 0, height: 0, scale: 0.98 }}
               animate={{ opacity: 1, height: 'auto', scale: 1 }}
-              exit={{ opacity: 0, height: 0, scale: 0.95 }}
-              className="mb-10 overflow-hidden"
+              exit={{ opacity: 0, height: 0, scale: 0.98 }}
+              style={{ overflow: 'hidden', marginBottom: '18px' }}
             >
-              <div className="bg-[var(--color-inverse-surface)] rounded-[2.5rem] p-8 md:p-12 shadow-2xl text-center relative border border-[var(--color-surface-variant)] overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--color-shakti-secondary)]/20 blur-[100px] rounded-full pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--color-shakti-primary)]/20 blur-[100px] rounded-full pointer-events-none" />
-                
+              <div style={{
+                position: 'relative', overflow: 'hidden',
+                background: 'var(--color-surface-lowest)',
+                borderRadius: '1.5rem', padding: '36px 24px',
+                textAlign: 'center', boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+                border: `1px solid ${meta.accent}33`,
+              }}>
+                <div style={{ position: 'absolute', top: '-50px', right: '-30px', width: '180px', height: '180px', background: `${meta.accent}18`, borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
                 {isProcessing ? (
-                  <div className="flex flex-col items-center justify-center relative z-10 py-10">
-                    <div className="w-24 h-24 rounded-full bg-[var(--color-shakti-success)]/20 flex items-center justify-center mb-6 border border-[var(--color-shakti-success)]/50 shadow-[0_0_40px_rgba(16,185,129,0.3)] relative">
-                      <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }} className="absolute inset-0 border-t-2 border-[var(--color-shakti-success-light)] rounded-full" />
-                      <CheckCircle2 size={48} className="text-[var(--color-shakti-success-light)]" />
+                  <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px 0' }}>
+                    <div style={{
+                      width: '84px', height: '84px', borderRadius: '50%',
+                      background: '#ecfdf5', border: '1px solid rgba(16,185,129,0.25)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      marginBottom: '18px', position: 'relative',
+                    }}>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+                        style={{ position: 'absolute', inset: '-4px', borderRadius: '50%', border: '3px solid transparent', borderTopColor: '#10b981' }}
+                      />
+                      <CheckCircle2 size={40} style={{ color: '#10b981' }} />
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-3">Encrypting & Saving...</h3>
-                    <p className="text-sm text-[var(--color-text-secondary)]">Adding watermark and securing file to vault.</p>
+                    <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-shakti-dark-text)', margin: '0 0 6px' }}>Encrypting & Saving…</h3>
+                    <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: 0 }}>Adding watermark and securing file to vault.</p>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center relative z-10 py-6">
-                    <div className="relative mb-8">
-                      <div className="absolute inset-0 bg-pink-500 rounded-full animate-ping opacity-20" style={{ animationDuration: '2s' }}></div>
-                      <div className="w-28 h-28 rounded-full bg-white/5 backdrop-blur-xl flex items-center justify-center border border-white/10 shadow-[0_0_40px_rgba(236,72,153,0.15)] relative z-10">
-                        {(() => {
-                          const SelectedIcon = typeMeta(selected).icon;
-                          return <SelectedIcon size={48} className="text-pink-400" />;
-                        })()}
+                  <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ position: 'relative', marginBottom: '20px' }}>
+                      <motion.div
+                        animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                        style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: meta.accent, opacity: 0.25 }}
+                      />
+                      <div style={{
+                        width: '96px', height: '96px', borderRadius: '50%',
+                        background: meta.bg, border: `2px solid ${meta.accent}40`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        position: 'relative', zIndex: 1,
+                      }}>
+                        <SelectedIcon size={40} style={{ color: meta.accent }} />
                       </div>
                     </div>
-                    
-                    <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">
-                      {typeMeta(selected).actionText}
+
+                    <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-shakti-dark-text)', margin: '0 0 10px' }}>
+                      {meta.actionText}
                     </h3>
-                    
+
                     {(selected === 'audio' || selected === 'video') && (
-                      <div className="text-6xl font-mono font-black text-white mb-10 tracking-wider">
-                        {formatTime(recordingTime)}
-                        <span className="block text-sm text-pink-400 font-sans tracking-normal mt-2 animate-pulse flex items-center justify-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-pink-500"></span> REC
-                        </span>
+                      <div style={{ marginBottom: '24px' }}>
+                        <div style={{ fontSize: '40px', fontWeight: 900, color: 'var(--color-shakti-dark-text)', fontFamily: 'monospace', letterSpacing: '0.05em', lineHeight: 1 }}>
+                          {formatTime(recordingTime)}
+                        </div>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                          <motion.span
+                            animate={{ opacity: [1, 0.3, 1] }}
+                            transition={{ repeat: Infinity, duration: 1.4 }}
+                            style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }}
+                          />
+                          <span style={{ fontSize: '11px', fontWeight: 800, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.1em' }}>REC</span>
+                        </div>
                       </div>
                     )}
-                    
+
                     <button
                       onClick={handleStopAndSave}
-                      className="flex items-center justify-center gap-3 w-full max-w-[280px] mx-auto py-4 px-8 rounded-2xl bg-[var(--color-surface-lowest)] text-slate-900 text-base font-bold shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition-all"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                        width: '100%', maxWidth: '280px',
+                        padding: '13px 20px', borderRadius: '12px',
+                        background: `linear-gradient(135deg, ${meta.accent}, ${meta.accent}dd)`,
+                        color: 'white', border: 'none',
+                        fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+                        boxShadow: `0 4px 14px ${meta.accent}40`,
+                        fontFamily: 'var(--font-sans)',
+                      }}
                     >
-                      <Square size={18} className="text-pink-600 fill-pink-600" /> Stop & Secure
+                      <Square size={16} fill="currentColor" /> Stop & Secure
                     </button>
                   </div>
                 )}
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
+          );
+        })()}
+      </AnimatePresence>
 
-        {/* Recent Evidence List */}
-        <div>
-          <div className="flex items-center justify-between mb-3 px-1">
-            <h3 className="text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-wider flex items-center gap-2">
-              <Clock size={14} className="text-[var(--color-shakti-primary)]" /> Recent Evidence
-            </h3>
-            <span className="text-[10px] font-bold text-[var(--color-outline)] uppercase tracking-widest">
-              {recentEvidence.length} item{recentEvidence.length === 1 ? '' : 's'}
-            </span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <AnimatePresence>
-              {recentEvidence.map((e, i) => {
-                const meta = typeMeta(e.type);
-                const Icon = meta.icon;
-                return (
-                  <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.04 }}
-                    key={e.id}
-                    onClick={() => setPlayingFile(e)}
-                    className="bg-[var(--color-surface-lowest)] rounded-2xl p-4 shadow-[0_1px_6px_rgba(24,20,69,0.03)] border border-[var(--color-surface-highlight)] flex items-center gap-3.5 hover:shadow-[0_6px_18px_rgba(24,20,69,0.06)] hover:border-[var(--color-shakti-primary-light)] hover:-translate-y-0.5 transition-all group w-full text-left"
-                  >
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden bg-[var(--color-surface)]"
-                    >
-                      {/* Thumbnail Preview logic based on type */}
-                      {e.type === 'photo' ? (
-                        <div className="absolute inset-0 bg-cover bg-center opacity-80" style={{ backgroundImage: `url(${e.url})` }} />
-                      ) : e.type === 'video' ? (
-                        <div className="absolute inset-0 bg-slate-200">
-                          <video src={e.url} className="w-full h-full object-cover opacity-60" />
-                        </div>
-                      ) : (
-                        <Icon size={24} style={{ color: meta.color }} strokeWidth={1.5} className="absolute z-10 group-hover:scale-110 transition-transform duration-300" />
-                      )}
-                      
-                      {/* Play overlay for media */}
-                      {(e.type === 'video' || e.type === 'audio') && (
-                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                          <Play size={20} className="text-white fill-white" />
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-[var(--color-text-primary)] truncate mb-1 group-hover:text-[var(--color-shakti-primary)] transition-colors">{e.name}</p>
-                      <div className="flex items-center gap-2 text-[11px] font-medium text-[var(--color-text-secondary)]">
-                        <span className="flex items-center gap-1"><Clock size={11} className="text-[var(--color-outline)]" /> {e.when}</span>
-                        <span className="bg-[var(--color-surface-low)] text-[var(--color-outline)] px-1.5 py-0.5 rounded-md font-semibold">{e.size}{e.duration !== '—' && ` · ${e.duration}`}</span>
-                      </div>
-                    </div>
-                  </motion.button>
-                );
-              })}
-            </AnimatePresence>
-          </div>
+      {/* RECENT EVIDENCE */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 4px 10px' }}>
+          <h3 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <Clock size={12} style={{ color: ACCENT }} /> Recent Evidence
+          </h3>
+          <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            {recentEvidence.length} item{recentEvidence.length === 1 ? '' : 's'}
+          </span>
         </div>
-
-        {/* Media Playback Modal */}
-        <AnimatePresence>
-          {playingFile && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-[var(--color-shakti-dark-text)]/80 backdrop-blur-md" onClick={() => setPlayingFile(null)}>
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-3xl bg-[var(--color-surface-lowest)] rounded-[2rem] shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]"
-              >
-                {/* Header */}
-                <div className="px-6 py-4 border-b border-[var(--color-surface-highlight)] flex items-center justify-between bg-[var(--color-surface-lowest)] z-10 relative">
-                  <div className="flex items-center gap-3 truncate pr-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: typeMeta(playingFile.type).bg }}>
-                      {(() => {
-                        const Icon = typeMeta(playingFile.type).icon;
-                        return <Icon size={20} style={{ color: typeMeta(playingFile.type).color }} />;
-                      })()}
-                    </div>
-                    <div className="truncate">
-                      <h3 className="text-lg font-bold text-[var(--color-text-primary)] truncate">{playingFile.name}</h3>
-                      <p className="text-xs font-medium text-[var(--color-text-secondary)]">{playingFile.when} • {playingFile.size}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px' }}>
+          <AnimatePresence>
+            {recentEvidence.map((e, i) => {
+              const meta = typeMeta(e.type);
+              const Icon = meta.icon;
+              return (
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  key={e.id}
+                  onClick={() => setPlayingFile(e)}
+                  style={{
+                    ...cardStyle, padding: '14px',
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    border: '1px solid rgba(24,20,69,0.04)',
+                    cursor: 'pointer', textAlign: 'left',
+                    fontFamily: 'var(--font-sans)', transition: 'all 0.15s'
+                  }}
+                  onMouseEnter={(e2) => { e2.currentTarget.style.boxShadow = '0 6px 18px rgba(24,20,69,0.06)'; e2.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={(e2) => { e2.currentTarget.style.boxShadow = '0 1px 6px rgba(24,20,69,0.03)'; e2.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  <div style={{
+                    width: '48px', height: '48px', borderRadius: '12px',
+                    background: meta.bg, color: meta.accent,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0, position: 'relative', overflow: 'hidden'
+                  }}>
+                    {e.type === 'photo' ? (
+                      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${e.url})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                    ) : (
+                      <Icon size={22} strokeWidth={2} />
+                    )}
+                    {(e.type === 'video' || e.type === 'audio') && (
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Play size={16} fill="currentColor" style={{ color: meta.accent }} />
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-shakti-dark-text)', margin: '0 0 4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.name}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--color-outline)' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                        <Clock size={11} /> {e.when}
+                      </span>
+                      <span style={{
+                        padding: '2px 7px', borderRadius: '5px',
+                        background: 'var(--color-surface-low)', color: 'var(--color-outline)',
+                        fontWeight: 600, border: '1px solid rgba(24,20,69,0.04)'
+                      }}>
+                        {e.size}{e.duration !== '—' && ` · ${e.duration}`}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button className="p-2 rounded-full hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] transition-colors hidden sm:flex">
-                      <Download size={18} />
-                    </button>
-                    <button className="p-2 rounded-full hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] transition-colors hidden sm:flex">
-                      <Share2 size={18} />
-                    </button>
-                    <button onClick={() => setPlayingFile(null)} className="p-2 rounded-full hover:bg-[var(--color-shakti-safety-light)] text-[var(--color-text-secondary)] hover:text-[var(--color-shakti-safety)] transition-colors">
-                      <X size={20} />
-                    </button>
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* PLAYBACK MODAL */}
+      <AnimatePresence>
+        {playingFile && (() => {
+          const meta = typeMeta(playingFile.type);
+          const Icon = meta.icon;
+          return (
+            <div
+              style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', background: 'rgba(24,20,69,0.55)', backdropFilter: 'blur(8px)' }}
+              onClick={() => setPlayingFile(null)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  width: '100%', maxWidth: '720px', maxHeight: '90vh',
+                  background: 'var(--color-surface-lowest)',
+                  borderRadius: '1.5rem', overflow: 'hidden',
+                  boxShadow: '0 20px 50px rgba(24,20,69,0.20)',
+                  display: 'flex', flexDirection: 'column',
+                }}
+              >
+                <div style={{
+                  padding: '14px 18px', borderBottom: '1px solid var(--color-surface-low)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
+                    <div style={{
+                      width: '38px', height: '38px', borderRadius: '10px',
+                      background: meta.bg, color: meta.accent,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                    }}>
+                      <Icon size={18} />
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                      <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-shakti-dark-text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playingFile.name}</h3>
+                      <p style={{ fontSize: '11px', color: 'var(--color-outline)', margin: '2px 0 0' }}>{playingFile.when} · {playingFile.size}</p>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                    <IconButton><Download size={16} /></IconButton>
+                    <IconButton><Share2 size={16} /></IconButton>
+                    <IconButton onClick={() => setPlayingFile(null)}><X size={18} /></IconButton>
                   </div>
                 </div>
-                
-                {/* Content Area */}
-                <div className="flex-1 overflow-auto bg-[var(--color-surface)] relative flex items-center justify-center min-h-[300px]">
-                  
+                <div style={{ flex: 1, overflow: 'auto', background: 'var(--color-surface-low)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '320px', position: 'relative' }}>
                   {playingFile.type === 'video' && (
-                    <video 
-                      src={playingFile.url} 
-                      controls 
-                      autoPlay 
-                      className="w-full max-h-[60vh] object-contain bg-black shadow-lg"
-                    />
+                    <video src={playingFile.url} controls autoPlay style={{ width: '100%', maxHeight: '60vh', objectFit: 'contain', background: '#000' }} />
                   )}
-                  
                   {playingFile.type === 'audio' && (
-                    <div className="w-full max-w-md px-6 py-12 flex flex-col items-center">
-                      <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center mb-8 shadow-inner relative">
-                        <motion.div 
-                          animate={{ scale: [1, 1.2, 1] }} 
-                          transition={{ repeat: Infinity, duration: 2 }} 
-                          className="absolute inset-0 bg-purple-200 rounded-full opacity-50"
+                    <div style={{ width: '100%', maxWidth: '380px', padding: '40px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+                      <div style={{ position: 'relative', width: '96px', height: '96px' }}>
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1], opacity: [0.6, 0.1, 0.6] }}
+                          transition={{ repeat: Infinity, duration: 2 }}
+                          style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: meta.accent, opacity: 0.3 }}
                         />
-                        <Mic size={40} className="text-purple-600 relative z-10" />
+                        <div style={{
+                          position: 'absolute', inset: '8px', borderRadius: '50%',
+                          background: meta.bg, color: meta.accent,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          border: `1px solid ${meta.accent}33`
+                        }}>
+                          <Mic size={32} />
+                        </div>
                       </div>
-                      <audio src={playingFile.url} controls autoPlay className="w-full" />
+                      <audio src={playingFile.url} controls autoPlay style={{ width: '100%' }} />
                     </div>
                   )}
-                  
                   {playingFile.type === 'photo' && (
-                    <img 
-                      src={playingFile.url} 
-                      alt={playingFile.name} 
-                      className="w-full h-full object-contain max-h-[70vh]" 
-                    />
+                    <img src={playingFile.url} alt={playingFile.name} style={{ width: '100%', height: '100%', objectFit: 'contain', maxHeight: '70vh' }} />
                   )}
-                  
                   {playingFile.type === 'note' && (
-                    <div className="w-full p-8 max-w-2xl mx-auto h-full">
-                      <div className="bg-[var(--color-surface-lowest)] p-8 rounded-2xl shadow-sm border border-[var(--color-surface-highlight)] min-h-[300px] font-mono text-[var(--color-text-primary)] leading-relaxed">
-                        <p>{playingFile.content}</p>
+                    <div style={{ width: '100%', padding: '24px', maxWidth: '640px' }}>
+                      <div style={{
+                        background: 'var(--color-surface-lowest)', padding: '20px',
+                        borderRadius: '14px', border: '1px solid rgba(24,20,69,0.05)',
+                        fontFamily: 'monospace', fontSize: '13px',
+                        color: 'var(--color-shakti-dark-text)', lineHeight: 1.7,
+                        minHeight: '240px'
+                      }}>
+                        {playingFile.content}
                       </div>
                     </div>
                   )}
-                  
-                  {/* Location Overlay for media types */}
                   {playingFile.type !== 'note' && (
-                    <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-medium">
-                      <MapPin size={12} className="text-pink-400" /> {playingFile.location}
+                    <div style={{
+                      position: 'absolute', bottom: '12px', left: '12px',
+                      padding: '6px 12px', borderRadius: '10px',
+                      background: 'rgba(24,20,69,0.85)', backdropFilter: 'blur(6px)',
+                      color: 'white', fontSize: '11px', fontWeight: 600,
+                      display: 'inline-flex', alignItems: 'center', gap: '5px'
+                    }}>
+                      <MapPin size={11} style={{ color: ACCENT_LIGHT }} /> {playingFile.location}
                     </div>
                   )}
                 </div>
               </motion.div>
             </div>
-          )}
-        </AnimatePresence>
-
-      </div>
+          );
+        })()}
+      </AnimatePresence>
     </div>
+  );
+}
+
+function IconButton({ children, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: '34px', height: '34px', borderRadius: '10px',
+        background: 'var(--color-surface-low)', border: 'none',
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        color: 'var(--color-outline)', cursor: 'pointer', transition: 'background 0.15s'
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-surface-high)'}
+      onMouseLeave={(e) => e.currentTarget.style.background = 'var(--color-surface-low)'}
+    >
+      {children}
+    </button>
   );
 }
