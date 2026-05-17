@@ -40,71 +40,76 @@ export default function MentorMatch() {
         </div>
       </motion.div>
 
-      <div className="rounded-2xl p-4 mb-5 flex items-start gap-3" style={{ background: '#fffbeb', border: '1px solid rgba(245,158,11,0.25)' }}>
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(245,158,11,0.15)', color: '#b45309' }}>
-          <Sparkles size={18} />
+      <div className="rounded-2xl p-3 mb-4 flex items-center gap-3" style={{ background: '#fffbeb', border: '1px solid rgba(245,158,11,0.22)' }}>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(245,158,11,0.15)', color: '#b45309' }}>
+          <Sparkles size={16} />
         </div>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-[var(--color-shakti-dark-text)] mb-1">AI suggests: <span style={{ color: '#b45309' }}>Priya Krishnan</span></p>
-          <p className="text-xs" style={{ color: 'var(--color-outline)' }}>Based on your interest in frontend & leadership growth.</p>
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] font-bold text-[var(--color-shakti-dark-text)]" style={{ margin: 0 }}>AI suggests: <span style={{ color: '#b45309' }}>Priya Krishnan</span></p>
+          <p className="text-[11px]" style={{ color: 'var(--color-outline)', margin: '1px 0 0' }}>Based on your interest in frontend & leadership growth.</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-5 overflow-x-auto pb-2">
-        <Filter size={14} className="text-[var(--color-outline)] flex-shrink-0" />
+      <div className="flex items-center gap-2 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
+        <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[var(--color-surface-lowest)] border border-[var(--color-surface-highlight)] flex-shrink-0">
+          <Filter size={13} className="text-[var(--color-outline)]" />
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--color-outline)]">Filter</span>
+        </div>
         {filters.map(f => (
           <button
             key={f}
             onClick={() => setActiveFilter(f)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+            className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all flex-shrink-0 ${
               activeFilter === f
-                ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/25'
-                : 'bg-[var(--color-surface-lowest)] text-[var(--color-outline)] border border-[var(--color-surface-highlight)] hover:border-amber-200'
+                ? 'text-white shadow-md'
+                : 'bg-[var(--color-surface-lowest)] text-[var(--color-outline)] border border-[var(--color-surface-highlight)] hover:text-[var(--color-shakti-dark-text)]'
             }`}
+            style={activeFilter === f ? { background: 'linear-gradient(135deg, #f59e0b, #f97316)', boxShadow: '0 4px 12px rgba(245,158,11,0.30)' } : undefined}
           >
             {f}
           </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {filtered.map(m => (
           <motion.div
             key={m.id}
-            whileHover={{ y: -3 }}
-            className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm hover:shadow-md transition-all"
+            whileHover={{ y: -2 }}
+            className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 transition-all"
+            style={{ boxShadow: '0 1px 6px rgba(24,20,69,0.03)', border: '1px solid rgba(24,20,69,0.04)' }}
           >
-            <div className="flex items-start gap-4 mb-4">
+            <div className="flex items-start gap-3 mb-3">
               <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-white text-xl font-bold"
-                style={{ backgroundColor: m.color }}
+                className="rounded-2xl flex items-center justify-center flex-shrink-0 text-white text-lg font-extrabold"
+                style={{ width: '48px', height: '48px', background: `linear-gradient(135deg, ${m.color}, ${m.color}cc)`, boxShadow: `0 4px 12px ${m.color}33` }}
               >
                 {m.initial}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-base font-semibold text-[var(--color-text-primary)] leading-tight">{m.name}</h3>
-                <p className="text-xs text-[var(--color-text-secondary)]">{m.role} · {m.company}</p>
-                <div className="flex items-center gap-3 mt-1">
-                  <div className="flex items-center gap-1 text-xs text-[var(--color-text-primary)]">
-                    <Star size={12} className="text-amber-400 fill-amber-400" />
-                    <span className="font-semibold">{m.rating}</span>
-                  </div>
-                  <span className="text-xs text-[var(--color-outline)]">{m.sessions} sessions</span>
+                <h3 className="text-[15px] font-bold text-[var(--color-shakti-dark-text)] leading-tight mb-0.5 truncate">{m.name}</h3>
+                <p className="text-[11px] text-[var(--color-outline)] truncate">{m.role} · {m.company}</p>
+                <div className="flex items-center gap-2.5 mt-1.5">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--color-shakti-dark-text)]">
+                    <Star size={11} className="text-amber-400 fill-amber-400" />
+                    {m.rating}
+                  </span>
+                  <span className="text-[11px] text-[var(--color-outline)]">{m.sessions} sessions</span>
                 </div>
               </div>
             </div>
 
-            <p className="text-sm text-[var(--color-text-secondary)] mb-4 leading-relaxed">{m.bio}</p>
+            <p className="text-[13px] text-[var(--color-shakti-dark-muted)] mb-3 leading-relaxed">{m.bio}</p>
 
-            <div className="flex items-center gap-1.5 mb-4 flex-wrap">
+            <div className="flex items-center gap-1.5 mb-3 flex-wrap">
               {m.expertise.map(e => (
-                <span key={e} className="px-2 py-1 rounded-md text-[10px] font-semibold" style={{ background: '#fffbeb', color: '#b45309', border: '1px solid rgba(245,158,11,0.22)' }}>
+                <span key={e} className="px-2 py-1 rounded-md text-[10px] font-bold" style={{ background: '#fffbeb', color: '#b45309', border: '1px solid rgba(245,158,11,0.22)' }}>
                   {e}
                 </span>
               ))}
             </div>
 
-            <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-white text-sm font-bold transition-all" style={{ background: 'linear-gradient(135deg, #f59e0b, #f97316)', boxShadow: '0 4px 12px rgba(245,158,11,0.30)' }}>
+            <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-white text-[13px] font-bold transition-all" style={{ background: 'linear-gradient(135deg, #f59e0b, #f97316)', boxShadow: '0 4px 12px rgba(245,158,11,0.28)' }}>
               <MessageCircle size={14} /> Request Session
             </button>
           </motion.div>

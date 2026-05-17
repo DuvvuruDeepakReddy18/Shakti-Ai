@@ -35,7 +35,7 @@ export default function HackathonArena() {
         </div>
       </motion.div>
 
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex gap-2 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
         {[
           { id: 'all', label: 'All' },
           { id: 'live', label: 'Live' },
@@ -44,34 +44,36 @@ export default function HackathonArena() {
           <button
             key={t.id}
             onClick={() => setFilter(t.id)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+            className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all flex-shrink-0 ${
               filter === t.id
-                ? 'bg-rose-600 text-white shadow-sm shadow-rose-500/25'
-                : 'bg-[var(--color-surface-lowest)] text-[var(--color-outline)] border border-[var(--color-surface-highlight)] hover:border-rose-200'
+                ? 'text-white'
+                : 'bg-[var(--color-surface-lowest)] text-[var(--color-outline)] border border-[var(--color-surface-highlight)] hover:text-[var(--color-shakti-dark-text)]'
             }`}
+            style={filter === t.id ? { background: 'linear-gradient(135deg, #e11d48, #f97316)', boxShadow: '0 4px 12px rgba(225,29,72,0.30)' } : undefined}
           >
             {t.label}
           </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {filtered.map(h => (
           <motion.div
             key={h.id}
-            whileHover={{ y: -3 }}
-            className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm hover:shadow-md transition-all"
+            whileHover={{ y: -2 }}
+            className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 transition-all"
+            style={{ boxShadow: '0 1px 6px rgba(24,20,69,0.03)', border: '1px solid rgba(24,20,69,0.04)' }}
           >
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: h.bg }}>
-                <Trophy size={22} style={{ color: h.color }} />
+            <div className="flex items-start gap-3 mb-4">
+              <div className="rounded-xl flex items-center justify-center flex-shrink-0" style={{ width: '46px', height: '46px', backgroundColor: h.bg, border: `1px solid ${h.color}22` }}>
+                <Trophy size={20} style={{ color: h.color }} />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-base font-semibold text-[var(--color-text-primary)] leading-tight mb-1">{h.title}</h3>
-                <p className="text-xs text-[var(--color-text-secondary)]">by {h.sponsor}</p>
+                <h3 className="text-[15px] font-bold text-[var(--color-shakti-dark-text)] leading-tight mb-0.5 truncate">{h.title}</h3>
+                <p className="text-[11px] text-[var(--color-outline)]">by {h.sponsor}</p>
               </div>
               {h.status === 'live' && (
-                <span className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold uppercase tracking-wide">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex-shrink-0" style={{ background: '#ecfdf5', color: '#047857', border: '1px solid rgba(16,185,129,0.22)' }}>
                   Live
                 </span>
               )}
@@ -101,21 +103,22 @@ export default function HackathonArena() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 mb-4 flex-wrap">
+            <div className="flex items-center gap-1.5 mb-4 flex-wrap">
               {h.tags.map(t => (
-                <span key={t} className="px-2 py-1 rounded-md bg-[var(--color-surface-low)] text-[var(--color-text-secondary)] text-[10px] font-medium flex items-center gap-1">
-                  <Tag size={10} /> {t}
+                <span key={t} className="px-2 py-0.5 rounded-md text-[10px] font-bold inline-flex items-center gap-1" style={{ background: 'var(--color-surface-low)', color: 'var(--color-outline)', border: '1px solid rgba(24,20,69,0.05)' }}>
+                  <Tag size={9} /> {t}
                 </span>
               ))}
             </div>
 
-            <div className="flex items-center justify-between pt-3 border-t border-[var(--color-surface-highlight)]">
-              <div className="flex items-center gap-1 text-xs text-[var(--color-text-secondary)]">
-                <Calendar size={12} /> {h.deadline}
+            <div className="flex items-center justify-between gap-3 pt-3" style={{ borderTop: '1px solid var(--color-surface-low)' }}>
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-outline)] min-w-0">
+                <Calendar size={12} className="flex-shrink-0" />
+                <span className="truncate">{h.deadline}</span>
               </div>
               <button
-                className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: h.color }}
+                className="px-4 py-2 rounded-xl text-white text-[12px] font-bold transition-all flex-shrink-0"
+                style={{ background: `linear-gradient(135deg, ${h.color}, ${h.color}dd)`, boxShadow: `0 4px 12px ${h.color}40` }}
               >
                 Register
               </button>
