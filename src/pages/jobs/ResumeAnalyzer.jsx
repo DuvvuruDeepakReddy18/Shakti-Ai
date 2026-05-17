@@ -308,7 +308,10 @@ export default function ResumeAnalyzer() {
         {result && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {(() => {
-              const sm = scoreMeta(result.score);
+              const safeScore = typeof result.score === 'number' && !Number.isNaN(result.score)
+                ? Math.max(0, Math.min(100, Math.round(result.score)))
+                : 0;
+              const sm = scoreMeta(safeScore);
               return (
                 <div style={{ ...cardStyle, padding: '24px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '20px', position: 'relative', overflow: 'hidden' }}>
                   <div style={{ position: 'absolute', top: '-40px', right: '-30px', width: '160px', height: '160px', background: `${sm.color}10`, borderRadius: '50%', filter: 'blur(50px)', pointerEvents: 'none' }} />
@@ -317,14 +320,14 @@ export default function ResumeAnalyzer() {
                       <path style={{ color: 'var(--color-surface-low)' }} stroke="currentColor" strokeWidth="2.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                       <motion.path
                         initial={{ strokeDasharray: '0, 100' }}
-                        animate={{ strokeDasharray: `${result.score}, 100` }}
+                        animate={{ strokeDasharray: `${safeScore}, 100` }}
                         transition={{ duration: 1.5, ease: 'easeOut', delay: 0.2 }}
                         stroke={sm.color} strokeWidth="2.8" strokeLinecap="round" fill="none"
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       />
                     </svg>
                     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ fontSize: '32px', fontWeight: 900, color: 'var(--color-shakti-dark-text)', lineHeight: 1 }}>{result.score}</span>
+                      <span style={{ fontSize: '32px', fontWeight: 900, color: 'var(--color-shakti-dark-text)', lineHeight: 1 }}>{safeScore}</span>
                       <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '4px' }}>ATS Score</span>
                     </div>
                   </div>

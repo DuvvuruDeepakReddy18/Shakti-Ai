@@ -297,41 +297,57 @@ Always include standard Indian women's helplines if the situation is concerning 
 
 // 10. ATS Resume Analyzer
 export async function analyzeResume(extractedText) {
-  try {
-    const systemPrompt = `You are an expert ATS (Applicant Tracking System) and career coach.
-Analyze the following resume text:
-"${extractedText.substring(0, 4000)}"
+  const systemPrompt = `You are an expert ATS (Applicant Tracking System) and career coach. Analyze the resume below and return ONLY a single JSON object — no markdown, no commentary, no leading or trailing text.
 
-Extract the skills from the resume and show the match scores for 3 different roles it suits best based on those skills.
-Also identify missing keywords, strengths, and one specific bullet point improvement.
-Respond ONLY with a valid JSON object in this EXACT format, with no markdown or extra text:
-{
-  "score": 85,
-  "roles": [
-    { "title": "Frontend Developer", "matchScore": 90 },
-    { "title": "UI/UX Designer", "matchScore": 75 },
-    { "title": "Technical Writer", "matchScore": 60 }
-  ],
-  "missingKeywords": ["React Native", "GraphQL", "Jest"],
-  "strengths": ["Strong action verbs", "Clear impact metrics"],
-  "improvement": {
-    "original": "Worked on web app using React.",
-    "rewritten": "Developed a scalable web application using React, improving load time by 20%.",
-    "reason": "Added specific metrics and impact."
-  }
-}`;
+REQUIRED FIELDS (all must be present, no nulls):
+- "score": integer 0-100 representing overall ATS compatibility
+- "roles": array of EXACTLY 3 objects, each with "title" (string) and "matchScore" (integer 0-100), sorted highest matchScore first
+- "missingKeywords": array of 3-6 short strings (industry keywords the resume lacks)
+- "strengths": array of 3-5 short strings (what the resume does well)
+- "improvement": object with "original" (a real bullet from the resume), "rewritten" (a stronger version with metrics), "reason" (one sentence explaining the change)
 
-    const content = await fetchOpenRouter([
-      { role: "system", content: systemPrompt },
-      { role: "user", content: "Analyze my resume." }
-    ]);
-    const result = safeParseJSON(content);
-    if (!result) throw new Error("Invalid response format");
-    return result;
-  } catch (error) {
-    console.error('Resume analysis error:', error);
-    throw error;
+Example shape (do NOT copy values — derive them from the resume):
+{"score":78,"roles":[{"title":"Frontend Developer","matchScore":86},{"title":"UI Designer","matchScore":72},{"title":"Technical Writer","matchScore":55}],"missingKeywords":["TypeScript","Testing","CI/CD"],"strengths":["Action verbs","Clear metrics"],"improvement":{"original":"Worked on web app.","rewritten":"Built a React SPA serving 10k MAU, cut load time by 35%.","reason":"Quantifies scale and impact."}}
+
+Resume text:
+"""
+${extractedText.substring(0, 4000)}
+"""`;
+
+  // Try up to 3 models — bail and try next if response is missing required fields
+  const validate = (r) =>
+    r &&
+    typeof r.score === 'number' &&
+    Array.isArray(r.roles) && r.roles.length >= 1 &&
+    Array.isArray(r.missingKeywords) &&
+    Array.isArray(r.strengths) &&
+    r.improvement && typeof r.improvement === 'object';
+
+  let lastError = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const content = await fetchOpenRouter([
+        { role: "system", content: systemPrompt },
+        { role: "user", content: "Analyze my resume." }
+      ]);
+      const result = safeParseJSON(content);
+      if (validate(result)) {
+        // Clamp score to 0-100 in case the model returned something out of range
+        result.score = Math.max(0, Math.min(100, Math.round(result.score)));
+        result.roles = result.roles.map((r) => ({
+          title: String(r.title || 'Role'),
+          matchScore: Math.max(0, Math.min(100, Math.round(Number(r.matchScore) || 0))),
+        }));
+        return result;
+      }
+      console.warn('Resume analysis returned incomplete JSON, retrying...', result);
+      lastError = new Error('Incomplete JSON');
+    } catch (error) {
+      console.warn('Resume analysis attempt failed:', error?.message || error);
+      lastError = error;
+    }
   }
+  throw lastError || new Error('Resume analysis failed after retries');
 }
 
 // Demo/Fallback data
