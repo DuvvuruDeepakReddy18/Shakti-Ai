@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, UserPlus, Check, X, MessageCircle, Phone, MapPin } from 'lucide-react';
+import { Shield, UserPlus, Check, X, MessageCircle, Phone, MapPin, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+
+const ACCENT = '#7c3aed';
+const ACCENT_LIGHT = '#a855f7';
 
 const DEMO_CIRCLE = [
   { id: 1, name: 'Mom', relation: 'Family', phone: '+91 98********', lastActive: 'Active now', status: 'online', shareLocation: true },
@@ -16,6 +20,7 @@ const PENDING = [
 ];
 
 export default function TrustedCircle() {
+  const navigate = useNavigate();
   const [circle, setCircle] = useState(DEMO_CIRCLE);
   const [pending, setPending] = useState(PENDING);
   const [showAdd, setShowAdd] = useState(false);
@@ -36,81 +41,96 @@ export default function TrustedCircle() {
     toast.success(`${p.name} added`);
   };
 
-  const reject = (id) => {
-    setPending(pending.filter(x => x.id !== id));
-  };
+  const reject = (id) => setPending(pending.filter(x => x.id !== id));
+  const toggleShare = (id) => setCircle(circle.map(c => c.id === id ? { ...c, shareLocation: !c.shareLocation } : c));
 
-  const toggleShare = (id) => {
-    setCircle(circle.map(c => c.id === id ? { ...c, shareLocation: !c.shareLocation } : c));
-  };
+  const inputStyle = { width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'var(--color-surface-low)', border: '1px solid rgba(24,20,69,0.08)', color: 'var(--color-shakti-dark-text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'var(--font-sans)' };
 
   return (
-    <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-[2rem] p-6 shadow-lg relative overflow-hidden bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]">
-        <div className="absolute -top-20 -left-20 w-60 h-60 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="flex items-center gap-3 mb-2 relative z-10">
-          <div className="w-12 h-12 rounded-[1rem] bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10">
-            <Shield size={24} />
+    <div>
+      <button
+        onClick={() => navigate(-1)}
+        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--color-outline)', background: 'none', border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'var(--font-sans)' }}
+      >
+        <ArrowLeft size={16} /> Back
+      </button>
+
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-3xl p-6 bg-[var(--color-surface-lowest)]"
+        style={{ marginBottom: '24px', boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}
+      >
+        <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: `${ACCENT}1f`, borderRadius: '50%', filter: 'blur(60px)' }} />
+        <div className="flex items-center gap-3.5 relative z-10">
+          <div className="rounded-2xl flex items-center justify-center flex-shrink-0" style={{ width: '52px', height: '52px', background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`, boxShadow: `0 6px 20px ${ACCENT}40` }}>
+            <Shield size={24} color="white" strokeWidth={2.2} />
           </div>
-          <div>
-            <h1 className="text-2xl font-display font-bold text-white">Trusted Circle</h1>
-            <p className="text-sm text-white/60">Your inner circle — trusted contacts for safety, support & connection</p>
+          <div className="min-w-0">
+            <h1 className="text-2xl md:text-[26px] font-extrabold tracking-tight mb-0.5" style={{ color: 'var(--color-shakti-dark-text)', fontFamily: 'var(--font-display)' }}>Trusted Circle</h1>
+            <p className="text-sm font-medium" style={{ color: 'var(--color-outline)' }}>Your inner circle — trusted contacts for safety & support.</p>
           </div>
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div className="card-static p-4 text-center">
-          <p className="text-2xl font-bold text-[var(--color-shakti-success)]">{circle.length}</p>
-          <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">Members</p>
-        </div>
-        <div className="card-static p-4 text-center">
-          <p className="text-2xl font-bold text-[var(--color-shakti-primary)]">{circle.filter(c => c.shareLocation).length}</p>
-          <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">Tracking You</p>
-        </div>
-        <div className="card-static p-4 text-center">
-          <p className="text-2xl font-bold text-[var(--color-shakti-warning)]">{pending.length}</p>
-          <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">Pending</p>
-        </div>
+      {/* STATS */}
+      <div className="grid grid-cols-3 gap-2.5 mb-6">
+        <StatTile value={circle.length} label="Members" color={ACCENT} />
+        <StatTile value={circle.filter(c => c.shareLocation).length} label="Tracking" color="#10b981" />
+        <StatTile value={pending.length} label="Pending" color="#f59e0b" />
       </div>
 
-      <button onClick={() => setShowAdd(!showAdd)}
-        className="w-full py-3 rounded-xl gradient-bg text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-shakti-success)]/20">
-        <UserPlus size={18} /> Add to Circle
+      <button
+        onClick={() => setShowAdd(!showAdd)}
+        className="w-full inline-flex items-center justify-center gap-2 mb-6 transition-all"
+        style={{ padding: '13px', borderRadius: '12px', background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`, color: 'white', border: 'none', fontSize: '14px', fontWeight: 700, cursor: 'pointer', boxShadow: `0 6px 18px ${ACCENT}30`, fontFamily: 'var(--font-sans)' }}
+      >
+        <UserPlus size={18} /> {showAdd ? 'Hide form' : 'Add to circle'}
       </button>
 
       {showAdd && (
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="card-static p-5 space-y-3">
-          <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name"
-            className="w-full px-4 py-3 rounded-xl bg-[var(--color-shakti-dark-surface)] border border-[var(--color-shakti-dark-border)] text-[var(--color-shakti-dark-text)] text-sm" />
-          <input value={form.relation} onChange={(e) => setForm({ ...form, relation: e.target.value })} placeholder="Relation (e.g., Sister)"
-            className="w-full px-4 py-3 rounded-xl bg-[var(--color-shakti-dark-surface)] border border-[var(--color-shakti-dark-border)] text-[var(--color-shakti-dark-text)] text-sm" />
-          <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone number"
-            className="w-full px-4 py-3 rounded-xl bg-[var(--color-shakti-dark-surface)] border border-[var(--color-shakti-dark-border)] text-[var(--color-shakti-dark-text)] text-sm" />
-          <button onClick={addMember} className="w-full py-2.5 rounded-xl gradient-bg text-white font-semibold">Add Member</button>
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 mb-6"
+          style={{ boxShadow: '0 2px 16px rgba(24,20,69,0.04)', border: `1px solid ${ACCENT}22` }}
+        >
+          <h3 className="text-[15px] font-extrabold mb-3" style={{ color: 'var(--color-shakti-dark-text)' }}>Add new contact</h3>
+          <div className="flex flex-col gap-2.5 mb-3">
+            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" style={inputStyle} />
+            <input value={form.relation} onChange={(e) => setForm({ ...form, relation: e.target.value })} placeholder="Relation (e.g., Sister)" style={inputStyle} />
+            <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone number" style={inputStyle} />
+          </div>
+          <button onClick={addMember} className="w-full"
+            style={{ padding: '11px', borderRadius: '10px', background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`, color: 'white', border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer', boxShadow: `0 4px 12px ${ACCENT}30`, fontFamily: 'var(--font-sans)' }}>
+            Add member
+          </button>
         </motion.div>
       )}
 
       {pending.length > 0 && (
-        <div>
-          <h3 className="text-sm font-bold text-[var(--color-shakti-dark-text)] mb-3">Pending Invites</h3>
-          <div className="space-y-2">
+        <div className="mb-6">
+          <h3 className="text-[11px] font-extrabold uppercase tracking-wider mb-3 px-1" style={{ color: 'var(--color-outline)' }}>Pending invites</h3>
+          <div className="flex flex-col gap-2">
             {pending.map(p => (
               <motion.div key={p.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                className="card-static p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-[var(--color-shakti-dark-text)] font-bold text-sm">
+                className="bg-[var(--color-surface-lowest)] rounded-2xl p-4 flex items-center gap-3"
+                style={{ boxShadow: '0 1px 6px rgba(24,20,69,0.03)', border: '1px solid rgba(24,20,69,0.04)' }}
+              >
+                <div className="rounded-xl flex items-center justify-center text-white text-sm font-extrabold flex-shrink-0"
+                  style={{ width: '40px', height: '40px', background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})` }}>
                   {p.name.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-[var(--color-shakti-dark-text)] text-sm">{p.name}</p>
-                  <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">{p.relation} · {p.mutual} mutual</p>
+                  <p className="font-bold text-[14px]" style={{ color: 'var(--color-shakti-dark-text)' }}>{p.name}</p>
+                  <p className="text-[11px]" style={{ color: 'var(--color-outline)' }}>{p.relation} · {p.mutual} mutual</p>
                 </div>
-                <button onClick={() => accept(p.id)} className="w-8 h-8 rounded-lg bg-[var(--color-shakti-success)]/20 text-[var(--color-shakti-success)] flex items-center justify-center hover:bg-[var(--color-shakti-success)]/30">
+                <button onClick={() => accept(p.id)}
+                  className="flex items-center justify-center"
+                  style={{ width: '34px', height: '34px', borderRadius: '10px', background: '#ecfdf5', color: '#047857', border: '1px solid rgba(16,185,129,0.22)', cursor: 'pointer' }}>
                   <Check size={16} />
                 </button>
-                <button onClick={() => reject(p.id)} className="w-8 h-8 rounded-lg bg-[var(--color-shakti-error)]/20 text-[var(--color-shakti-error)] flex items-center justify-center hover:bg-[var(--color-shakti-error)]/30">
+                <button onClick={() => reject(p.id)}
+                  className="flex items-center justify-center"
+                  style={{ width: '34px', height: '34px', borderRadius: '10px', background: '#fef2f2', color: '#b91c1c', border: '1px solid rgba(225,29,72,0.22)', cursor: 'pointer' }}>
                   <X size={16} />
                 </button>
               </motion.div>
@@ -120,44 +140,60 @@ export default function TrustedCircle() {
       )}
 
       <div>
-        <h3 className="text-sm font-bold text-[var(--color-shakti-dark-text)] mb-3">Your Circle</h3>
-        <div className="space-y-2">
+        <h3 className="text-[11px] font-extrabold uppercase tracking-wider mb-3 px-1" style={{ color: 'var(--color-outline)' }}>Your circle</h3>
+        <div className="flex flex-col gap-2">
           {circle.map((m, i) => (
             <motion.div key={m.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-              className="card-static p-4">
+              className="bg-[var(--color-surface-lowest)] rounded-2xl p-4"
+              style={{ boxShadow: '0 1px 6px rgba(24,20,69,0.03)', border: '1px solid rgba(24,20,69,0.04)' }}
+            >
               <div className="flex items-center gap-3 mb-3">
-                <div className="relative">
-                  <div className="w-11 h-11 rounded-full gradient-bg flex items-center justify-center text-[var(--color-shakti-dark-text)] font-bold">
+                <div className="relative flex-shrink-0">
+                  <div className="rounded-xl flex items-center justify-center text-white text-sm font-extrabold"
+                    style={{ width: '44px', height: '44px', background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`, boxShadow: `0 4px 12px ${ACCENT}33` }}>
                     {m.name.charAt(0)}
                   </div>
-                  <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[var(--color-shakti-dark)] ${
-                    m.status === 'online' ? 'bg-[var(--color-shakti-success)]' : m.status === 'away' ? 'bg-[var(--color-shakti-warning)]' : 'bg-[var(--color-shakti-dark-muted)]'
-                  }`} />
+                  <div className="absolute -bottom-0.5 -right-0.5 rounded-full"
+                    style={{ width: '13px', height: '13px', border: '2px solid var(--color-surface-lowest)', background: m.status === 'online' ? '#10b981' : m.status === 'away' ? '#f59e0b' : '#94a3b8' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-[var(--color-shakti-dark-text)] text-sm">{m.name}</p>
-                  <p className="text-[10px] text-[var(--color-shakti-dark-muted)]">{m.relation} · {m.lastActive}</p>
+                  <p className="font-bold text-[14px] truncate" style={{ color: 'var(--color-shakti-dark-text)' }}>{m.name}</p>
+                  <p className="text-[11px]" style={{ color: 'var(--color-outline)' }}>{m.relation} · {m.lastActive}</p>
                 </div>
-                <button className="w-8 h-8 rounded-lg bg-[var(--color-shakti-primary)]/20 text-[var(--color-shakti-primary)] flex items-center justify-center hover:bg-[var(--color-shakti-primary)]/30">
+                <button className="flex items-center justify-center"
+                  style={{ width: '34px', height: '34px', borderRadius: '10px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid rgba(59,130,246,0.22)', cursor: 'pointer' }}>
                   <MessageCircle size={14} />
                 </button>
-                <button className="w-8 h-8 rounded-lg bg-[var(--color-shakti-success)]/20 text-[var(--color-shakti-success)] flex items-center justify-center hover:bg-[var(--color-shakti-success)]/30">
+                <button className="flex items-center justify-center"
+                  style={{ width: '34px', height: '34px', borderRadius: '10px', background: '#ecfdf5', color: '#047857', border: '1px solid rgba(16,185,129,0.22)', cursor: 'pointer' }}>
                   <Phone size={14} />
                 </button>
               </div>
-              <div className="flex items-center justify-between pt-2 border-t border-[var(--color-shakti-dark-border)]">
-                <span className="text-[10px] text-[var(--color-shakti-dark-muted)] flex items-center gap-1">
-                  <MapPin size={10} /> {m.shareLocation ? 'Can see your location' : 'Not sharing location'}
+              <div className="flex items-center justify-between pt-2.5" style={{ borderTop: '1px solid var(--color-surface-low)' }}>
+                <span className="text-[11px] flex items-center gap-1" style={{ color: 'var(--color-outline)' }}>
+                  <MapPin size={11} /> {m.shareLocation ? 'Can see your location' : 'Not sharing'}
                 </span>
                 <button onClick={() => toggleShare(m.id)}
-                  className={`w-9 h-5 rounded-full relative transition-colors ${m.shareLocation ? 'bg-[var(--color-shakti-success)]' : 'bg-[var(--color-shakti-dark-muted)]'}`}>
-                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-[var(--color-surface-lowest)] transition-all ${m.shareLocation ? 'left-4' : 'left-0.5'}`} />
+                  className="relative transition-colors"
+                  style={{ width: '40px', height: '22px', borderRadius: '999px', background: m.shareLocation ? ACCENT : 'var(--color-surface-high)', border: 'none', cursor: 'pointer' }}>
+                  <div className="absolute top-0.5 rounded-full transition-all"
+                    style={{ width: '18px', height: '18px', background: 'white', left: m.shareLocation ? '20px' : '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.15)' }} />
                 </button>
               </div>
             </motion.div>
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+function StatTile({ value, label, color }) {
+  return (
+    <div className="bg-[var(--color-surface-lowest)] rounded-xl p-3.5 text-center"
+      style={{ boxShadow: '0 1px 6px rgba(24,20,69,0.03)', border: '1px solid rgba(24,20,69,0.04)' }}>
+      <p className="text-[20px] font-extrabold" style={{ color, margin: 0, lineHeight: 1 }}>{value}</p>
+      <p className="text-[10px] font-bold uppercase tracking-wider mt-1" style={{ color: 'var(--color-outline)' }}>{label}</p>
     </div>
   );
 }

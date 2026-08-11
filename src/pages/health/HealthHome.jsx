@@ -87,7 +87,8 @@ export default function HealthHome() {
       {/* HERO */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden bg-[var(--color-surface-lowest)] rounded-[2rem] p-6 mb-8 shadow-sm"
+        className="relative overflow-hidden bg-[var(--color-surface-lowest)] rounded-[2rem] p-6 shadow-sm"
+        style={{ marginBottom: '40px' }}
       >
         <div className="absolute -top-10 -right-10 w-48 h-48 bg-[var(--color-shakti-error)]/10 blur-3xl rounded-full pointer-events-none" />
         <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[var(--color-shakti-secondary)]/10 blur-3xl rounded-full pointer-events-none" />
@@ -109,24 +110,27 @@ export default function HealthHome() {
       </motion.div>
 
       {/* METRICS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 md:mb-20">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" style={{ marginBottom: '40px' }}>
         {/* Mood */}
         <div className={metricCardClassName}>
           <div className="absolute -top-5 -right-5 w-16 h-16 bg-[var(--color-shakti-warning)]/10 blur-2xl rounded-full pointer-events-none" />
-          <div className="flex items-center gap-2 mb-4 relative z-10">
+          <div className="flex items-center gap-2 relative z-10">
             <div className="w-8 h-8 rounded-xl bg-[var(--color-shakti-warning)]/10 flex items-center justify-center text-[var(--color-shakti-warning)]">
               <Heart size={14} />
             </div>
             <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)]">Mood</span>
           </div>
           {todayMoodObj ? (
-            <div className="text-center relative z-10">
+            <div className="text-center relative z-10 my-2">
               <span className="text-4xl block mb-1">{todayMoodObj.emoji}</span>
               <p className="text-sm font-bold text-[var(--color-text-primary)]">{todayMoodObj.label}</p>
             </div>
           ) : (
-            <Link to="/health/mood" className="block p-3 rounded-xl bg-[var(--color-shakti-warning)]/10 text-[var(--color-shakti-warning)] text-xs font-bold text-center relative z-10 hover:shadow-md transition-all">
-              Log today
+            <Link to="/health/mood" className="flex-1 flex flex-col items-center justify-center gap-2 relative z-10 my-2 group">
+              <span className="text-3xl opacity-60 group-hover:opacity-90 transition-opacity">😶</span>
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold text-[var(--color-shakti-warning)]" style={{ background: '#fffbeb', border: '1px solid rgba(245,158,11,0.22)' }}>
+                Log today
+              </span>
             </Link>
           )}
         </div>
@@ -193,8 +197,13 @@ export default function HealthHome() {
       </div>
 
       {/* TOOLS */}
-      <div className="mb-12">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-secondary)] mb-4 ml-2">Wellness Toolkit</h2>
+      <div style={{ marginBottom: '40px' }}>
+        <div className="flex items-center justify-between mb-4 px-1">
+          <h2 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[var(--color-shakti-dark-text)] inline-flex items-center gap-2">
+            <Sparkles size={14} className="text-[var(--color-shakti-primary)]" /> Wellness Toolkit
+          </h2>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-outline)]">{tools.length} tools</span>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {tools.map((t, i) => {
             const Icon = t.icon;
@@ -225,30 +234,30 @@ export default function HealthHome() {
       {/* INSIGHT */}
       <motion.div
         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-        className="mt-12 mb-8 bg-[var(--color-surface-lowest)] rounded-[2rem] p-6 sm:p-8 shadow-md relative overflow-hidden border border-[var(--color-surface-highlight)] flex flex-col md:flex-row md:items-center justify-between gap-6"
+        className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] relative overflow-hidden"
+        style={{ padding: '24px', marginBottom: '32px', boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}
       >
-        <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[var(--color-shakti-primary)] via-[var(--color-shakti-secondary)] to-[var(--color-shakti-error)]" />
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-[var(--color-shakti-primary)]/10 to-[var(--color-shakti-secondary)]/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(124,58,237,0.12)', borderRadius: '50%', filter: 'blur(60px)' }} />
 
-        <div className="flex-1 relative z-10 pl-2">
+        <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-[1rem] bg-gradient-to-br from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] flex items-center justify-center shadow-md shadow-[var(--color-shakti-primary)]/20 text-white flex-shrink-0">
-              <Sparkles size={18} />
+            <div className="rounded-2xl flex items-center justify-center flex-shrink-0 text-white" style={{ width: '44px', height: '44px', background: 'linear-gradient(135deg, #7c3aed, #ec4899)', boxShadow: '0 4px 14px rgba(124,58,237,0.30)' }}>
+              <Sparkles size={20} strokeWidth={2.2} />
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-[var(--color-text-primary)] leading-tight">Wellness Insight</h3>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-shakti-primary)]">Personalized for you</p>
+            <div className="min-w-0">
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-[var(--color-shakti-primary)] mb-0.5">Personalized for you</p>
+              <h3 className="text-[16px] font-extrabold text-[var(--color-shakti-dark-text)] leading-tight">Wellness Insight</h3>
             </div>
           </div>
-          <p className="text-sm font-medium text-[var(--color-text-secondary)] leading-relaxed md:max-w-xl">{getSuggestion()}</p>
-        </div>
-        
-        <div className="flex-shrink-0 relative z-10 pl-2 md:pl-0">
-          <button 
+
+          <p className="text-[13px] font-medium text-[var(--color-shakti-dark-muted)] leading-relaxed mb-4">{getSuggestion()}</p>
+
+          <button
             onClick={() => setShowRoutine(true)}
-            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] text-white font-bold rounded-full text-sm shadow-md shadow-[var(--color-shakti-primary)]/20 hover:shadow-lg transform transition-all active:scale-95"
+            className="inline-flex items-center gap-2 text-white text-[13px] font-bold transition-all"
+            style={{ padding: '10px 18px', borderRadius: '10px', background: 'linear-gradient(135deg, #7c3aed, #ec4899)', boxShadow: '0 4px 14px rgba(124,58,237,0.30)', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans)' }}
           >
-            Plan my routine <ArrowRight size={16} />
+            Plan my routine <ArrowRight size={14} />
           </button>
         </div>
       </motion.div>

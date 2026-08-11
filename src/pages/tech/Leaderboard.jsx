@@ -24,8 +24,8 @@ export default function Leaderboard() {
       </Link>
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl p-6 mb-5 bg-[var(--color-surface-lowest)]"
-        style={{ boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}>
+        className="relative overflow-hidden rounded-3xl p-6 bg-[var(--color-surface-lowest)]"
+        style={{ marginBottom: '40px', boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}>
         <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(234,179,8,0.16)', borderRadius: '50%', filter: 'blur(60px)' }} />
         <div className="flex items-center gap-3.5 relative z-10">
           <div className="rounded-2xl flex items-center justify-center flex-shrink-0" style={{ width: '52px', height: '52px', background: 'linear-gradient(135deg, #eab308, #f59e0b)', boxShadow: '0 6px 20px rgba(234,179,8,0.34)' }}>
@@ -39,26 +39,38 @@ export default function Leaderboard() {
       </motion.div>
 
       {/* Podium */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-3 gap-2.5 mb-6">
         {topRanks.map(t => (
           <motion.div
             key={t.rank}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: t.rank * 0.1 }}
-            className="bg-[var(--color-surface-lowest)] rounded-2xl p-5 border border-[var(--color-surface-highlight)] shadow-sm text-center"
+            transition={{ delay: t.rank * 0.08 }}
+            className="bg-[var(--color-surface-lowest)] rounded-2xl text-center relative"
+            style={{ padding: '20px 12px 14px', boxShadow: '0 1px 6px rgba(24,20,69,0.03)', border: '1px solid rgba(24,20,69,0.04)' }}
           >
-            <div className="text-3xl mb-2">{t.badge}</div>
             <div
-              className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 text-white text-lg font-bold"
-              style={{ backgroundColor: t.color }}
+              style={{
+                position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)',
+                width: '28px', height: '28px', borderRadius: '50%',
+                background: t.rank === 1 ? 'linear-gradient(135deg, #fbbf24, #f59e0b)' : t.rank === 2 ? 'linear-gradient(135deg, #cbd5e1, #94a3b8)' : 'linear-gradient(135deg, #fb923c, #c2410c)',
+                color: 'white', fontSize: '12px', fontWeight: 900,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 4px 10px rgba(0,0,0,0.10)', border: '2px solid var(--color-surface-lowest)'
+              }}
+            >
+              {t.rank}
+            </div>
+            <div
+              className="rounded-2xl flex items-center justify-center mx-auto text-white text-base font-extrabold"
+              style={{ width: '48px', height: '48px', background: `linear-gradient(135deg, ${t.color}, ${t.color}cc)`, boxShadow: `0 4px 14px ${t.color}40` }}
             >
               {t.initial}
             </div>
-            <p className="text-sm font-semibold text-[var(--color-text-primary)] truncate">{t.name}</p>
-            <p className="text-lg font-bold text-[var(--color-text-primary)] mt-1">{t.points.toLocaleString()}</p>
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold mt-2">
-              <TrendingUp size={10} /> {t.delta}
+            <p className="text-[12px] font-bold text-[var(--color-shakti-dark-text)] truncate mt-2">{t.name}</p>
+            <p className="text-lg font-extrabold text-[var(--color-shakti-dark-text)] leading-tight">{t.points.toLocaleString()}</p>
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold mt-1" style={{ background: '#ecfdf5', color: '#047857', border: '1px solid rgba(16,185,129,0.22)' }}>
+              <TrendingUp size={9} /> {t.delta}
             </div>
           </motion.div>
         ))}
@@ -81,23 +93,28 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      <div className="bg-[var(--color-surface-lowest)] rounded-2xl border border-[var(--color-surface-highlight)] shadow-sm overflow-hidden">
-        <div className="px-5 py-3 border-b border-[var(--color-surface-highlight)]">
-          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Ranks 4 – 8</h3>
+      <div className="bg-[var(--color-surface-lowest)] rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 6px rgba(24,20,69,0.03)', border: '1px solid rgba(24,20,69,0.04)' }}>
+        <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: '1px solid var(--color-surface-low)' }}>
+          <h3 className="text-[12px] font-extrabold uppercase tracking-wider text-[var(--color-outline)]">Ranks 4 – 8</h3>
+          <span className="text-[10px] font-bold text-[var(--color-outline)]">Weekly</span>
         </div>
-        <div className="divide-y divide-gray-50">
-          {others.map(o => (
-            <div key={o.rank} className="flex items-center gap-4 px-5 py-3 hover:bg-[var(--color-surface-low)] transition-colors">
-              <span className="w-6 text-sm font-semibold text-[var(--color-outline)]">#{o.rank}</span>
+        <div>
+          {others.map((o, i) => (
+            <div
+              key={o.rank}
+              className="flex items-center gap-3 px-5 py-3 transition-colors"
+              style={{ borderTop: i === 0 ? 'none' : '1px solid var(--color-surface-low)' }}
+            >
+              <span style={{ width: '28px', fontSize: '13px', fontWeight: 800, color: 'var(--color-outline)' }}>#{o.rank}</span>
               <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-semibold"
-                style={{ backgroundColor: o.color }}
+                className="rounded-xl flex items-center justify-center text-white text-[13px] font-extrabold flex-shrink-0"
+                style={{ width: '36px', height: '36px', background: `linear-gradient(135deg, ${o.color}, ${o.color}cc)`, boxShadow: `0 3px 8px ${o.color}33` }}
               >
                 {o.initial}
               </div>
-              <span className="flex-1 text-sm font-medium text-[var(--color-text-primary)]">{o.name}</span>
-              <span className="text-sm font-semibold text-[var(--color-text-primary)]">{o.points.toLocaleString()}</span>
-              <span className="text-xs text-emerald-600 font-semibold w-12 text-right">{o.delta}</span>
+              <span className="flex-1 text-[14px] font-bold text-[var(--color-shakti-dark-text)] truncate">{o.name}</span>
+              <span className="text-[14px] font-extrabold text-[var(--color-shakti-dark-text)]">{o.points.toLocaleString()}</span>
+              <span className="text-[11px] font-bold w-12 text-right" style={{ color: '#047857' }}>{o.delta}</span>
             </div>
           ))}
         </div>

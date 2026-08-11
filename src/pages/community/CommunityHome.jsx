@@ -4,15 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, Search, MessageSquare, Heart, Shield,
   Plus, TrendingUp, X, Sparkles, ArrowUpRight,
-  Calendar, Briefcase, UserPlus, Flame, ChevronRight, CheckCircle,
+  Calendar, Briefcase, UserPlus, Flame, ChevronRight,
 } from 'lucide-react';
 
 const tools = [
-  { to: '/community/forums', icon: MessageSquare, title: 'Forums', desc: 'Open discussions', color: 'var(--color-shakti-primary)', bg: 'var(--color-shakti-primary-container)' },
-  { to: '/community/circle', icon: UserPlus, title: 'Trusted Circle', desc: 'Your network', color: 'var(--color-shakti-tertiary)', bg: 'var(--color-shakti-tertiary-container)' },
-  { to: '/community/events', icon: Calendar, title: 'Events', desc: 'Meetups & workshops', color: 'var(--color-shakti-info)', bg: 'var(--color-shakti-info-container)' },
-  { to: '/community/skills', icon: Briefcase, title: 'Skill Exchange', desc: 'Trade expertise', color: 'var(--color-shakti-success)', bg: 'var(--color-shakti-success-container)' },
-  { to: '/community/volunteers', icon: Users, title: 'Volunteers', desc: 'Help nearby', color: 'var(--color-shakti-warning)', bg: 'var(--color-shakti-warning-container)' },
+  { to: '/community/forums', icon: MessageSquare, title: 'Forums', desc: 'Open discussions', color: '#3b82f6', bg: '#eff6ff' },
+  { to: '/community/circle', icon: UserPlus, title: 'Trusted Circle', desc: 'Your network', color: '#7c3aed', bg: '#f5f3ff' },
+  { to: '/community/events', icon: Calendar, title: 'Events', desc: 'Meetups & workshops', color: '#f59e0b', bg: '#fffbeb' },
+  { to: '/community/skill-exchange', icon: Briefcase, title: 'Skill Exchange', desc: 'Trade expertise', color: '#10b981', bg: '#ecfdf5' },
+  { to: '/community/volunteers', icon: Users, title: 'Volunteers', desc: 'Help nearby', color: '#e11d48', bg: '#fef2f2' },
 ];
 
 const categories = [

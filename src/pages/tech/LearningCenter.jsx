@@ -10,6 +10,13 @@ const tracks = [
   { id: 'mobile', label: 'Mobile' },
 ];
 
+const BADGES = [
+  { label: 'Frontend Pro', color: '#0284c7', completed: 2, total: 2 },
+  { label: 'Backend Builder', color: '#10b981', completed: 1, total: 2 },
+  { label: 'AI Explorer', color: '#a855f7', completed: 0, total: 2 },
+  { label: 'Mobile Maker', color: '#f59e0b', completed: 0, total: 1 },
+];
+
 const courses = [
   { track: 'frontend', title: 'React in 100 Mins', provider: 'Fireship', duration: '1h 40m', paid: false, link: 'https://www.youtube.com/watch?v=Tn6-PIqc4UM', color: '#3B82F6' },
   { track: 'frontend', title: 'Tailwind From Scratch', provider: 'freeCodeCamp', duration: '5h 20m', paid: false, link: 'https://www.youtube.com/watch?v=UBOj6rqRUME', color: '#0891b2' },
@@ -25,6 +32,7 @@ export default function LearningCenter() {
   const [selectedPaidCourse, setSelectedPaidCourse] = useState(null);
   const [unlockedCourses, setUnlockedCourses] = useState([]);
   const [scanning, setScanning] = useState(false);
+  const [showBadges, setShowBadges] = useState(false);
 
   const visible = courses.filter(c => c.track === activeTrack);
 
@@ -58,8 +66,8 @@ export default function LearningCenter() {
       </Link>
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl p-6 mb-5 bg-[var(--color-surface-lowest)]"
-        style={{ boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}>
+        className="relative overflow-hidden rounded-3xl p-6 bg-[var(--color-surface-lowest)]"
+        style={{ marginBottom: '32px', boxShadow: '0 2px 16px rgba(24,20,69,0.04)' }}>
         <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(2,132,199,0.14)', borderRadius: '50%', filter: 'blur(60px)' }} />
         <div className="flex items-center gap-3.5 relative z-10">
           <div className="rounded-2xl flex items-center justify-center flex-shrink-0" style={{ width: '52px', height: '52px', background: 'linear-gradient(135deg, #0284c7, #06b6d4)', boxShadow: '0 6px 20px rgba(2,132,199,0.34)' }}>
@@ -72,20 +80,21 @@ export default function LearningCenter() {
         </div>
       </motion.div>
 
-      <div className="flex gap-2.5 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
+      <div className="flex flex-wrap gap-2 mb-6">
         {tracks.map(t => (
           <button
             key={t.id}
             onClick={() => setActiveTrack(t.id)}
-            className={`px-5 py-3 rounded-2xl text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 ${
-              activeTrack === t.id
-                ? 'text-white scale-[1.02]'
-                : 'bg-[var(--color-surface-lowest)] text-[var(--color-shakti-dark-text)] hover:scale-[1.02]'
-            }`}
-            style={activeTrack === t.id
-              ? { background: 'linear-gradient(135deg, #0284c7, #06b6d4)', boxShadow: '0 6px 18px rgba(2,132,199,0.35)' }
-              : { boxShadow: '0 1px 6px rgba(24,20,69,0.04)', border: '1px solid rgba(24,20,69,0.06)' }
-            }
+            className="rounded-lg text-[13px] font-bold whitespace-nowrap transition-all"
+            style={{
+              padding: '8px 14px',
+              minHeight: '36px',
+              lineHeight: 1,
+              ...(activeTrack === t.id
+                ? { background: 'linear-gradient(135deg, #0284c7, #06b6d4)', color: 'white', border: '1px solid transparent', boxShadow: '0 4px 12px rgba(2,132,199,0.30)' }
+                : { background: 'var(--color-surface-low)', color: 'var(--color-shakti-dark-muted)', border: '1px solid rgba(24,20,69,0.08)' }
+              )
+            }}
           >
             {t.label}
           </button>
@@ -153,11 +162,100 @@ export default function LearningCenter() {
             <h2 className="text-base font-extrabold mb-0.5">Earn certificates as you learn</h2>
             <p className="text-cyan-50 text-[12px] font-medium">Complete a track to unlock a verified SHAKTI badge.</p>
           </div>
-          <button className="px-3.5 py-2 bg-white text-[12px] rounded-xl font-bold transition-all active:scale-95 flex items-center gap-1.5 whitespace-nowrap flex-shrink-0" style={{ color: '#0284c7' }}>
+          <button
+            onClick={() => setShowBadges(true)}
+            className="px-3.5 py-2 bg-white text-[12px] rounded-xl font-bold transition-all active:scale-95 flex items-center gap-1.5 whitespace-nowrap flex-shrink-0"
+            style={{ color: '#0284c7' }}
+          >
             Badges <ChevronRight size={14} />
           </button>
         </div>
       </div>
+
+      {/* Badges modal */}
+      <AnimatePresence>
+        {showBadges && (
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', background: 'rgba(24,20,69,0.55)', backdropFilter: 'blur(8px)' }}
+            onClick={() => setShowBadges(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 16 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: '100%', maxWidth: '560px', maxHeight: '90vh', overflow: 'auto',
+                background: 'var(--color-surface-lowest)', borderRadius: '1.5rem', padding: '24px',
+                boxShadow: '0 20px 50px rgba(24,20,69,0.20)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '4px' }}>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontSize: '10px', fontWeight: 800, color: '#0284c7', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 4px' }}>Your progress</p>
+                  <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-shakti-dark-text)', margin: 0 }}>Badge gallery</h3>
+                  <p style={{ fontSize: '12px', color: 'var(--color-outline)', margin: '4px 0 0' }}>Finish a track to verify a badge for your profile.</p>
+                </div>
+                <button
+                  onClick={() => setShowBadges(false)}
+                  style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--color-surface-low)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-outline)', cursor: 'pointer', flexShrink: 0 }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginTop: '18px' }}>
+                {BADGES.map(b => {
+                  const pct = Math.min(100, Math.round((b.completed / b.total) * 100));
+                  const unlocked = b.completed >= b.total;
+                  return (
+                    <div
+                      key={b.label}
+                      style={{
+                        background: unlocked ? `linear-gradient(135deg, ${b.color}, ${b.color}cc)` : 'var(--color-surface-low)',
+                        color: unlocked ? 'white' : 'var(--color-shakti-dark-text)',
+                        borderRadius: '14px', padding: '14px',
+                        border: unlocked ? 'none' : '1px solid rgba(24,20,69,0.06)',
+                        boxShadow: unlocked ? `0 4px 14px ${b.color}40` : 'none'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                        <div
+                          style={{
+                            width: '36px', height: '36px', borderRadius: '10px',
+                            background: unlocked ? 'rgba(255,255,255,0.25)' : `${b.color}1f`,
+                            color: unlocked ? 'white' : b.color,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                            border: unlocked ? '1px solid rgba(255,255,255,0.30)' : `1px solid ${b.color}33`
+                          }}
+                        >
+                          <Award size={18} />
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <p style={{ fontSize: '13px', fontWeight: 800, margin: 0 }}>{b.label}</p>
+                          <p style={{ fontSize: '10px', fontWeight: 700, opacity: unlocked ? 0.9 : 0.6, margin: '2px 0 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            {unlocked ? '✓ Unlocked' : `${b.completed} / ${b.total} courses`}
+                          </p>
+                        </div>
+                      </div>
+                      <div style={{ height: '6px', borderRadius: '999px', background: unlocked ? 'rgba(255,255,255,0.25)' : 'rgba(24,20,69,0.06)', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${pct}%`, background: unlocked ? 'white' : b.color, transition: 'width 0.4s' }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => setShowBadges(false)}
+                style={{ marginTop: '20px', width: '100%', padding: '12px', borderRadius: '10px', background: 'linear-gradient(135deg, #0284c7, #06b6d4)', color: 'white', border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(2,132,199,0.30)', fontFamily: 'var(--font-sans)' }}
+              >
+                Keep learning
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {selectedPaidCourse && (
