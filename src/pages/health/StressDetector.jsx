@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Activity, Wind, Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Brain, Activity, Wind, Loader2, AlertTriangle, CheckCircle2, Sparkles } from 'lucide-react';
 import { analyzeEmotion } from '../../services/aiService';
 import toast from 'react-hot-toast';
 
@@ -45,10 +46,49 @@ export default function StressDetector() {
   const reset = () => { setAnswers({}); setJournal(''); setResult(null); };
 
   const STRESS_MAP = {
-    low: { color: 'text-[var(--color-shakti-success)]', bg: 'bg-[var(--color-shakti-success)]/10', border: 'border-[var(--color-shakti-success)]/30', label: 'Low Stress', advice: 'You\'re doing great! Keep up healthy habits.', icon: CheckCircle2 },
-    moderate: { color: 'text-[var(--color-shakti-warning)]', bg: 'bg-[var(--color-shakti-warning)]/10', border: 'border-[var(--color-shakti-warning)]/30', label: 'Moderate Stress', advice: 'Some warning signs. Try short wellness breaks today.', icon: Activity },
-    high: { color: 'text-[var(--color-shakti-error)]', bg: 'bg-[var(--color-shakti-error)]/10', border: 'border-[var(--color-shakti-error)]/30', label: 'High Stress', advice: 'Your body needs care. Prioritize sleep and reach out to someone.', icon: AlertTriangle },
-    critical: { color: 'text-[var(--color-shakti-error)]', bg: 'bg-[var(--color-shakti-error)]/20', border: 'border-[var(--color-shakti-error)]/50', label: 'Critical — Reach Out', advice: 'Please talk to a professional. iCall: 9152987821 (free & confidential).', icon: AlertTriangle },
+    low: {
+      color: 'text-[var(--color-shakti-success)]', bg: 'bg-[var(--color-shakti-success)]/10', border: 'border-[var(--color-shakti-success)]/30', label: 'Low Stress', icon: CheckCircle2,
+      advice: 'You\'re doing great! Keep up healthy habits.',
+      suggestions: [
+        'Keep your sleep schedule consistent — it\'s clearly working for you',
+        'Take a 10-minute walk or stretch to keep your energy topped up',
+        'Write down one thing you\'re grateful for today',
+        'Check in on a friend — connection protects your mood long-term',
+      ],
+    },
+    moderate: {
+      color: 'text-[var(--color-shakti-warning)]', bg: 'bg-[var(--color-shakti-warning)]/10', border: 'border-[var(--color-shakti-warning)]/30', label: 'Moderate Stress', icon: Activity,
+      advice: 'Some warning signs. A few small resets today can stop this from building up.',
+      suggestions: [
+        '4-7-8 breathing: inhale 4s, hold 7s, exhale 8s — repeat 4 times',
+        'Take a 15-minute screen-free break — step away from your desk and phone',
+        'Get 10 minutes of daylight: a short walk outside lifts mood fast',
+        'Skip caffeine after 2pm and aim for an earlier bedtime tonight',
+        'Message or call someone you trust and tell them how your day really was',
+      ],
+    },
+    high: {
+      color: 'text-[var(--color-shakti-error)]', bg: 'bg-[var(--color-shakti-error)]/10', border: 'border-[var(--color-shakti-error)]/30', label: 'High Stress', icon: AlertTriangle,
+      advice: 'Your body is asking for care. Try these now — small actions bring stress down.',
+      suggestions: [
+        'Box breathing right now: inhale 4s, hold 4s, exhale 4s, hold 4s — 5 rounds',
+        'Ground yourself (5-4-3-2-1): name 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste',
+        'Drop one non-essential task from today — give yourself permission',
+        'Do 10 minutes of gentle stretching or yoga before bed instead of scrolling',
+        'Tell one trusted person how you\'re actually feeling today',
+      ],
+    },
+    critical: {
+      color: 'text-[var(--color-shakti-error)]', bg: 'bg-[var(--color-shakti-error)]/20', border: 'border-[var(--color-shakti-error)]/50', label: 'Critical — Reach Out', icon: AlertTriangle,
+      advice: 'You don\'t have to carry this alone. Start with one small step below, and please consider talking to a professional — iCall: 9152987821 (free & confidential).',
+      suggestions: [
+        'Slow your breathing: hand on your belly, 6 slow breaths per minute for 2 minutes',
+        'Stay near someone you trust today — avoid being alone if you can',
+        'Postpone big decisions and non-urgent tasks — nothing needs solving right now',
+        'Drink water and eat something small, even if appetite is low',
+        'iCall: 9152987821 or Women Helpline: 181 — free, confidential, judgement-free',
+      ],
+    },
   };
 
   return (
@@ -145,6 +185,24 @@ export default function StressDetector() {
               <p className="text-sm font-medium text-[var(--color-text-primary)] leading-relaxed">{info.advice}</p>
             </div>
 
+            <div className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-6 shadow-sm">
+              <h4 className="text-sm font-bold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <Sparkles size={16} className="text-[var(--color-shakti-primary)]" /> What you can do right now
+              </h4>
+              <ul className="space-y-3">
+                {info.suggestions.map((s, i) => (
+                  <motion.li
+                    key={i}
+                    initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + i * 0.06 }}
+                    className="flex items-start gap-3 p-3 rounded-xl bg-[var(--color-surface)] shadow-inner"
+                  >
+                    <CheckCircle2 size={16} className={`${info.color} flex-shrink-0 mt-0.5`} />
+                    <span className="text-sm font-medium text-[var(--color-text-primary)] leading-relaxed">{s}</span>
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+
             {result.aiAnalysis && (
               <div className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-6 shadow-sm">
                 <h4 className="text-sm font-bold text-[var(--color-text-primary)] mb-4 flex items-center gap-2"><Brain size={16} className="text-[var(--color-shakti-primary)]" /> AI Emotion Analysis</h4>
@@ -161,9 +219,9 @@ export default function StressDetector() {
               <button onClick={reset} className="py-4 rounded-full bg-[var(--color-surface-lowest)] text-[var(--color-text-primary)] font-bold text-sm shadow-sm hover:bg-[var(--color-surface)] transition-colors active:scale-95">
                 Take Again
               </button>
-              <a href="/health/companion" className="py-4 rounded-full bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] text-white font-bold text-sm text-center shadow-md hover:shadow-lg transition-all active:scale-95">
+              <Link to="/health/companion" className="py-4 rounded-full bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] text-white font-bold text-sm text-center shadow-md hover:shadow-lg transition-all active:scale-95">
                 Talk to SHAKTI
-              </a>
+              </Link>
             </div>
           </motion.div>
         );

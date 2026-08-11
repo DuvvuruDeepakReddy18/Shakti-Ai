@@ -2,21 +2,32 @@ import { safeParseJSON } from "../utils/helpers";
 
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 
+// Verified-working free models on OpenRouter (largest/strongest first).
+// The previous list had deprecated/rate-limited models which always fell to demo.
+const DEFAULT_MODELS = [
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'nvidia/nemotron-3.5-lightning:free',
+  'openai/gpt-oss-20b:free',
+  'google/gemma-4-31b-it:free',
+];
+
+// Same pool ordered for latency — lightning answers ~5x faster than ultra.
+const FAST_MODELS = [
+  'nvidia/nemotron-3.5-lightning:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
+  'openai/gpt-oss-20b:free',
+  'google/gemma-4-31b-it:free',
+];
+
 async function fetchOpenRouter(messages, options = {}) {
   if (!OPENROUTER_API_KEY) {
     console.warn("OpenRouter API Key is missing. Returning demo data.");
     throw new Error("Missing API Key");
   }
 
-  // Verified-working free models on OpenRouter (largest/strongest first).
-  // The previous list had deprecated/rate-limited models which always fell to demo.
-  const models = [
-    'openai/gpt-oss-120b:free',
-    'z-ai/glm-4.5-air:free',
-    'openai/gpt-oss-20b:free',
-    'google/gemma-4-31b-it:free',
-    'minimax/minimax-m2.5:free',
-  ];
+  const models = options.fast ? FAST_MODELS : DEFAULT_MODELS;
 
   // Lower temperature by default — most callers want structured JSON.
   const temperature = options.temperature ?? 0.3;
@@ -26,7 +37,9 @@ async function fetchOpenRouter(messages, options = {}) {
   for (const model of models) {
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 25000);
+      // Free-tier latency varies widely (6s-35s observed) — abort too early and
+      // every model in the chain gets killed mid-generation, landing on demo data.
+      const timer = setTimeout(() => controller.abort(), 45000);
 
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -37,7 +50,11 @@ async function fetchOpenRouter(messages, options = {}) {
           "HTTP-Referer": window.location.origin,
           "X-Title": "She Care AI"
         },
-        body: JSON.stringify({ model, messages, temperature, top_p })
+        body: JSON.stringify({
+          model, messages, temperature, top_p,
+          // Nemotron models are reasoners; low effort cuts latency 2-5x on these JSON tasks.
+          ...(model.startsWith('nvidia/') ? { reasoning: { effort: 'low' } } : {}),
+        })
       });
 
       clearTimeout(timer);
@@ -107,19 +124,34 @@ export async function chatWithCompanion(message, chatHistory = []) {
 // 2. Skill-to-Income Translator
 export async function translateSkills(skills, location) {
   try {
-    const systemPrompt = `You are a career advisor for women in India. Given a list of skills and location,
-       suggest 5-6 realistic income opportunities. Include freelance, part-time, and full-time options.
-       Provide estimated earnings in INR (monthly).
-       Return RAW JSON array without markdown code blocks: [{ "title": string, "description": string, "estimatedEarning": string, "platform": string, "difficulty": "Beginner"|"Intermediate"|"Advanced", "timeCommitment": string, "startupCost": string }]`;
-    
+    const systemPrompt = `You are a career advisor for women in India. Given a list of skills and a city,
+       suggest 6 realistic income opportunities that are SPECIFIC to those exact skills — never generic filler
+       like tutoring or content writing unless the skills genuinely point there.
+       Rules:
+       - Every opportunity must directly use at least one of the given skills; name it in "usesSkill".
+       - Tailor each to the given city: local demand, realistic local rates in INR per month, and where to find this work in that city.
+       - All 6 must be clearly distinct from each other (no near-duplicates).
+       - Mix freelance, remote, part-time, full-time, and local in-person options.
+       Return RAW JSON array without markdown code blocks: [{ "title": string, "description": string, "usesSkill": string, "estimatedEarning": string, "platform": string, "difficulty": "Beginner"|"Intermediate"|"Advanced", "timeCommitment": string, "startupCost": string, "searchKeywords": string }]
+       "searchKeywords" is the 2-4 word phrase someone would type on a job site to find this exact work (e.g. "react developer", "home tuition maths").`;
+
     const content = await fetchOpenRouter([
       { role: "system", content: systemPrompt },
-      { role: "user", content: `Skills: ${skills.join(", ")}. Location: ${location}. Suggest income opportunities.` }
-    ]);
-    return safeParseJSON(content) || [];
+      { role: "user", content: `Skills: ${skills.join(", ")}. City: ${location}. Suggest income opportunities.` }
+    ], { fast: true });
+    const parsed = safeParseJSON(content);
+    if (!Array.isArray(parsed) || parsed.length === 0) throw new Error('Empty AI result');
+    // Drop near-duplicate titles the model may still produce
+    const seen = new Set();
+    return parsed.filter(r => {
+      const key = (r.title || '').toLowerCase().trim();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   } catch (error) {
     console.error('Skill translator error:', error);
-    return getDemoSkillResults();
+    return getDemoSkillResults().map(r => ({ ...r, isDemo: true }));
   }
 }
 
@@ -152,7 +184,7 @@ export async function generateProjectIdeas(skills, interests) {
     const content = await fetchOpenRouter([
       { role: "system", content: systemPrompt },
       { role: "user", content: `Skills: ${skills}. Interests: ${interests}. Generate project ideas.` }
-    ]);
+    ], { fast: true });
     return safeParseJSON(content) || [];
   } catch (error) {
     console.error('Project generator error:', error);

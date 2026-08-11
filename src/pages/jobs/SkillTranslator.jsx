@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, Loader2, TrendingUp, MapPin, Briefcase,
   Clock, Plus, X, Sparkles, IndianRupee, Target, Layers,
-  Search, Brain, BarChart3
+  Search, Brain, BarChart3, ExternalLink, AlertTriangle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -36,6 +36,7 @@ export default function SkillTranslator() {
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [results, setResults] = useState(null);
+  const [resultLocation, setResultLocation] = useState('');
 
   useEffect(() => {
     if (!loading) { setLoadingStep(0); return; }
@@ -60,16 +61,22 @@ export default function SkillTranslator() {
     if (!location.trim()) return toast.error('Enter your location');
     setLoading(true);
     setResults(null);
+    setResultLocation(location.trim());
     try {
       const data = await translateSkills(skills, location);
       setResults(data);
-      if (data?.length) toast.success(`Found ${data.length} opportunities!`);
+      if (data?.length && data[0]?.isDemo) toast('Live AI is busy — showing sample data. Try again in a moment.', { icon: '⚠️' });
+      else if (data?.length) toast.success(`Found ${data.length} opportunities!`);
       else toast.error('No results — try different skills');
     } catch {
       toast.error('Something went wrong');
     }
     setLoading(false);
   };
+
+  // Universal job search link — works for both formal jobs and local gig work
+  const applyUrl = (r) =>
+    `https://www.google.com/search?q=${encodeURIComponent(`${r.searchKeywords || r.title} jobs in ${resultLocation}`)}&ibp=htl;jobs`;
 
   const cardStyle = {
     background: 'var(--color-surface-lowest)',
@@ -304,6 +311,19 @@ export default function SkillTranslator() {
               }}>{results.length} found</span>
             </div>
 
+            {results.some(r => r.isDemo) && (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '12px 16px', borderRadius: '12px',
+                background: '#fffbeb', border: '1px solid rgba(245,158,11,0.25)',
+              }}>
+                <AlertTriangle size={16} style={{ color: '#b45309', flexShrink: 0 }} />
+                <p style={{ fontSize: '12px', fontWeight: 600, color: '#b45309', margin: 0 }}>
+                  Live AI was unavailable, so these are sample opportunities — not personalized to your skills. Please try again in a minute.
+                </p>
+              </div>
+            )}
+
             {results.map((r, i) => {
               const dm = difficultyMeta(r.difficulty);
               return (
@@ -325,11 +345,31 @@ export default function SkillTranslator() {
                       <p style={{ fontSize: '10px', color: 'var(--color-outline)', margin: '2px 0 0', fontWeight: 600 }}>per month</p>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingTop: '10px', borderTop: '1px solid var(--color-surface-low)' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px', paddingTop: '10px', borderTop: '1px solid var(--color-surface-low)' }}>
                     <span style={{
                       padding: '4px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
                       background: dm.bg, color: dm.text, border: `1px solid ${dm.border}`
                     }}>{r.difficulty}</span>
+                    {r.usesSkill && (
+                      <span style={{
+                        padding: '4px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
+                        background: `${ACCENT}12`, color: ACCENT,
+                        border: `1px solid ${ACCENT}2e`,
+                        display: 'inline-flex', alignItems: 'center', gap: '4px'
+                      }}>
+                        <Layers size={10} /> Uses: {r.usesSkill}
+                      </span>
+                    )}
+                    {resultLocation && (
+                      <span style={{
+                        padding: '4px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
+                        background: 'var(--color-surface-low)', color: 'var(--color-outline)',
+                        border: '1px solid rgba(24,20,69,0.05)',
+                        display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'capitalize'
+                      }}>
+                        <MapPin size={10} /> {resultLocation}
+                      </span>
+                    )}
                     {r.platform && (
                       <span style={{
                         padding: '4px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
@@ -350,6 +390,21 @@ export default function SkillTranslator() {
                         <Clock size={10} /> {r.timeCommitment}
                       </span>
                     )}
+                    <a
+                      href={applyUrl(r)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        marginLeft: 'auto', padding: '7px 14px', borderRadius: '10px',
+                        fontSize: '11px', fontWeight: 700, textDecoration: 'none',
+                        background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})`,
+                        color: 'white', boxShadow: `0 3px 10px ${ACCENT}33`,
+                        display: 'inline-flex', alignItems: 'center', gap: '5px',
+                        fontFamily: 'var(--font-sans)'
+                      }}
+                    >
+                      Apply <ExternalLink size={11} />
+                    </a>
                   </div>
                 </motion.div>
               );

@@ -5,14 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
 
-// Verified-working free models on OpenRouter (text)
+// Verified-working free models on OpenRouter (text), fastest-responding first
 const TEXT_MODELS = [
-  'openai/gpt-oss-120b:free',
-  'z-ai/glm-4.5-air:free',
+  'nvidia/nemotron-3.5-lightning:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
   'openai/gpt-oss-20b:free',
   'google/gemma-4-31b-it:free',
-  'minimax/minimax-m2.5:free',
 ];
+
+// Nemotron models are reasoners; low effort keeps them fast and inside max_tokens
+const modelExtras = (model) =>
+  model.startsWith('nvidia/') ? { reasoning: { effort: 'low' } } : {};
 
 // Verified-working free models with image input support
 const VISION_MODELS = [
@@ -77,12 +81,12 @@ Reply ONLY with valid JSON, no markdown, no code fences:
     for (const model of TEXT_MODELS) {
       try {
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 20000);
+        const timer = setTimeout(() => controller.abort(), 45000);
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST', signal: controller.signal,
           headers: OR_HEADERS(),
           body: JSON.stringify({
-            model, max_tokens: 800, temperature: 0.3,
+            model, max_tokens: 800, temperature: 0.3, ...modelExtras(model),
             messages: [{ role: 'user', content: makePrompt(foodText) }],
           }),
         });
@@ -152,6 +156,7 @@ Reply ONLY with valid JSON, no markdown, no code fences:
             model,
             max_tokens: 800,
             temperature: 0.3,
+            ...modelExtras(model),
             messages: [{
               role: 'user',
               content: [
