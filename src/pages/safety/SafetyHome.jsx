@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import {
   Shield, Map, Radio, Users, Lock, Award, ChevronRight,
-  Phone, MessageSquareWarning, Archive, Scale, Zap, CheckCircle,
+  Phone, MessageSquareWarning, Scale, Zap, CheckCircle,
   AlertTriangle,
 } from 'lucide-react';
 import useUiStore from '../../store/uiStore';
@@ -10,7 +10,6 @@ import { motion } from 'framer-motion';
 const features = [
   { icon: Phone, title: 'Fake Call', desc: 'Simulate an incoming call instantly', action: 'fakeCall', color: '#6d28d9', bg: '#f0edff' },
   { icon: MessageSquareWarning, title: 'Is This Normal?', desc: 'AI incident & boundary analyzer', link: '/safety/is-this-normal', color: '#db2777', bg: '#fdf2f8' },
-  { icon: Archive, title: 'Time Capsule', desc: 'Cryptographically sealed evidence', link: '/safety/time-capsule', color: '#7c3aed', bg: '#f5f3ff' },
   { icon: Map, title: 'Safety Map', desc: 'Predictive zones & route analysis', link: '/safety/map', color: '#059669', bg: '#ecfdf5' },
   { icon: Radio, title: 'Live Tracking', desc: 'Crowd Shield virtual escort', link: '/safety/tracking', color: '#2563eb', bg: '#eff6ff' },
   { icon: Users, title: 'Trusted Contacts', desc: 'Manage your trusted contacts', link: '/safety/contacts', color: '#d97706', bg: '#fffbeb' },

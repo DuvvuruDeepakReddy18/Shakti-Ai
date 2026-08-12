@@ -27,7 +27,6 @@ import EmergencyContacts from './pages/safety/EmergencyContacts';
 import EvidenceLocker from './pages/safety/EvidenceLocker';
 import SafetyScoreboard from './pages/safety/SafetyScoreboard';
 import IsThisNormal from './pages/safety/IsThisNormal';
-import TimeCapsule from './pages/safety/TimeCapsule';
 import KnowYourRights from './pages/safety/KnowYourRights';
 import ActiveSOSPage from './pages/safety/ActiveSOSPage';
 
@@ -136,7 +135,6 @@ export default function App() {
           <Route path="safety/evidence" element={<EvidenceLocker />} />
           <Route path="safety/scoreboard" element={<SafetyScoreboard />} />
           <Route path="safety/is-this-normal" element={<IsThisNormal />} />
-          <Route path="safety/time-capsule" element={<TimeCapsule />} />
           <Route path="safety/rights" element={<KnowYourRights />} />
           <Route path="safety/active" element={<ActiveSOSPage />} />
 
