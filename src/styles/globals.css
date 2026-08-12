@@ -22,6 +22,11 @@
   --color-shakti-tertiary-light: #fbcfe8;
   --color-shakti-tertiary-container: #fce7f3;
 
+  /* "On" colors — text/icon color on top of the matching solid/gradient fill */
+  --color-shakti-primary-on: #ffffff;
+  --color-shakti-secondary-on: #ffffff;
+  --color-shakti-success-on: #ffffff;
+
   /* Functional Colors */
   --color-shakti-safety: #a20017;
   --color-shakti-safety-light: #ffdad7;

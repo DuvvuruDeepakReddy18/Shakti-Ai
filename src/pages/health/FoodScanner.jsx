@@ -226,19 +226,47 @@ Reply ONLY with valid JSON, no markdown, no code fences:
     <div style={{ padding: '20px 16px 100px', maxWidth: '960px', margin: '0 auto', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-        <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', padding: '8px', cursor: 'pointer', color: 'var(--color-shakti-dark-text)' }}>
-          <ArrowLeft size={24} />
-        </button>
-        <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--color-shakti-dark-text)', margin: '0 0 4px', fontFamily: 'var(--font-display)' }}>
-            Hormone-Safe Scanner
-          </h1>
-          <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: 0 }}>
-            Analyze any food for women's health
-          </p>
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          fontSize: '13px', color: 'var(--color-outline)', background: 'none',
+          border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'var(--font-sans)',
+        }}
+      >
+        <ArrowLeft size={16} /> Back
+      </button>
+
+      {/* HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        style={{
+          position: 'relative', borderRadius: '1.5rem', padding: '28px 24px',
+          marginBottom: '18px', overflow: 'hidden',
+          background: 'var(--color-surface-lowest)',
+          boxShadow: '0 2px 16px rgba(24,20,69,0.04)',
+        }}
+      >
+        <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: '200px', height: '200px', background: 'rgba(219,39,119,0.08)', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative', zIndex: 10 }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '16px',
+            background: 'linear-gradient(135deg, #db2777, #a855f7)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 6px 20px rgba(219,39,119,0.25)',
+          }}>
+            <HeartPulse size={24} color="white" strokeWidth={2.2} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-shakti-dark-text)', margin: 0, lineHeight: 1.2 }}>
+              Hormone-Safe Scanner
+            </h1>
+            <p style={{ fontSize: '13px', color: 'var(--color-outline)', margin: '3px 0 0' }}>
+              Analyze any food for women's health
+            </p>
+          </div>
         </div>
-      </div>
+      </motion.div>
 
       <div style={{
         background: 'rgba(180,19,109,0.08)', border: '1px solid rgba(180,19,109,0.2)',
@@ -282,7 +310,7 @@ Reply ONLY with valid JSON, no markdown, no code fences:
             </div>
             <div style={{ textAlign: 'center', zIndex: 1 }}>
               <span style={{ display: 'block', fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>
-                📷 Upload Food Photo
+                Upload Food Photo
               </span>
               <span style={{ fontSize: '13px', opacity: 0.85 }}>
                 AI will automatically identify & analyze the food

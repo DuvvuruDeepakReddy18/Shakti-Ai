@@ -94,17 +94,16 @@ export default function StressDetector() {
   return (
     <div className="p-4 lg:p-6 pb-24 lg:pb-6 space-y-6 max-w-[960px] mx-auto">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-[2rem] p-6 shadow-lg relative overflow-hidden bg-gradient-to-br from-[#1a153a] to-[#0d0a1f]"
+        className="rounded-[1.5rem] p-6 relative overflow-hidden bg-[var(--color-surface-lowest)] shadow-[0_2px_16px_rgba(24,20,69,0.04)]"
       >
-        <div className="absolute -top-20 -left-20 w-60 h-60 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-16 -right-10 w-52 h-52 rounded-full blur-3xl pointer-events-none" style={{ background: 'rgba(139,92,246,0.10)' }} />
         <div className="flex items-center gap-4 relative z-10">
-          <div className="w-14 h-14 rounded-[1.25rem] bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-purple-400 flex-shrink-0 shadow-lg shadow-purple-500/10">
-            <Brain size={28} strokeWidth={1.5} />
+          <div className="w-[52px] h-[52px] rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #8b5cf6, #a78bfa)', boxShadow: '0 6px 20px rgba(139,92,246,0.25)' }}>
+            <Brain size={24} color="white" strokeWidth={2} />
           </div>
           <div>
-            <h1 className="text-2xl font-display font-bold text-white tracking-tight">Stress Detector</h1>
-            <p className="text-sm text-white/60">Quick check-in to understand your mental state</p>
+            <h1 className="text-2xl font-display font-bold text-[var(--color-shakti-dark-text)] tracking-tight">Stress Detector</h1>
+            <p className="text-sm text-[var(--color-outline)]">Quick check-in to understand your mental state</p>
           </div>
         </div>
       </motion.div>
