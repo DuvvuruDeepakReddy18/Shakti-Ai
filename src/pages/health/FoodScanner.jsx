@@ -80,13 +80,16 @@ Reply ONLY with valid JSON, no markdown, no code fences:
 
     for (const model of TEXT_MODELS) {
       try {
+        // Surface which model is being tried so retries aren't a silent stall
+        const shortName = model.split('/')[1].split(':')[0];
+        setScanStatus(`🧬 Analyzing hormonal impact… (${shortName})`);
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 45000);
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST', signal: controller.signal,
           headers: OR_HEADERS(),
           body: JSON.stringify({
-            model, max_tokens: 800, temperature: 0.3, ...modelExtras(model),
+            model, max_tokens: 1200, temperature: 0.3, ...modelExtras(model),
             messages: [{ role: 'user', content: makePrompt(foodText) }],
           }),
         });
@@ -154,7 +157,7 @@ Reply ONLY with valid JSON, no markdown, no code fences:
           headers: OR_HEADERS(),
           body: JSON.stringify({
             model,
-            max_tokens: 800,
+            max_tokens: 1200,
             temperature: 0.3,
             ...modelExtras(model),
             messages: [{

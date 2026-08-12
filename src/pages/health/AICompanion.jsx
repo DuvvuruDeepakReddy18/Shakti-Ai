@@ -221,7 +221,7 @@ export default function AICompanion() {
                 flex: 1, padding: '12px 16px', background: 'transparent', color: 'var(--color-shakti-dark-text)',
                 border: 'none', outline: 'none', fontSize: '15px', fontFamily: 'var(--font-sans)'
               }} />
-            <button onClick={() => send()} disabled={loading || !input.trim()}
+            <button onClick={() => send()} disabled={loading || !input.trim()} aria-label="Send message"
               style={{
                 width: '44px', height: '44px', borderRadius: '16px',
                 background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', color: 'white',

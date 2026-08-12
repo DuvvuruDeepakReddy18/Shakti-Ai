@@ -37,6 +37,13 @@ export default function OnboardingPage() {
     else { if (max && arr.length >= max) { toast('Maximum selections reached', { icon: 'ℹ️' }); return; } setter([...arr, item]); }
   };
   const addContact = () => { if (emergencyContacts.length < 3) setEmergencyContacts([...emergencyContacts, { name: '', phone: '', relation: 'Friend' }]); };
+  const handleNext = () => {
+    if (step === 3 && !emergencyContacts.some(c => c.name.trim() && c.phone.trim())) {
+      toast.error('Please add at least one emergency contact (name and phone)');
+      return;
+    }
+    setStep(step + 1);
+  };
   const updateContact = (i, f, v) => { const u = [...emergencyContacts]; u[i] = { ...u[i], [f]: v }; setEmergencyContacts(u); };
   const removeContact = (i) => setEmergencyContacts(emergencyContacts.filter((_, j) => j !== i));
   const requestLocation = () => { if (navigator.geolocation) navigator.geolocation.getCurrentPosition(() => toast.success('Location access granted!'), () => toast.error('Location access denied')); };
@@ -268,7 +275,7 @@ export default function OnboardingPage() {
                 </button>
               ) : <div />}
               {step < 7 ? (
-                <button onClick={() => setStep(step + 1)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 28px', borderRadius: '999px', background: 'linear-gradient(135deg, #630ed4, #db2777)', color: 'white', fontWeight: 700, fontSize: '13px', border: 'none', cursor: 'pointer', boxShadow: '0 6px 16px rgba(99,14,212,0.25)', fontFamily: 'var(--font-sans)' }}>
+                <button onClick={handleNext} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 28px', borderRadius: '999px', background: 'linear-gradient(135deg, #630ed4, #db2777)', color: 'white', fontWeight: 700, fontSize: '13px', border: 'none', cursor: 'pointer', boxShadow: '0 6px 16px rgba(99,14,212,0.25)', fontFamily: 'var(--font-sans)' }}>
                   Next <ArrowRight size={16} />
                 </button>
               ) : (

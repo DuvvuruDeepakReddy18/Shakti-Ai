@@ -84,6 +84,8 @@ const useAuthStore = create((set, get) => ({
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        // A real Firebase session supersedes any lingering demo state
+        localStorage.removeItem('shakti_demo_user');
         try {
           const profileDoc = await getDoc(doc(db, 'users', user.uid));
           const userProfile = profileDoc.exists() ? profileDoc.data() : null;
@@ -95,9 +97,24 @@ const useAuthStore = create((set, get) => ({
         // Don't wipe an active demo session set by the Demo button
         if (get().isDemo) {
           set({ loading: false });
-        } else {
-          set({ user: null, userProfile: null, loading: false });
+          return;
         }
+        // Restore a persisted demo session (the Demo button writes localStorage).
+        // Firebase reports "no user" for demo logins, so without this any full
+        // page reload or deep link kicks demo users back to the login screen.
+        const savedDemo = localStorage.getItem('shakti_demo_user');
+        if (savedDemo) {
+          try {
+            const demoUser = JSON.parse(savedDemo);
+            const savedProfile = localStorage.getItem(`shakti_demo_profile_${demoUser.email}`);
+            const demoProfile = savedProfile ? JSON.parse(savedProfile) : { ...DEMO_PROFILE, email: demoUser.email };
+            set({ user: demoUser, userProfile: demoProfile, loading: false, isDemo: true });
+            return;
+          } catch {
+            localStorage.removeItem('shakti_demo_user');
+          }
+        }
+        set({ user: null, userProfile: null, loading: false });
       }
     });
   },
@@ -239,10 +256,9 @@ const useAuthStore = create((set, get) => ({
   // Sign Out (aliased as both signOut and logout)
   signOut: async () => {
     try {
+      localStorage.removeItem('shakti_demo_user');
       if (isFirebaseConfigured()) {
         await firebaseSignOut(auth);
-      } else {
-        localStorage.removeItem('shakti_demo_user');
       }
       set({ user: null, userProfile: null, isDemo: false });
     } catch (error) {

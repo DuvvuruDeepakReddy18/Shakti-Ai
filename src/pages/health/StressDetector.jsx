@@ -219,7 +219,8 @@ export default function StressDetector() {
               <button onClick={reset} className="py-4 rounded-full bg-[var(--color-surface-lowest)] text-[var(--color-text-primary)] font-bold text-sm shadow-sm hover:bg-[var(--color-surface)] transition-colors active:scale-95">
                 Take Again
               </button>
-              <Link to="/health/companion" className="py-4 rounded-full bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] text-white font-bold text-sm text-center shadow-md hover:shadow-lg transition-all active:scale-95">
+              {/* inline color: the unlayered `a` rule in globals.css beats Tailwind's layered text-white */}
+              <Link to="/health/companion" style={{ color: 'white' }} className="py-4 rounded-full bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] font-bold text-sm text-center shadow-md hover:shadow-lg transition-all active:scale-95">
                 Talk to SHAKTI
               </Link>
             </div>

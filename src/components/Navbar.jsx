@@ -41,6 +41,7 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             onClick={onToggleSidebar}
+            aria-label="Toggle navigation menu"
             className="hamburger-btn"
             style={{ display: 'none', padding: '8px', borderRadius: '12px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--color-shakti-dark-text)' }}
             aria-label="Toggle menu"
@@ -95,6 +96,7 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }) {
           {/* Mobile search */}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
+            aria-label="Toggle search"
             className="hide-desktop"
             style={{ padding: '10px', borderRadius: '12px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--color-shakti-dark-muted)' }}
           >
@@ -102,7 +104,7 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }) {
           </button>
 
           {/* Notifications */}
-          <button style={{ position: 'relative', padding: '10px', borderRadius: '12px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--color-shakti-dark-muted)' }}>
+          <button aria-label="Notifications" style={{ position: 'relative', padding: '10px', borderRadius: '12px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--color-shakti-dark-muted)' }}>
             <Bell size={20} />
             <span style={{ position: 'absolute', top: '6px', right: '6px', width: '8px', height: '8px', background: '#c6252b', borderRadius: '50%', border: '2px solid var(--color-surface-base)' }} />
           </button>
@@ -111,6 +113,7 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }) {
           <div style={{ position: 'relative' }}>
             <button
               onClick={() => setProfileOpen(!profileOpen)}
+              aria-label="Account menu"
               style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', borderRadius: '12px', border: 'none', background: 'transparent', cursor: 'pointer' }}
             >
               {userProfile?.photoURL ? (

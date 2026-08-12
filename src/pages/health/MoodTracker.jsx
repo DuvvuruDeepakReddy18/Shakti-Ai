@@ -174,7 +174,7 @@ export default function MoodTracker() {
           <span style={{ fontSize: '12px', color: 'var(--color-outline)' }}>Avg: <span style={{ color: '#ec4899', fontWeight: 700 }}>{avg.toFixed(1)}</span></span>
         </div>
         <div style={{ height: '240px', width: '100%', position: 'relative', marginLeft: '-10px' }}>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 520, height: 240 }}>
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="moodGrad" x1="0" y1="0" x2="0" y2="1">

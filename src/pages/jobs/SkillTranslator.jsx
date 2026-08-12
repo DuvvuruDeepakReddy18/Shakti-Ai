@@ -75,8 +75,12 @@ export default function SkillTranslator() {
   };
 
   // Universal job search link — works for both formal jobs and local gig work
-  const applyUrl = (r) =>
-    `https://www.google.com/search?q=${encodeURIComponent(`${r.searchKeywords || r.title} jobs in ${resultLocation}`)}&ibp=htl;jobs`;
+  const applyUrl = (r) => {
+    const kw = (r.searchKeywords || r.title || '').trim();
+    const loc = resultLocation.trim();
+    const q = kw.toLowerCase().includes(loc.toLowerCase()) ? `${kw} jobs` : `${kw} jobs in ${loc}`;
+    return `https://www.google.com/search?q=${encodeURIComponent(q)}&ibp=htl;jobs`;
+  };
 
   const cardStyle = {
     background: 'var(--color-surface-lowest)',
@@ -154,6 +158,7 @@ export default function SkillTranslator() {
             </div>
             <button
               onClick={() => addSkill()}
+              aria-label="Add skill"
               style={{
                 padding: '0 16px', borderRadius: '12px',
                 background: ACCENT_BG, color: ACCENT,
