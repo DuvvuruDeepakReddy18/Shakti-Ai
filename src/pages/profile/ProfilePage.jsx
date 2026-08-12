@@ -69,7 +69,7 @@ export default function ProfilePage() {
             <h1 className="text-2xl font-bold font-display text-[var(--color-text-primary)] mb-1">{userProfile?.name || 'SHAKTI Warrior'}</h1>
             <p className="text-sm text-[var(--color-text-secondary)] mb-3">{userProfile?.email}</p>
             <div className="flex flex-wrap gap-2 justify-center mb-4">
-              <span className="px-3 py-1 rounded-full bg-purple-50 border border-purple-100 text-[11px] font-bold text-purple-600">{userProfile?.mode || 'Beginner'}</span>
+              <span className="px-3.5 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-xs font-bold text-purple-700 capitalize">{userProfile?.mode || 'Beginner'}</span>
               {userProfile?.isVolunteer && (
                 <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-[11px] font-bold text-emerald-600 flex items-center gap-1">
                   <Shield size={12} /> Volunteer
@@ -77,7 +77,7 @@ export default function ProfilePage() {
               )}
             </div>
             <button onClick={() => editing ? save() : setEditing(true)} disabled={saving}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-[var(--color-shakti-dark-text)] to-[var(--color-shakti-secondary)] text-white text-sm font-bold flex items-center gap-2 mx-auto glow-purple transition-opacity disabled:opacity-60"
+              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] text-white text-sm font-bold flex items-center gap-2 mx-auto shadow-[0_6px_16px_rgba(99,14,212,0.25)] hover:shadow-[0_8px_20px_rgba(99,14,212,0.35)] transition-all disabled:opacity-60"
             >
               {editing ? <><Save size={16} /> {saving ? 'Saving…' : 'Save'}</> : <><Edit3 size={16} /> Edit profile</>}
             </button>
@@ -107,33 +107,37 @@ export default function ProfilePage() {
             <p className="text-[11px] text-[var(--color-text-secondary)] m-0">{Math.max(1000 - points, 0)} pts to next</p>
           </div>
         </div>
-        <div className="w-full h-2 bg-[var(--color-surface)] rounded-full overflow-hidden">
+        <div className="w-full h-2.5 bg-[var(--color-surface)] rounded-full overflow-hidden">
           <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 1 }}
-            className="h-full bg-gradient-to-r from-[var(--color-shakti-dark-text)] to-[var(--color-shakti-secondary)] rounded-full" 
+            className="h-full bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] rounded-full"
           />
         </div>
       </motion.div>
 
       {/* STATS */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} 
-          className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-5 shadow-sm border border-[var(--color-surface-highlight)] text-center"
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+          className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-5 shadow-sm border border-[var(--color-surface-highlight)] flex items-center justify-center gap-4"
         >
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--color-shakti-safety)] to-orange-500 flex items-center justify-center mx-auto mb-2 glow-red">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--color-shakti-safety)] to-orange-500 flex items-center justify-center shrink-0 shadow-[0_4px_12px_rgba(162,0,23,0.2)]">
             <Flame size={24} className="text-white fill-white" />
           </div>
-          <p className="text-2xl font-extrabold text-[var(--color-text-primary)] m-0 leading-none">{wellnessStreak}</p>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] mt-1.5">Day streak</p>
+          <div className="text-left">
+            <p className="text-2xl font-extrabold text-[var(--color-text-primary)] m-0 leading-none">{wellnessStreak}</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] mt-1.5 m-0">Day streak</p>
+          </div>
         </motion.div>
-        
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} 
-          className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-5 shadow-sm border border-[var(--color-surface-highlight)] text-center"
+
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-5 shadow-sm border border-[var(--color-surface-highlight)] flex items-center justify-center gap-4"
         >
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mx-auto mb-2 shadow-[0_4px_12px_rgba(217,119,6,0.2)]">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shrink-0 shadow-[0_4px_12px_rgba(217,119,6,0.2)]">
             <Award size={24} className="text-white" />
           </div>
-          <p className="text-2xl font-extrabold text-[var(--color-text-primary)] m-0 leading-none">{earnedCount}</p>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] mt-1.5">Badges won</p>
+          <div className="text-left">
+            <p className="text-2xl font-extrabold text-[var(--color-text-primary)] m-0 leading-none">{earnedCount}</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] mt-1.5 m-0">Badges won</p>
+          </div>
         </motion.div>
       </div>
 
@@ -170,7 +174,7 @@ export default function ProfilePage() {
           >
             <div className="bg-[var(--color-surface-lowest)] rounded-[1.5rem] p-5 shadow-sm border border-[var(--color-surface-highlight)]">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] flex items-center justify-center shadow-[0_4px_12px_rgba(99,14,212,0.2)]">
                   <User size={20} className="text-white" />
                 </div>
                 <h3 className="text-base font-bold text-[var(--color-text-primary)] m-0">Contact details</h3>
@@ -251,14 +255,14 @@ export default function ProfilePage() {
       {/* REWARDS CTA */}
       <Link to="/profile/store" className="block text-inherit no-underline">
         <motion.div whileHover={{ y: -3 }}
-          className="rounded-[1.25rem] p-5 flex items-center justify-between text-white shadow-[0_8px_24px_rgba(99,14,212,0.2)] relative overflow-hidden bg-gradient-to-br from-indigo-950 via-purple-900 to-pink-900"
+          className="rounded-[1.25rem] p-5 flex items-center justify-between text-white shadow-[0_8px_24px_rgba(99,14,212,0.25)] relative overflow-hidden bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)]"
         >
-          <div className="absolute top-0 right-0 w-48 h-full bg-gradient-to-l from-pink-500/20 to-transparent pointer-events-none" />
+          <div className="absolute top-0 right-0 w-48 h-full bg-gradient-to-l from-white/10 to-transparent pointer-events-none" />
           <div className="relative z-10">
-            <h3 className="text-base font-bold m-0 mb-1 flex items-center gap-2">
-              Rewards Store <Gift size={18} className="text-pink-300" />
+            <h3 className="text-base font-bold m-0 mb-1 flex items-center gap-2" style={{ color: 'white' }}>
+              Rewards Store <Gift size={18} className="text-pink-200" />
             </h3>
-            <p className="text-sm text-purple-200/90 m-0">Redeem your ShePoints for exclusive perks.</p>
+            <p className="text-sm text-white/80 m-0">Redeem your ShePoints for exclusive perks.</p>
           </div>
           <div className="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center shrink-0 relative z-10">
             <ArrowRight size={20} />

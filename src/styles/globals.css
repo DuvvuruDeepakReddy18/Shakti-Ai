@@ -78,6 +78,7 @@
   --color-surface-highlight: #ccc3d8;
   --color-text-primary: #181445;
   --color-text-secondary: #7b7487;
+  --color-shakti-light-text: #7b7487;
   --color-accent-blue: #3B82F6;
   --color-accent-pink: #ec4899;
   --color-accent-purple: #7c3aed;
@@ -127,11 +128,14 @@
   --color-shakti-primary-light: #b48cff;
 }
 
-/* CSS Reset & Base */
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* CSS Reset & Base — MUST stay inside @layer base: unlayered rules beat all
+   Tailwind utility layers, which silently zeroed every spacing utility. */
+@layer base {
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
 html {
@@ -185,15 +189,17 @@ body {
   outline-offset: 2px;
 }
 
-/* Links */
-a {
-  color: var(--color-shakti-primary);
-  text-decoration: none;
-  transition: color 0.2s;
-}
+/* Links — layered so color utilities (text-white etc.) can override */
+@layer base {
+  a {
+    color: var(--color-shakti-primary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
 
-a:hover {
-  color: var(--color-shakti-primary-container);
+  a:hover {
+    color: var(--color-shakti-primary-container);
+  }
 }
 
 /* ============================================
@@ -259,38 +265,6 @@ a:hover {
   border: none;
   border-radius: 2rem;
   padding: 1.5rem;
-}
-
-/* ── Global page wrapper fix for all sub-pages ── */
-.p-4 { padding: 16px; }
-.p-5 { padding: 20px; }
-.p-6 { padding: 24px; }
-.pb-24 { padding-bottom: 100px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-3 { margin-bottom: 12px; }
-.mb-4 { margin-bottom: 16px; }
-.mb-6 { margin-bottom: 24px; }
-.mt-1 { margin-top: 4px; }
-.mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 12px; }
-.mt-4 { margin-top: 16px; }
-.mt-5 { margin-top: 20px; }
-.space-y-2 > * + * { margin-top: 8px; }
-.space-y-3 > * + * { margin-top: 12px; }
-.space-y-4 > * + * { margin-top: 16px; }
-.space-y-6 > * + * { margin-top: 24px; }
-.gap-1 { gap: 4px; }
-.gap-2 { gap: 8px; }
-.gap-3 { gap: 12px; }
-.gap-4 { gap: 16px; }
-.flex-1 { flex: 1; }
-.min-w-0 { min-width: 0; }
-.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.w-full { width: 100%; }
-
-@media (min-width: 1024px) {
-  .lg\:p-6 { padding: 24px; }
-  .lg\:pb-6 { padding-bottom: 24px; }
 }
 
 /* Pulse Animation for SOS */

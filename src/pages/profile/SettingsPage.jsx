@@ -27,7 +27,7 @@ export default function SettingsPage() {
   const Toggle = ({ checked, onChange }) => (
     <button
       onClick={(e) => { e.stopPropagation(); onChange(!checked); }}
-      className={`relative w-12 h-6 rounded-full border-none cursor-pointer flex shrink-0 items-center px-1 transition-colors duration-300 ${checked ? 'bg-[var(--color-shakti-dark-text)]' : 'bg-[var(--color-surface-highlight)]'}`}
+      className={`relative w-12 h-6 rounded-full border-none cursor-pointer flex shrink-0 items-center px-1 transition-colors duration-300 ${checked ? 'bg-gradient-to-r from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)]' : 'bg-[var(--color-surface-highlight)]'}`}
     >
       <motion.div
         initial={false}
@@ -38,8 +38,11 @@ export default function SettingsPage() {
     </button>
   );
 
-  const SettingRow = ({ icon: Icon, iconColor, iconBg, title, desc, right, onClick, danger }) => (
-    <motion.button
+  const SettingRow = ({ icon: Icon, iconColor, iconBg, title, desc, right, onClick, danger }) => {
+    // Rows hosting a Toggle must not be <button> — nested buttons are invalid HTML
+    const Row = onClick ? motion.button : motion.div;
+    return (
+    <Row
       whileHover={onClick ? { scale: 0.99, backgroundColor: danger ? 'var(--color-shakti-safety-light)' : 'var(--color-surface)' } : {}}
       whileTap={onClick ? { scale: 0.97 } : {}}
       onClick={onClick}
@@ -55,8 +58,9 @@ export default function SettingsPage() {
       <div className="shrink-0 flex items-center">
         {right || (onClick && <ChevronRight size={18} className="text-[var(--color-shakti-light-text)]" />)}
       </div>
-    </motion.button>
-  );
+    </Row>
+    );
+  };
 
   const Section = ({ label, delay, children }) => (
     <motion.div
@@ -86,8 +90,8 @@ export default function SettingsPage() {
         <div className="absolute -top-10 -right-10 w-44 h-44 bg-gradient-to-br from-[var(--color-accent-blue)]/10 to-transparent blur-3xl pointer-events-none" />
 
         <div className="flex items-center gap-5 relative z-10">
-          <div className="w-16 h-16 rounded-[1.25rem] bg-[var(--color-surface)] shadow-inner flex items-center justify-center text-[var(--color-shakti-dark-text)] shrink-0">
-            <Settings size={32} strokeWidth={1.5} />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-shakti-primary)] to-[var(--color-shakti-secondary)] shadow-[0_6px_20px_rgba(99,14,212,0.25)] flex items-center justify-center shrink-0">
+            <Settings size={26} color="white" strokeWidth={2} />
           </div>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)] mb-2 tracking-tight">Settings</h1>
